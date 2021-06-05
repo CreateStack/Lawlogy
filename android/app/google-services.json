@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1020065741772",
+    "firebase_url": "https://lawlogy-0908-default-rtdb.firebaseio.com",
+    "project_id": "lawlogy-0908",
+    "storage_bucket": "lawlogy-0908.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1020065741772:android:4695fe5125c3b6136cfb69",
+        "android_client_info": {
+          "package_name": "com.lawlogy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1020065741772-sahge3c3r52g8k9o1atuuolgo78jao09.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lawlogy",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1020065741772-aelduhgjg3qkucfj1v4c2sh7fp86ja3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPn_p16JrTGPJFLQndeerqKtpuWc2pkEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1020065741772-aelduhgjg3qkucfj1v4c2sh7fp86ja3e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1020065741772-r5vbb527kg02r8e6gsa882pomtcv8tke.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.lawlogy-admin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
