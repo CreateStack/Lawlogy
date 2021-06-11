@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import _ from 'lodash';
+
 import colors from '../config/colors';
 
 function TopicScreen(props) {
@@ -23,7 +25,7 @@ function TopicScreen(props) {
           })
         }>
         <Text key={index} style={styles.text}>
-          {item}
+          {_.startCase(_.toLower(item))}
         </Text>
       </TouchableOpacity>
     );
@@ -35,6 +37,7 @@ function TopicScreen(props) {
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         style={styles.flatlist}
+        contentContainerStyle={{alignItems: 'center'}}
       />
     </View>
   );
@@ -49,7 +52,7 @@ const styles = StyleSheet.create({
   },
   flatlist: {
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
+    width: '100%',
   },
   topic: {
     padding: 16,
@@ -57,7 +60,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginVertical: 8,
     borderRadius: 10,
-    backgroundColor: colors.light,
+    backgroundColor: colors.white,
     overflow: 'hidden',
   },
 });

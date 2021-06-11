@@ -4,6 +4,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MainScreen from '../screens/MainScreen';
 import TopicScreen from '../screens/TopicScreen';
 import QuizzesScreen from '../screens/QuizzesScreen';
+import colors from '../config/colors';
+import QuestionsScreen from '../screens/QuestionsScreen';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +19,7 @@ const AppNavigator = () => (
         title: 'Lawlogy',
         headerStyle: {elevation: 10},
         headerTitleAlign: 'center',
-        headerTintColor: 'rgb(171,54,48)',
+        headerTintColor: colors.primary,
       }}
     />
     <Stack.Screen
@@ -28,7 +30,7 @@ const AppNavigator = () => (
         title: 'Topics',
         headerStyle: {elevation: 10},
         headerTitleAlign: 'center',
-        headerTintColor: 'rgb(171,54,48)',
+        headerTintColor: colors.primary,
       }}
     />
     <Stack.Screen
@@ -39,7 +41,18 @@ const AppNavigator = () => (
         title: 'Quizzes',
         headerStyle: {elevation: 10},
         headerTitleAlign: 'center',
-        headerTintColor: 'rgb(171,54,48)',
+        headerTintColor: colors.primary,
+      }}
+    />
+    <Stack.Screen
+      name="Quiz"
+      component={QuestionsScreen}
+      options={{
+        headerShown: true,
+        title: 'Quiz',
+        headerStyle: {elevation: 10},
+        headerTitleAlign: 'center',
+        headerTintColor: colors.primary,
       }}
     />
   </Stack.Navigator>

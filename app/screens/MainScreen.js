@@ -54,8 +54,8 @@ function MainScreen(props) {
           <ImageBackground
             source={require('../assets/quizzes.jpg')}
             style={styles.imageBackground}
-            blurRadius={1}>
-            <Text style={{...styles.text, color: colors.white}}>Quizzes</Text>
+            blurRadius={2}>
+            <Text style={{...styles.text, color: colors.black}}>Quizzes</Text>
           </ImageBackground>
         </TouchableOpacity>
         <TouchableOpacity
@@ -66,7 +66,9 @@ function MainScreen(props) {
             source={require('../assets/questions.jpg')}
             style={styles.imageBackground}
             blurRadius={1.2}>
-            <Text style={{...styles.text, color: colors.black}}>Questions</Text>
+            <Text style={{...styles.text, color: colors.black}}>
+              Important Questions
+            </Text>
           </ImageBackground>
         </TouchableOpacity>
       </View>
@@ -97,6 +99,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 40,
+    textAlign: 'center',
   },
 });
 
