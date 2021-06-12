@@ -78,7 +78,7 @@ function LoginScreen(props) {
               setAutoVerifying(true);
               break;
             case auth.PhoneAuthState.ERROR:
-              setErrorMsg(snapshot.error);
+              setErrorMsg(snapshot.error.message);
               setRegisterFailed(true);
               setGetOTP(0);
               setLoading(false);
@@ -97,7 +97,7 @@ function LoginScreen(props) {
                   if (snapshot.val() === null) {
                     Alert.alert(
                       "Student doesn't exists",
-                      'Please registere yourself first',
+                      'Please register yourself first',
                       [
                         {
                           text: 'Register',
@@ -153,7 +153,7 @@ function LoginScreen(props) {
           if (snapshot.val() === null) {
             Alert.alert(
               "Student doesn't exists",
-              'Please registere yourself first',
+              'Please register yourself first',
               [
                 {
                   text: 'Register',

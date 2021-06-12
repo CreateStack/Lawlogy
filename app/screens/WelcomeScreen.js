@@ -14,7 +14,6 @@ import logoImage from '../assets/logo.png';
 import AppButton from '../components/AppButton';
 
 export default function WelcomeScreen({navigation}) {
-  const [otp, setOTP] = useState({otpRemainingTime: 0, confirm: null});
   return (
     <ImageBackground
       source={backgroundImage}
@@ -34,10 +33,7 @@ export default function WelcomeScreen({navigation}) {
           title="Register"
           color="secondary"
           onPress={() => {
-            navigation.navigate('Register', {
-              otp,
-              setOTP,
-            });
+            navigation.navigate('Register');
           }}
         />
       </View>

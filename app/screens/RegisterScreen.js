@@ -34,8 +34,6 @@ function RegisterScreen(props) {
   const {logIn} = useAuth();
 
   useEffect(() => {
-    setGetOTP(props.route.params.otp.otpRemainingTime);
-    setConfirm(props.route.params.otp.confirm);
     if (getOTP > 0) {
       otpTimer = setInterval(() => {
         setGetOTP((v) => {
@@ -50,7 +48,6 @@ function RegisterScreen(props) {
     otpTimer = null;
     return () => {
       if (otpTimer) clearInterval(otpTimer);
-      props.route.params.setOTP({otpRemainingTime: getOTP, confirm: confirm});
     };
   }, []);
 
@@ -86,7 +83,7 @@ function RegisterScreen(props) {
               setAutoVerifying(true);
               break;
             case auth.PhoneAuthState.ERROR:
-              setErrorMsg(snapshot.error);
+              setErrorMsg(snapshot.error.message);
               setRegisterFailed(true);
               setGetOTP(0);
               setLoading(false);
@@ -143,20 +140,11 @@ function RegisterScreen(props) {
         },
         (error) => {
           console.log('Error: ', error);
+          setErrorMsg(error.message);
+          setAutoVerifying(false);
           setLoading(false);
         },
       );
-    /* .signInWithPhoneNumber('+91' + phoneNumber)
-      .then((confirmation) => {
-        setConfirm(confirmation);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setRegisterFailed(true);
-        setErrorMsg(error.message);
-        setGetOTP(0);
-        setLoading(false);
-      }); */
   }
   useEffect(() => {
     if (getOTP < 1 && otpTimer) {
