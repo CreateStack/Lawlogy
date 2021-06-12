@@ -167,7 +167,7 @@ function QuestionsScreen(props) {
         ListHeaderComponent={headerItem}
         ListHeaderComponentStyle={{width: '100%'}}
         renderItem={renderItem}
-        keyExtractor={(item, index) => index}
+        keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{alignItems: 'center', padding: 16}}
       />
       {showScore ? (

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Dimensions, Image, StyleSheet} from 'react-native';
+import {Alert, Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-import * as Yup from 'yup';
+import LottieView from 'lottie-react-native';
 
 import Screen from '../components/Screen';
 import {
@@ -15,6 +15,7 @@ import ActivityIndicator from '../components/ActivityIndicator';
 import useAuth from '../auth/useAuth';
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import AppButton from '../components/AppButton';
+import colors from '../config/colors';
 
 let otpTimer = null;
 function LoginScreen(props) {
@@ -24,12 +25,19 @@ function LoginScreen(props) {
   const [errorMsg, setErrorMsg] = useState();
   const [getOTP, setGetOTP] = useState(0);
   const [phone, setPhone] = useState('');
+  const [autoVerifying, setAutoVerifying] = useState(false);
   const {logIn} = useAuth();
 
   useEffect(() => {
     if (getOTP > 0) {
       otpTimer = setInterval(() => {
-        setGetOTP((v) => v - 1);
+        setGetOTP((v) => {
+          if (v > 0) return v - 1;
+          else {
+            clearInterval(otpTimer);
+            return 0;
+          }
+        });
       }, 1000);
     }
     otpTimer = null;
@@ -49,22 +57,80 @@ function LoginScreen(props) {
     setLoading(true);
     setGetOTP((v) => {
       otpTimer = setInterval(() => {
-        setGetOTP((v) => v - 1);
+        setGetOTP((v) => {
+          if (v > 0) return v - 1;
+          else {
+            clearInterval(otpTimer);
+            return 0;
+          }
+        });
       }, 1000);
       return 61;
     });
     auth()
-      .signInWithPhoneNumber('+91' + phoneNumber)
-      .then((confirmation) => {
-        setConfirm(confirmation);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setRegisterFailed(true);
-        setErrorMsg(error.message);
-        setGetOTP(0);
-        setLoading(false);
-      });
+      .verifyPhoneNumber('+91' + phoneNumber, 10, false)
+      .on(
+        'state_changed',
+        (snapshot) => {
+          switch (snapshot.state) {
+            case auth.PhoneAuthState.CODE_SENT:
+              setLoading(false);
+              setAutoVerifying(true);
+              break;
+            case auth.PhoneAuthState.ERROR:
+              setErrorMsg(snapshot.error);
+              setRegisterFailed(true);
+              setGetOTP(0);
+              setLoading(false);
+              setAutoVerifying(false);
+              break;
+            case auth.PhoneAuthState.AUTO_VERIFY_TIMEOUT:
+              setConfirm(snapshot.verificationId);
+              setLoading(false);
+              setAutoVerifying(false);
+              break;
+            case auth.PhoneAuthState.AUTO_VERIFIED:
+              database()
+                .ref('/student/' + phone)
+                .once('value')
+                .then((snapshot) => {
+                  if (snapshot.val() === null) {
+                    Alert.alert(
+                      "Student doesn't exists",
+                      'Please registere yourself first',
+                      [
+                        {
+                          text: 'Register',
+                          onPress: () => props.navigation.navigate('Register'),
+                        },
+                      ],
+                    );
+                    setLoading(false);
+                    setAutoVerifying(false);
+                    setRegisterFailed(true);
+                  } else {
+                    console.log('Logged in');
+                    logIn(phone);
+                    setLoading(false);
+                    setAutoVerifying(false);
+                    setRegisterFailed(false);
+                  }
+                })
+                .catch((e) => {
+                  setErrorMsg(e);
+                  console.log('error logging in: ', e);
+                  setLoading(false);
+                  setAutoVerifying(false);
+                  setRegisterFailed(true);
+                });
+              break;
+          }
+        },
+        (error) => {
+          console.log('Error: ', error);
+          setLoading(false);
+        },
+      );
   }
   useEffect(() => {
     if (getOTP < 1 && otpTimer) {
@@ -75,7 +141,11 @@ function LoginScreen(props) {
   const handleLogin = async (userInfo) => {
     setLoading(true);
     try {
-      await confirm.confirm(userInfo.otp);
+      const credential = auth.PhoneAuthProvider.credential(
+        confirm,
+        userInfo.otp,
+      );
+      await auth().signInWithCredential(credential);
       database()
         .ref('/student/' + phone)
         .once('value')
@@ -84,6 +154,12 @@ function LoginScreen(props) {
             Alert.alert(
               "Student doesn't exists",
               'Please registere yourself first',
+              [
+                {
+                  text: 'Register',
+                  onPress: () => props.navigation.navigate('Register'),
+                },
+              ],
             );
             setLoading(false);
           } else {
@@ -150,6 +226,34 @@ function LoginScreen(props) {
           />
         </Screen>
       </ImageBackground>
+      {autoVerifying ? (
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 50,
+            width: '100%',
+            alignItems: 'center',
+            padding: 16,
+            zIndex: 1,
+            backgroundColor: colors.white,
+          }}>
+          <LottieView
+            autoPlay
+            loop
+            source={require('../assets/animations/verifying.json')}
+            style={{height: 100}}
+          />
+          <Text
+            style={{
+              marginTop: 16,
+              fontSize: 18,
+              color: colors.black,
+              textAlign: 'center',
+            }}>
+            Auto-Verifying OTP
+          </Text>
+        </View>
+      ) : null}
     </>
   );
 }
