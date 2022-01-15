@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import backgroundImage from '../assets/background.jpg';
-import logoImage from '../assets/logo.png';
+import logoImage from '../assets/logo.jpg';
 import AppButton from '../components/AppButton';
 
 export default function WelcomeScreen({navigation}) {

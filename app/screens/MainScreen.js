@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  FlatList,
   ImageBackground,
   StyleSheet,
   Text,
@@ -42,45 +43,106 @@ function MainScreen(props) {
       });
   }, []);
 
+  const data = [
+    {
+      onPress: () => props.navigation.navigate('Topics', {quizzes}),
+      disabled: quizzes,
+      imageBackground: require('../assets/quizzes.jpg'),
+      blurRadius: 2,
+      text: 'Quizzes',
+    },
+    {
+      onPress: () => {},
+      disabled: questions,
+      imageBackground: require('../assets/questions.jpg'),
+      blurRadius: 1.2,
+      text: ' Important Questions',
+    },
+    {
+      onPress: () => {},
+      disabled: null,
+      imageBackground: require('../assets/comingSoon.png'),
+      blurRadius: 0.5,
+      text: ' Coming Soon  :)',
+    },
+    {
+      onPress: () => {},
+      disabled: null,
+      imageBackground: require('../assets/comingSoon.png'),
+      blurRadius: 0.5,
+      text: ' Coming Soon  :)',
+    },
+    {
+      onPress: () => {},
+      disabled: null,
+      imageBackground: require('../assets/comingSoon.png'),
+      blurRadius: 0.5,
+      text: ' Coming Soon  :)',
+    },
+    {
+      onPress: () => {},
+      disabled: null,
+      imageBackground: require('../assets/comingSoon.png'),
+      blurRadius: 0.5,
+      text: ' Coming Soon  :)',
+    },
+    {
+      onPress: () => {},
+      disabled: null,
+      imageBackground: require('../assets/comingSoon.png'),
+      blurRadius: 0.5,
+      text: ' Coming Soon  :)',
+    },
+    {
+      onPress: () => {},
+      disabled: null,
+      imageBackground: require('../assets/comingSoon.png'),
+      blurRadius: 0.5,
+      text: ' Coming Soon  :)',
+    },
+  ];
+
+  const render = (item) => {
+    return (
+      <TouchableOpacity
+        onPress={item.onPress}
+        style={styles.subContainer}
+        activeOpacity={0.5}
+        disabled={!item.disabled}>
+        <ImageBackground
+          source={item.imageBackground}
+          style={styles.imageBackground}
+          blurRadius={item.blurRadius}>
+          <Text style={{...styles.text, color: colors.black}}>{item.text}</Text>
+        </ImageBackground>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <>
       <ActivityIndicator visible={loading} />
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() => props.navigation.navigate('Topics', {quizzes})}
-          style={styles.subContainer}
-          activeOpacity={0.5}
-          disabled={!quizzes}>
-          <ImageBackground
-            source={require('../assets/quizzes.jpg')}
-            style={styles.imageBackground}
-            blurRadius={2}>
-            <Text style={{...styles.text, color: colors.black}}>Quizzes</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.subContainer}
-          activeOpacity={0.5}
-          disabled={!questions}>
-          <ImageBackground
-            source={require('../assets/questions.jpg')}
-            style={styles.imageBackground}
-            blurRadius={1.2}>
-            <Text style={{...styles.text, color: colors.black}}>
-              Important Questions
-            </Text>
-          </ImageBackground>
-        </TouchableOpacity>
-      </View>
+      <FlatList
+        contentContainerStyle={styles.flatlistContent}
+        data={data}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => render(item)}
+        style={{
+          flex: 1,
+          backgroundColor: colors.secondary,
+          paddingHorizontal: 16,
+          width: '100%',
+        }}
+      />
     </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ddd',
     flex: 1,
     padding: 16,
+    width: '100%',
   },
   imageBackground: {
     height: '100%',
@@ -89,13 +151,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   subContainer: {
-    flex: 1,
-    marginVertical: 16,
-    width: '100%',
     alignItems: 'center',
+    borderRadius: 10,
+    elevation: 5,
+    flex: 1,
+    height: 100,
     justifyContent: 'center',
-    borderRadius: 40,
+    marginVertical: 8,
     overflow: 'hidden',
+    width: '100%',
   },
   text: {
     fontSize: 40,

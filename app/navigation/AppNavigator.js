@@ -6,6 +6,7 @@ import TopicScreen from '../screens/TopicScreen';
 import QuizzesScreen from '../screens/QuizzesScreen';
 import colors from '../config/colors';
 import QuestionsScreen from '../screens/QuestionsScreen';
+import PurchaseScreen from '../screens/PurchaseScreen';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,17 @@ const AppNavigator = () => (
       options={{
         headerShown: true,
         title: 'Quiz',
+        headerStyle: {elevation: 10},
+        headerTitleAlign: 'center',
+        headerTintColor: colors.primary,
+      }}
+    />
+    <Stack.Screen
+      name="Purchase"
+      component={PurchaseScreen}
+      options={{
+        headerShown: true,
+        title: 'Lawlogy complete course',
         headerStyle: {elevation: 10},
         headerTitleAlign: 'center',
         headerTintColor: colors.primary,

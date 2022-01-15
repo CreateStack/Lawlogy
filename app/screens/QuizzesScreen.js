@@ -126,9 +126,23 @@ function QuizzesScreen(props) {
       <View style={styles.container}>
         <FlatList
           data={quizzes}
+          keyExtractor={(item, index) => index.toString()}
+          ListFooterComponent={() => (
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate('Purchase')}
+              style={{
+                width: '100%',
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                backgroundColor: colors.secondary,
+              }}>
+              <Text style={{color: colors.black, fontSize: 14, lineHeight: 21}}>
+                Purchase full course
+              </Text>
+            </TouchableOpacity>
+          )}
           ListHeaderComponent={headerItem}
           ListHeaderComponentStyle={{width: '100%'}}
-          keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
           style={styles.flatlist}
           contentContainerStyle={{

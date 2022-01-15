@@ -44,7 +44,7 @@ const App = () => {
           backgroundColor: '#fff',
         }}>
         <ImageBackground
-          source={require('./app/assets/logo.png')}
+          source={require('./app/assets/logo.jpg')}
           style={{
             height: 200,
             width: 200,

@@ -124,6 +124,13 @@ function LoginScreen(props) {
                   setRegisterFailed(true);
                 });
               break;
+            default:
+              setErrorMsg('Login failed');
+              console.log('error logging in');
+              setLoading(false);
+              setAutoVerifying(false);
+              setRegisterFailed(true);
+              break;
           }
         },
         (error) => {
@@ -190,7 +197,7 @@ function LoginScreen(props) {
         }}>
         <ActivityIndicator visible={loading} />
 
-        <Image source={require('../assets/logo.png')} style={styles.logo} />
+        <Image source={require('../assets/logo.jpg')} style={styles.logo} />
         <Screen style={styles.container}>
           <AppForm onSubmit={handleLogin} initialValues={{otp: ''}}>
             <ErrorMessage visible={registerFailed} error={errorMsg} />
