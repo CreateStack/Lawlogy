@@ -5844,10 +5844,10 @@ react-native-upi-payment@^1.0.3:
   resolved "https://registry.yarnpkg.com/react-native-upi-payment/-/react-native-upi-payment-1.0.3.tgz#ee041e565d29acd908b8c0e9e13310071cc02978"
   integrity sha512-vr3/+jKuYy618rQJg0L5yjzpxZf4+6TTPakc2szPHO3TY+KknuSeogf8583I9O8K1QGW4CzeWhVfhw4S8bFt2A==
 
-react-native-vector-icons@^8.1.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-8.1.0.tgz#e8ee2b17bc4d9f636da1c6f67feee8e2a850c3d8"
-  integrity sha512-sHIdBB6Y0dHaot2fMXgy5J/hhCn5YuyN7SKDNFgPzL8KA1oF2/v7mgYMavnK7LIIs2dJoGnDANKf61dsU+TZlg==
+react-native-vector-icons@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.0.0.tgz#ab38ec6941f3f340d39846f1e8300e59863e2fb1"
+  integrity sha512-qKX5d5/TafHmI4B7UOSZCL3BAGh7ZfF30iLwRgxBkKfZl2lKSuHp8Ottj9OyWh9b5fFtlg+LtyvZrns3g2kh+w==
   dependencies:
     lodash.frompairs "^4.0.1"
     lodash.isequal "^4.5.0"
@@ -7433,9 +7433,9 @@ yargs-parser@^18.1.2:
     decamelize "^1.2.0"
 
 yargs-parser@^20.2.2:
-  version "20.2.7"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.7.tgz#61df85c113edfb5a7a4e36eb8aa60ef423cbc90a"
-  integrity sha512-FiNkvbeHzB/syOjIUxFDCnhSfzAL8R5vs40MgLFBorXACCOAEaWu0gRZl14vG8MR9AOJIZbmkjhusqBYZ3HTHw==
+  version "20.2.9"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.9.tgz#2eb7dc3b0289718fc295f362753845c41a0c94ee"
+  integrity sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==
 
 yargs@^14.2.0:
   version "14.2.3"

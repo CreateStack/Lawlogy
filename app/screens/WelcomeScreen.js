@@ -12,6 +12,7 @@ import {
 import backgroundImage from '../assets/background.jpg';
 import logoImage from '../assets/logo.jpg';
 import AppButton from '../components/AppButton';
+import colors from '../config/colors';
 
 export default function WelcomeScreen({navigation}) {
   return (
@@ -20,11 +21,10 @@ export default function WelcomeScreen({navigation}) {
       style={styles.contianer}
       blurRadius={3}>
       <View style={styles.logoContainer}>
-        <Image source={logoImage} style={styles.logo} />
         <Text style={styles.tagline}>
-          The ability to observe without evaluating is the highest form of
-          intelligence
+          "Motivation is what gets you started. Habit is what keeps you going"
         </Text>
+        <Image source={logoImage} style={styles.logo} />
       </View>
 
       <View style={styles.loginCont}>
@@ -43,28 +43,29 @@ export default function WelcomeScreen({navigation}) {
 
 const styles = StyleSheet.create({
   contianer: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    width: '100%',
+    height: '100%',
     flex: 1,
     marginTop: StatusBar.currentHeight,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
+    backgroundColor: colors.white,
     justifyContent: 'space-between',
   },
   logo: {
-    width: 100,
-    height: 100,
+    borderRadius: 75,
+    height: 150,
+    position: 'absolute',
     resizeMode: 'center',
-    borderRadius: 80,
+    top: Dimensions.get('window').height / 2 - 190,
+    width: 150,
   },
 
   logoContainer: {
-    flex: 0.3,
-    alignSelf: 'center',
+    backgroundColor: 'rgba(122,117,190,0.3)',
     marginTop: '10%',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    width: '100%',
+    top: 40,
   },
   loginCont: {
     width: '100%',
@@ -73,15 +74,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     padding: 20,
+    bottom: 80,
   },
   tagline: {
-    top: 20,
-    fontSize: 25,
+    fontSize: 23,
     fontWeight: 'bold',
     paddingVertical: 20,
     textAlign: 'center',
-    color: '#444',
-    backgroundColor: '#fff9',
-    borderRadius: 20,
+    color: colors.black,
+    paddingHorizontal: 16,
+    fontStyle: 'italic',
   },
 });

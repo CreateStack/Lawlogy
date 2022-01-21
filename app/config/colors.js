@@ -13,7 +13,7 @@ export default {
   greyLight: '#D9DBE0',
   greyLighter: '#F8F8F8',
   grey: '#4C4C50',
-  primary: '#DC3224',
+  primary: 'rgb(122,117,190)',
   secondaryDark: '#4B4FA6',
   tertiary: '#C94318',
   white: '#FFF',

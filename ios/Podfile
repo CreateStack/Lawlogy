@@ -8,6 +8,7 @@ target 'lawlogy' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+
   target 'lawlogyTests' do
     inherit! :complete
     # Pods for testing
