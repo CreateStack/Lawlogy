@@ -1,5 +1,4 @@
 import React from 'react';
-import {useState} from 'react';
 import {
   View,
   ImageBackground,
@@ -9,6 +8,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
+
 import backgroundImage from '../assets/background.jpg';
 import logoImage from '../assets/logo.jpg';
 import AppButton from '../components/AppButton';
@@ -19,7 +19,7 @@ export default function WelcomeScreen({navigation}) {
     <ImageBackground
       source={backgroundImage}
       style={styles.contianer}
-      blurRadius={3}>
+      blurRadius={2}>
       <View style={styles.logoContainer}>
         <Text style={styles.tagline}>
           "Motivation is what gets you started. Habit is what keeps you going"
@@ -77,12 +77,11 @@ const styles = StyleSheet.create({
     bottom: 80,
   },
   tagline: {
-    fontSize: 23,
+    fontSize: 22,
     fontWeight: 'bold',
     paddingVertical: 20,
     textAlign: 'center',
     color: colors.black,
     paddingHorizontal: 16,
-    fontStyle: 'italic',
   },
 });

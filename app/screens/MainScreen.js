@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
-  ImageBackground,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,7 +16,8 @@ function MainScreen(props) {
   const [questions, setQuestions] = useState();
   const [quizzes, setQuizzes] = useState();
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
+
+  const loadData = () => {
     setLoading(true);
     database()
       .ref('/questions')
@@ -41,6 +42,10 @@ function MainScreen(props) {
         console.log('Error fetching quizes: ', e);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   const data = [
@@ -50,55 +55,61 @@ function MainScreen(props) {
       imageBackground: require('../assets/quizzes.jpg'),
       blurRadius: 2,
       text: 'Quizzes',
+      extraInfo: quizzes
+        ? Object.keys(quizzes).length +
+          (Object.keys(quizzes).length > 1 ? ' Topics' : ' Topic')
+        : 'Coming soon',
+    },
+    {
+      onPress: () => {},
+      disabled: null,
+      imageBackground: require('../assets/comingSoon.png'),
+      blurRadius: 0.5,
+      text: 'Test Series',
+      extraInfo: 'Coming soon',
     },
     {
       onPress: () => {},
       disabled: questions,
       imageBackground: require('../assets/questions.jpg'),
       blurRadius: 1.2,
-      text: ' Important Questions',
+      text: ' Mains Questions',
+      extraInfo: questions
+        ? Object.keys(questions).length +
+          (Object.keys(questions).length > 1 ? ' Topics' : ' Topic')
+        : 'Coming soon',
     },
     {
       onPress: () => {},
       disabled: null,
       imageBackground: require('../assets/comingSoon.png'),
       blurRadius: 0.5,
-      text: ' Coming Soon  :)',
+      text: 'Previous Year Papers',
+      extraInfo: 'Coming soon',
     },
     {
       onPress: () => {},
       disabled: null,
       imageBackground: require('../assets/comingSoon.png'),
       blurRadius: 0.5,
-      text: ' Coming Soon  :)',
+      text: 'Study Material',
+      extraInfo: 'Coming soon',
     },
     {
       onPress: () => {},
       disabled: null,
       imageBackground: require('../assets/comingSoon.png'),
       blurRadius: 0.5,
-      text: ' Coming Soon  :)',
+      text: 'Our Courses',
+      extraInfo: 'Coming soon',
     },
     {
       onPress: () => {},
       disabled: null,
       imageBackground: require('../assets/comingSoon.png'),
       blurRadius: 0.5,
-      text: ' Coming Soon  :)',
-    },
-    {
-      onPress: () => {},
-      disabled: null,
-      imageBackground: require('../assets/comingSoon.png'),
-      blurRadius: 0.5,
-      text: ' Coming Soon  :)',
-    },
-    {
-      onPress: () => {},
-      disabled: null,
-      imageBackground: require('../assets/comingSoon.png'),
-      blurRadius: 0.5,
-      text: ' Coming Soon  :)',
+      text: 'Live Classes',
+      extraInfo: 'Coming soon',
     },
   ];
 
@@ -109,12 +120,13 @@ function MainScreen(props) {
         style={styles.subContainer}
         activeOpacity={0.5}
         disabled={!item.disabled}>
-        <ImageBackground
-          source={item.imageBackground}
-          style={styles.imageBackground}
-          blurRadius={item.blurRadius}>
-          <Text style={{...styles.text, color: colors.black}}>{item.text}</Text>
-        </ImageBackground>
+        <Image source={item.imageBackground} style={styles.imageBackground} />
+        <Text style={{...styles.text, color: colors.black}}>{item.text}</Text>
+        {item.extraInfo ? (
+          <View style={styles.extraInfo}>
+            <Text style={styles.extraInfoText}>{item.extraInfo}</Text>
+          </View>
+        ) : null}
       </TouchableOpacity>
     );
   };
@@ -123,47 +135,61 @@ function MainScreen(props) {
     <>
       <ActivityIndicator visible={loading} />
       <FlatList
-        contentContainerStyle={styles.flatlistContent}
         data={data}
         keyExtractor={(item, index) => index.toString()}
+        onRefresh={loadData}
+        refreshing={loading}
         renderItem={({item}) => render(item)}
-        style={{
-          flex: 1,
-          backgroundColor: colors.secondary,
-          paddingHorizontal: 16,
-          width: '100%',
-        }}
+        style={styles.flatlist}
       />
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  extraInfo: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    borderBottomLeftRadius: 10,
+  },
+  extraInfoText: {
+    fontSize: 16,
+    color: colors.white,
+  },
+  flatlist: {
     flex: 1,
-    padding: 16,
+    backgroundColor: colors.white,
+    paddingHorizontal: 16,
     width: '100%',
   },
   imageBackground: {
     height: '100%',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: '30%',
+    borderWidth: 2,
+    borderColor: colors.secondary,
   },
   subContainer: {
     alignItems: 'center',
+    backgroundColor: colors.white,
+    borderColor: colors.primary,
     borderRadius: 10,
-    elevation: 5,
-    flex: 1,
+    borderWidth: 1,
+    flexDirection: 'row',
     height: 100,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     marginVertical: 8,
     overflow: 'hidden',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     width: '100%',
   },
   text: {
-    fontSize: 40,
-    textAlign: 'center',
+    fontSize: 22,
+    marginLeft: 8,
   },
 });
 

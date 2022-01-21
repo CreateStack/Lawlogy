@@ -196,7 +196,6 @@ function LoginScreen(props) {
           flex: 1,
         }}>
         <ActivityIndicator visible={loading} />
-
         <Image source={require('../assets/logo.jpg')} style={styles.logo} />
         <Screen style={styles.container}>
           <AppForm onSubmit={handleLogin} initialValues={{otp: ''}}>
@@ -205,6 +204,7 @@ function LoginScreen(props) {
               autoCapitalize="none"
               autoCorrect={false}
               icon="cellphone-basic"
+              inputContainer={styles.inputContainer}
               name="number"
               placeholder="10 digit Mobile number"
               textContentType="telephoneNumber"
@@ -269,13 +269,16 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
   },
+  inputContainer: {
+    backgroundColor: colors.white,
+  },
   logo: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     alignSelf: 'center',
     marginTop: 50,
     marginBottom: 20,
-    borderRadius: 20,
+    borderRadius: 50,
   },
 });
 
