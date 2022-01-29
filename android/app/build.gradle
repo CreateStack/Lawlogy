@@ -194,6 +194,8 @@ dependencies {
     implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
 
+    implementation project(':react-native-linear-gradient')
+
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {

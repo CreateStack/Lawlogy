@@ -186,15 +186,17 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 20,
-    padding: 16,
-    backgroundColor: colors.secondary,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.blue,
     borderRadius: 10,
     width: '100%',
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
     color: colors.white,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   quizOptionsView: {
     flexDirection: 'row',
@@ -212,13 +214,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   topic: {
-    padding: 16,
-    width: Dimensions.get('window').width - 40,
+    backgroundColor: colors.white,
+    borderColor: colors.primary,
+    borderRadius: 10,
+    borderWidth: 1,
     elevation: 5,
     marginVertical: 8,
-    backgroundColor: colors.white,
-    borderRadius: 10,
     overflow: 'hidden',
+    padding: 16,
+    width: Dimensions.get('window').width - 40,
   },
 });
 

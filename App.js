@@ -58,19 +58,6 @@ const App = () => {
       <OfflineNotice />
       <NavigationContainer theme={navigationTheme}>
         {user ? <AppNavigator /> : <AuthNavigator />}
-        {/*  <Question
-          setScore={setScore}
-          question={{
-            Question:
-              'On which date the ‘Objective resolution ‘was moved in the Constituent assembly? ',
-            a: 'December 13, 1946 ',
-            b: 'December 09, 1946 ',
-            c: 'December 16, 1946 ',
-            d: 'December 19, 1946 ',
-            correct: 'A',
-            premium: true,
-          }}
-        /> */}
       </NavigationContainer>
     </AuthContext.Provider>
   );

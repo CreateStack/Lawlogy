@@ -50,7 +50,13 @@ function MainScreen(props) {
 
   const data = [
     {
-      onPress: () => props.navigation.navigate('Topics', {quizzes}),
+      onPress: () =>
+        props.navigation.navigate('Topics', {
+          itemName: 'Quizzes',
+          items: quizzes,
+          image: require('../assets/quizzes.jpg'),
+          navigateToScreen: 'Quizzes',
+        }),
       disabled: quizzes,
       imageBackground: require('../assets/quizzes.jpg'),
       blurRadius: 2,
@@ -63,13 +69,19 @@ function MainScreen(props) {
     {
       onPress: () => {},
       disabled: null,
-      imageBackground: require('../assets/comingSoon.png'),
+      imageBackground: require('../assets/testSeries.jpg'),
       blurRadius: 0.5,
       text: 'Test Series',
       extraInfo: 'Coming soon',
     },
     {
-      onPress: () => {},
+      onPress: () =>
+        props.navigation.navigate('Topics', {
+          itemName: 'Questions',
+          items: questions,
+          image: require('../assets/questions.jpg'),
+          navigateToScreen: 'JustQuestions',
+        }),
       disabled: questions,
       imageBackground: require('../assets/questions.jpg'),
       blurRadius: 1.2,
@@ -82,7 +94,7 @@ function MainScreen(props) {
     {
       onPress: () => {},
       disabled: null,
-      imageBackground: require('../assets/comingSoon.png'),
+      imageBackground: require('../assets/previousYearPapers.jpg'),
       blurRadius: 0.5,
       text: 'Previous Year Papers',
       extraInfo: 'Coming soon',
@@ -90,7 +102,7 @@ function MainScreen(props) {
     {
       onPress: () => {},
       disabled: null,
-      imageBackground: require('../assets/comingSoon.png'),
+      imageBackground: require('../assets/studyMaterial.jpg'),
       blurRadius: 0.5,
       text: 'Study Material',
       extraInfo: 'Coming soon',
@@ -98,7 +110,7 @@ function MainScreen(props) {
     {
       onPress: () => {},
       disabled: null,
-      imageBackground: require('../assets/comingSoon.png'),
+      imageBackground: require('../assets/ourCourses.jpg'),
       blurRadius: 0.5,
       text: 'Our Courses',
       extraInfo: 'Coming soon',
@@ -106,7 +118,7 @@ function MainScreen(props) {
     {
       onPress: () => {},
       disabled: null,
-      imageBackground: require('../assets/comingSoon.png'),
+      imageBackground: require('../assets/liveClasses.jpg'),
       blurRadius: 0.5,
       text: 'Live Classes',
       extraInfo: 'Coming soon',
@@ -121,7 +133,7 @@ function MainScreen(props) {
         activeOpacity={0.5}
         disabled={!item.disabled}>
         <Image source={item.imageBackground} style={styles.imageBackground} />
-        <Text style={{...styles.text, color: colors.black}}>{item.text}</Text>
+        <Text style={styles.text}>{item.text}</Text>
         {item.extraInfo ? (
           <View style={styles.extraInfo}>
             <Text style={styles.extraInfoText}>{item.extraInfo}</Text>
@@ -135,8 +147,10 @@ function MainScreen(props) {
     <>
       <ActivityIndicator visible={loading} />
       <FlatList
+        columnWrapperStyle={{justifyContent: 'space-between'}}
         data={data}
         keyExtractor={(item, index) => index.toString()}
+        numColumns={2}
         onRefresh={loadData}
         refreshing={loading}
         renderItem={({item}) => render(item)}
@@ -167,10 +181,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   imageBackground: {
-    height: '100%',
-    width: '30%',
+    height: '60%',
+    width: '100%',
     borderWidth: 2,
     borderColor: colors.secondary,
+    borderTopRightRadius: 8,
+    borderBottomLeftRadius: 8,
   },
   subContainer: {
     alignItems: 'center',
@@ -178,18 +194,19 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderRadius: 10,
     borderWidth: 1,
-    flexDirection: 'row',
-    height: 100,
-    justifyContent: 'flex-start',
-    marginVertical: 8,
+    height: 150,
+    justifyContent: 'space-between',
+    marginVertical: 12,
     overflow: 'hidden',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    width: '100%',
+    paddingVertical: 8,
+    width: '46%',
   },
   text: {
-    fontSize: 22,
-    marginLeft: 8,
+    color: colors.black,
+    flexWrap: 'wrap',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 

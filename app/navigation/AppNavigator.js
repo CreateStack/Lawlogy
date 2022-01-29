@@ -7,7 +7,8 @@ import QuizzesScreen from '../screens/QuizzesScreen';
 import colors from '../config/colors';
 import QuestionsScreen from '../screens/QuestionsScreen';
 import PurchaseScreen from '../screens/PurchaseScreen';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
+import JustQuestionsScreen from '../screens/JustQuestionsScreen';
 
 const Stack = createStackNavigator();
 
@@ -66,6 +67,19 @@ const AppNavigator = () => (
       options={{
         headerShown: true,
         headerTitle: () => headerTitleCreater('Lawlogy complete course'),
+      }}
+    />
+    <Stack.Screen
+      name="JustQuestions"
+      component={JustQuestionsScreen}
+      options={{
+        headerShown: true,
+        headerTitle: () => headerTitleCreater(''),
+        headerStyle: {
+          height: 50,
+          backgroundColor: colors.primary,
+          elevation: 0,
+        },
       }}
     />
   </Stack.Navigator>
