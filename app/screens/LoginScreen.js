@@ -17,34 +17,36 @@ import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 
-let otpTimer = null;
 function LoginScreen(props) {
   const [confirm, setConfirm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [registerFailed, setRegisterFailed] = useState();
   const [errorMsg, setErrorMsg] = useState();
-  const [getOTP, setGetOTP] = useState(0);
+  const [getOTP, setGetOTP] = useState(61);
   const [phone, setPhone] = useState('');
   const [autoVerifying, setAutoVerifying] = useState(false);
+  const [otpTimer, setOtpTimer] = useState(false);
   const {logIn} = useAuth();
 
   useEffect(() => {
-    if (getOTP > 0) {
-      otpTimer = setInterval(() => {
-        setGetOTP((v) => {
-          if (v > 0) return v - 1;
-          else {
-            clearInterval(otpTimer);
-            return 0;
-          }
-        });
-      }, 1000);
-    }
-    otpTimer = null;
     return () => {
-      if (otpTimer) clearInterval(otpTimer);
+      if (otpTimer) {
+        clearInterval(otpTimer);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (getOTP < 1 && otpTimer) {
+      clearInterval(otpTimer);
+      setGetOTP(61);
+    }
+  }, [getOTP]);
+
+  const startTimer = () => {
+    const timer = setInterval(() => setGetOTP((v) => v - 1), 1000);
+    setOtpTimer(timer);
+  };
 
   async function signInWithPhoneNumber(phoneNumber) {
     if (phoneNumber.length !== 10) {
@@ -55,18 +57,7 @@ function LoginScreen(props) {
     setRegisterFailed(false);
     setErrorMsg('');
     setLoading(true);
-    setGetOTP((v) => {
-      otpTimer = setInterval(() => {
-        setGetOTP((v) => {
-          if (v > 0) return v - 1;
-          else {
-            clearInterval(otpTimer);
-            return 0;
-          }
-        });
-      }, 1000);
-      return 61;
-    });
+    startTimer();
     auth()
       .verifyPhoneNumber('+91' + phoneNumber, 10, false)
       .on(
@@ -90,34 +81,51 @@ function LoginScreen(props) {
               setAutoVerifying(false);
               break;
             case auth.PhoneAuthState.AUTO_VERIFIED:
-              database()
-                .ref('/student/' + phone)
-                .once('value')
-                .then((snapshot) => {
-                  if (snapshot.val() === null) {
-                    Alert.alert(
-                      "Student doesn't exists",
-                      'Please register yourself first',
-                      [
-                        {
-                          text: 'Register',
-                          onPress: () => props.navigation.navigate('Register'),
-                        },
-                      ],
-                    );
-                    setLoading(false);
-                    setAutoVerifying(false);
-                    setRegisterFailed(true);
-                  } else {
-                    console.log('Logged in');
-                    logIn(phone);
-                    setLoading(false);
-                    setAutoVerifying(false);
-                    setRegisterFailed(false);
-                  }
+              setConfirm(snapshot.verificationId);
+              const credential = auth.PhoneAuthProvider.credential(
+                snapshot.verificationId,
+                snapshot.code,
+              );
+              auth()
+                .signInWithCredential(credential)
+                .then((data) => {
+                  database()
+                    .ref('/student/' + phone)
+                    .once('value')
+                    .then((snapshot) => {
+                      if (snapshot.val() === null) {
+                        Alert.alert(
+                          "Student doesn't exists",
+                          'Please register yourself first',
+                          [
+                            {
+                              text: 'Register',
+                              onPress: () =>
+                                props.navigation.navigate('Register'),
+                            },
+                          ],
+                        );
+                        setLoading(false);
+                        setAutoVerifying(false);
+                        setRegisterFailed(true);
+                      } else {
+                        console.log('Logged in');
+                        logIn(phone);
+                        setLoading(false);
+                        setAutoVerifying(false);
+                        setRegisterFailed(false);
+                      }
+                    })
+                    .catch((e) => {
+                      setErrorMsg(e);
+                      console.log('error logging in: ', e);
+                      setLoading(false);
+                      setAutoVerifying(false);
+                      setRegisterFailed(true);
+                    });
                 })
                 .catch((e) => {
-                  setErrorMsg(e);
+                  setErrorMsg('Login failed: ', e);
                   console.log('error logging in: ', e);
                   setLoading(false);
                   setAutoVerifying(false);
@@ -139,13 +147,15 @@ function LoginScreen(props) {
         },
       );
   }
-  useEffect(() => {
-    if (getOTP < 1 && otpTimer) {
-      clearInterval(otpTimer);
-    }
-  }, [getOTP]);
 
   const handleLogin = async (userInfo) => {
+    if (!userInfo.otp || userInfo.otp === '') {
+      setRegisterFailed(true);
+      setErrorMsg('Please enter a valid OTP');
+      return;
+    }
+    setRegisterFailed(false);
+    setErrorMsg('');
     setLoading(true);
     try {
       const credential = auth.PhoneAuthProvider.credential(
@@ -174,6 +184,12 @@ function LoginScreen(props) {
             logIn(phone);
             setLoading(false);
           }
+        })
+        .catch((e) => {
+          setLoading(false);
+          console.log('Error: ', e);
+          setErrorMsg('Login failed: ', e);
+          setRegisterFailed(true);
         });
     } catch (error) {
       setLoading(false);
@@ -226,10 +242,10 @@ function LoginScreen(props) {
             {confirm ? <SubmitButton title={'Login'} /> : <></>}
           </AppForm>
           <AppButton
-            title={getOTP === 0 ? 'Get OTP' : getOTP}
+            title={getOTP === 61 ? 'Get OTP' : getOTP}
             onPress={() => signInWithPhoneNumber(phone)}
-            color={'secondary'}
-            disabled={getOTP === 0 ? false : true}
+            color={'yellow'}
+            disabled={getOTP === 61 ? false : true}
           />
         </Screen>
       </ImageBackground>

@@ -39,7 +39,7 @@ const JustQuestionsScreen = ({route}) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[colors.primary, colors.secondary]}
+        colors={[colors.primary, colors.blue]}
         style={styles.gradient}>
         <View>
           <Text style={styles.gradientTopic}>{params.name}</Text>

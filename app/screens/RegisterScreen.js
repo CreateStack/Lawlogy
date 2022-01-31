@@ -17,39 +17,58 @@ import useAuth from '../auth/useAuth';
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
+import stateData from '../utils/stateData.json';
+import preparingForData from '../utils/preparingForData.json';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label('Name'),
   state: Yup.string().lowercase().required().label('State'),
+  email: Yup.string()
+    .lowercase()
+    .email('Must be a valid email address')
+    .required()
+    .label('Email address'),
+  age: Yup.string().lowercase().required().label('Age'),
+  preparingFor: Yup.string().lowercase().required().label('Preparing for'),
 });
-let otpTimer = null;
 function RegisterScreen(props) {
   const [confirm, setConfirm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [registerFailed, setRegisterFailed] = useState();
   const [errorMsg, setErrorMsg] = useState();
-  const [getOTP, setGetOTP] = useState(0);
+  const [getOTP, setGetOTP] = useState(61);
   const [phone, setPhone] = useState('');
   const [autoVerifying, setAutoVerifying] = useState(false);
+  const [otpTimer, setOtpTimer] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
   const {logIn} = useAuth();
 
+  const updateUserInfo = (name, value) => {
+    setUserInfo((info) => {
+      info[name] = value;
+      return info;
+    });
+  };
+
   useEffect(() => {
-    if (getOTP > 0) {
-      otpTimer = setInterval(() => {
-        setGetOTP((v) => {
-          if (v > 0) return v - 1;
-          else {
-            clearInterval(otpTimer);
-            return 0;
-          }
-        });
-      }, 1000);
-    }
-    otpTimer = null;
     return () => {
-      if (otpTimer) clearInterval(otpTimer);
+      if (otpTimer) {
+        clearInterval(otpTimer);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (getOTP < 1 && otpTimer) {
+      clearInterval(otpTimer);
+      setGetOTP(61);
+    }
+  }, [getOTP]);
+
+  const startTimer = () => {
+    const timer = setInterval(() => setGetOTP((v) => v - 1), 1000);
+    setOtpTimer(timer);
+  };
 
   async function signInWithPhoneNumber(phoneNumber) {
     if (phoneNumber.length !== 10) {
@@ -60,18 +79,7 @@ function RegisterScreen(props) {
     setRegisterFailed(false);
     setErrorMsg('');
     setLoading(true);
-    setGetOTP((v) => {
-      otpTimer = setInterval(() => {
-        setGetOTP((v) => {
-          if (v > 0) return v - 1;
-          else {
-            clearInterval(otpTimer);
-            return 0;
-          }
-        });
-      }, 1000);
-      return 61;
-    });
+    startTimer();
     auth()
       .verifyPhoneNumber('+91' + phoneNumber, 10, false)
       .on(
@@ -95,45 +103,71 @@ function RegisterScreen(props) {
               setAutoVerifying(false);
               break;
             case auth.PhoneAuthState.AUTO_VERIFIED:
-              database()
-                .ref('/student/' + phone)
-                .once('value')
-                .then((snapshot) => {
-                  if (snapshot.val() !== null) {
-                    setAutoVerifying(false);
-                    Alert.alert(
-                      'Student exists',
-                      'You are already registered, please login',
-                      [
-                        {
-                          text: 'Login',
-                          onPress: () => props.navigation.navigate('Login'),
-                        },
-                      ],
-                    );
-                    setLoading(false);
-                  } else {
-                    database()
-                      .ref('/student/' + phone)
-                      .update({
-                        name: userInfo.name,
-                        state: userInfo.state,
-                        premium: false,
-                      })
-                      .then(() => {
+              setConfirm(snapshot.verificationId);
+              const credential = auth.PhoneAuthProvider.credential(
+                snapshot.verificationId,
+                snapshot.code,
+              );
+              auth()
+                .signInWithCredential(credential)
+                .then((data) => {
+                  database()
+                    .ref('/student/' + phone)
+                    .once('value')
+                    .then((snapshot) => {
+                      if (snapshot.val() !== null) {
                         setAutoVerifying(false);
-                        setRegisterFailed(false);
-                        logIn(phone);
+                        Alert.alert(
+                          'Student exists',
+                          'You are already registered, please login',
+                          [
+                            {
+                              text: 'Login',
+                              onPress: () => props.navigation.navigate('Login'),
+                            },
+                          ],
+                        );
                         setLoading(false);
-                      })
-                      .catch((e) => {
-                        setAutoVerifying(false);
-                        setRegisterFailed(true);
-                        setLoading(false);
-                        console.log('Error: ', e);
-                        setErrorMsg(e);
-                      });
-                  }
+                      } else {
+                        database()
+                          .ref('/student/' + phone)
+                          .update({
+                            name: userInfo.name,
+                            state: userInfo.state,
+                            email: userInfo.email,
+                            age: userInfo.age,
+                            preparingFor: userInfo.preparingFor,
+                            premium: false,
+                          })
+                          .then(() => {
+                            setAutoVerifying(false);
+                            setRegisterFailed(false);
+                            logIn(phone);
+                            setLoading(false);
+                          })
+                          .catch((e) => {
+                            setAutoVerifying(false);
+                            setRegisterFailed(true);
+                            setLoading(false);
+                            console.log('Error: ', e);
+                            setErrorMsg(e);
+                          });
+                      }
+                    })
+                    .catch((e) => {
+                      setAutoVerifying(false);
+                      setRegisterFailed(true);
+                      setLoading(false);
+                      console.log('Error: ', e);
+                      setErrorMsg(e);
+                    });
+                })
+                .catch((e) => {
+                  setAutoVerifying(false);
+                  setRegisterFailed(true);
+                  setLoading(false);
+                  console.log('Error: ', e);
+                  setErrorMsg('Error: ', e);
                 });
               break;
           }
@@ -146,13 +180,14 @@ function RegisterScreen(props) {
         },
       );
   }
-  useEffect(() => {
-    if (getOTP < 1 && otpTimer) {
-      clearInterval(otpTimer);
-    }
-  }, [getOTP]);
 
   const handleRegister = async (userInfo) => {
+    if (!userInfo.otp || userInfo.otp === '') {
+      setRegisterFailed(true);
+      setErrorMsg('Please enter a valid OTP');
+      return;
+    }
+    console.log('Userinfo: ', userInfo);
     setLoading(true);
     try {
       const credential = auth.PhoneAuthProvider.credential(
@@ -182,6 +217,9 @@ function RegisterScreen(props) {
               .update({
                 name: userInfo.name,
                 state: userInfo.state,
+                email: userInfo.email,
+                age: userInfo.age,
+                preparingFor: userInfo.preparingFor,
                 premium: false,
               })
               .then(() => {
@@ -196,6 +234,12 @@ function RegisterScreen(props) {
                 setErrorMsg(e);
               });
           }
+        })
+        .catch((e) => {
+          setRegisterFailed(true);
+          setLoading(false);
+          console.log('Error: ', e);
+          setErrorMsg(e);
         });
     } catch (error) {
       setLoading(false);
@@ -220,7 +264,13 @@ function RegisterScreen(props) {
         <ActivityIndicator visible={loading} />
         <Screen style={styles.container}>
           <AppForm
-            initialValues={{name: '', state: ''}}
+            initialValues={{
+              name: '',
+              state: '',
+              email: '',
+              age: '',
+              preparingFor: '',
+            }}
             onSubmit={handleRegister}
             validationSchema={validationSchema}>
             <ErrorMessage visible={registerFailed} error={errorMsg} />
@@ -228,14 +278,18 @@ function RegisterScreen(props) {
               autoCorrect={false}
               icon="account"
               name="name"
+              onValueChange={updateUserInfo}
               placeholder="Name"
             />
             <AppFormField
               autoCapitalize="none"
               autoCorrect={false}
+              dropDown
+              dropDownList={stateData.data}
               icon="book-open-page-variant"
               keyboardType="default"
               name="state"
+              onValueChange={updateUserInfo}
               placeholder="State"
               textContentType="countryName"
             />
@@ -243,11 +297,45 @@ function RegisterScreen(props) {
               autoCapitalize="none"
               autoCorrect={false}
               icon="cellphone-basic"
+              keyboardType="number-pad"
               name="number"
+              onValueChange={updateUserInfo}
               placeholder="10 digit Mobile number"
               textContentType="telephoneNumber"
               onChangeText={(v) => setPhone(v)}
               value={phone}
+            />
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              icon="email"
+              keyboardType="email-address"
+              name="email"
+              onValueChange={updateUserInfo}
+              placeholder="Email address"
+              textContentType="emailAddress"
+            />
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              icon="human-male-height"
+              keyboardType="number-pad"
+              name="age"
+              onValueChange={updateUserInfo}
+              placeholder="Age"
+              textContentType="none"
+            />
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              dropDown
+              dropDownList={preparingForData.data}
+              icon="human-male-height"
+              keyboardType="default"
+              name="preparingFor"
+              onValueChange={updateUserInfo}
+              placeholder="Preparing for"
+              textContentType="none"
             />
             {confirm ? (
               <AppFormField
@@ -264,10 +352,10 @@ function RegisterScreen(props) {
             {confirm ? <SubmitButton title={'Register'} /> : <></>}
           </AppForm>
           <AppButton
-            title={getOTP === 0 ? 'Get OTP' : getOTP}
+            title={getOTP === 61 ? 'Get OTP' : getOTP}
             onPress={() => signInWithPhoneNumber(phone)}
-            color={'secondary'}
-            disabled={getOTP === 0 ? false : true}
+            color={'yellow'}
+            disabled={getOTP === 61 ? false : true}
           />
         </Screen>
       </ImageBackground>

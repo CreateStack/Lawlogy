@@ -26,4 +26,5 @@ export default {
   darkBlack: '#000000',
   redText: '#C92D21',
   secondary: '#4B4FA633',
+  yellow: '#ffbf45',
 };

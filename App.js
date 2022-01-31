@@ -8,15 +8,18 @@ import authStorage from './app/auth/storage';
 import {ImageBackground, View} from 'react-native';
 import OfflineNotice from './app/components/OfflineNotice';
 import AppNavigator from './app/navigation/AppNavigator';
-import Question from './app/components/Question';
 
 const App = () => {
   const [user, setUser] = useState(null);
   const [isReady, setIsReady] = useState(false);
-  const [score, setScore] = useState(0);
+  const [showSplash, setShowSplash] = useState(true);
+
+  const timeOut = setTimeout(() => setShowSplash(false), 3000);
+
   useEffect(() => {
-    console.log('score: ', score);
-  }, [score]);
+    return () => timeOut && clearTimeout(timeOut);
+  }, []);
+
   useEffect(() => {
     setIsReady(false);
     authStorage
@@ -34,7 +37,8 @@ const App = () => {
         setIsReady(true);
       });
   }, []);
-  if (!isReady) {
+
+  if (!isReady || showSplash) {
     return (
       <View
         style={{

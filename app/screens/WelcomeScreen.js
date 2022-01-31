@@ -31,10 +31,11 @@ export default function WelcomeScreen({navigation}) {
         <AppButton title="Login" onPress={() => navigation.navigate('Login')} />
         <AppButton
           title="Register"
-          color="secondary"
+          color="yellow"
           onPress={() => {
             navigation.navigate('Register');
           }}
+          textColor={colors.primary}
         />
       </View>
     </ImageBackground>

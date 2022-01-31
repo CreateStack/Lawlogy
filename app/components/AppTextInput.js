@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TextInput, StyleSheet, Platform} from 'react-native';
+import {View, TextInput, StyleSheet} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import defaultStyles from '../config/styles';
@@ -28,10 +28,10 @@ export default AppTextInput;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: defaultStyles.colors.light,
-    borderRadius: 25,
+    borderRadius: 16,
     flexDirection: 'row',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
     marginVertical: 10,
     alignItems: 'center',
   },

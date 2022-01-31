@@ -1,25 +1,78 @@
 import React from 'react';
 import {useFormikContext} from 'formik';
+import {Picker} from '@react-native-picker/picker';
 
 import AppTextInput from '../AppTextInput';
 import ErrorMessage from './ErrorMessage';
+import {StyleSheet, View} from 'react-native';
+import colors from '../../config/colors';
 
-const AppFormField = ({name, inputContainer, width, ...otherProps}) => {
+const AppFormField = ({
+  dropDown = false,
+  dropDownList = [],
+  name,
+  inputContainer,
+  onValueChange = () => {},
+  width,
+  ...otherProps
+}) => {
   const {errors, setFieldValue, setFieldTouched, touched, values} =
     useFormikContext();
+
   return (
     <>
-      <AppTextInput
-        inputContainer={inputContainer}
-        onBlur={() => setFieldTouched(name)}
-        onChangeText={(text) => setFieldValue(name, text)}
-        value={values[name]}
-        width={width}
-        {...otherProps}
-      />
+      {dropDown && dropDownList.length > 0 ? (
+        <View style={styles.dropDownContainer}>
+          <Picker
+            dropdownIconColor={colors.primary}
+            dropdownIconRippleColor={colors.secondaryDark}
+            onBlur={() => setFieldTouched(name)}
+            onValueChange={(value, index) => {
+              setFieldValue(name, value);
+              onValueChange(name, value);
+            }}
+            selectedValue={values[name]}
+            style={styles.container}>
+            {dropDownList.map((item, index) => (
+              <Picker.Item
+                label={item.label}
+                value={item.value}
+                key={index}
+                style={styles.container}
+              />
+            ))}
+          </Picker>
+        </View>
+      ) : (
+        <AppTextInput
+          inputContainer={inputContainer}
+          onBlur={() => setFieldTouched(name)}
+          onChangeText={(text) => {
+            setFieldValue(name, text);
+            onValueChange(name, text);
+          }}
+          value={values[name]}
+          width={width}
+          {...otherProps}
+        />
+      )}
       <ErrorMessage error={errors[name]} visible={touched[name]} />
     </>
   );
 };
 
 export default AppFormField;
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    backgroundColor: colors.light,
+    borderRadius: 16,
+    flexDirection: 'row',
+  },
+  dropDownContainer: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginVertical: 10,
+  },
+});
