@@ -14,17 +14,13 @@ import colors from '../config/colors';
 
 const JustQuestionsScreen = ({route}) => {
   const {params} = route;
-  let count = 0;
-  const render = ({item}) => {
+  const render = ({item, index}) => {
     if (!item) return null;
-    count++;
     return (
       <View style={styles.question}>
-        <Text style={styles.questionText}>
-          {count + '. ' + _.capitalize(item)}
-        </Text>
+        <Text style={styles.questionText}>{index + '. ' + item}</Text>
         <TouchableOpacity
-          activeOpacity={0.9}
+          activeOpacity={0.6}
           onPress={() => console.log('hello')}
           style={styles.share}>
           <Image
@@ -41,7 +37,7 @@ const JustQuestionsScreen = ({route}) => {
       <LinearGradient
         colors={[colors.primary, colors.blue]}
         style={styles.gradient}>
-        <View>
+        <View style={styles.title}>
           <Text style={styles.gradientTopic}>{params.name}</Text>
           <Text style={styles.gradientText}>Mains Questions</Text>
         </View>
@@ -51,6 +47,7 @@ const JustQuestionsScreen = ({route}) => {
         />
       </LinearGradient>
       <FlatList
+        contentContainerStyle={styles.flatlistContent}
         data={params.quizzes}
         keyExtractor={(item, index) => index.toString()}
         renderItem={render}
@@ -71,16 +68,18 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 16,
-    paddingVertical: 32,
+    paddingTop: 32,
     top: -20,
     width: '100%',
+  },
+  flatlistContent: {
+    paddingBottom: 32,
   },
   gradient: {
     alignItems: 'center',
     flexDirection: 'row',
     height: '25%',
     justifyContent: 'space-between',
-
     paddingHorizontal: 32,
     width: '100%',
   },
@@ -94,10 +93,10 @@ const styles = StyleSheet.create({
   },
   image: {
     borderColor: colors.white,
-    borderRadius: 60,
+    borderRadius: 50,
     borderWidth: 6,
-    height: 110,
-    width: 110,
+    height: 100,
+    width: 100,
   },
   question: {
     backgroundColor: colors.secondary,
@@ -118,6 +117,9 @@ const styles = StyleSheet.create({
   shareImage: {
     height: 20,
     width: 20,
+  },
+  title: {
+    flex: 1,
   },
 });
 

@@ -14,9 +14,11 @@ import colors from '../config/colors';
 
 function TopicScreen({navigation, route}) {
   const {params} = route;
-  const items = Object.keys(params.items);
+  let items = Object.keys(params.items);
   const renderItem = ({item, index}) => {
-    const noOfItems = Object.keys(params.items[item]).length;
+    const noOfItems = Object.values(params.items[item]).filter(
+      (item) => item !== null,
+    ).length;
     return (
       <TouchableOpacity
         key={index}
