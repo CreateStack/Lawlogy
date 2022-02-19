@@ -11,9 +11,12 @@ import {
 import _ from 'lodash';
 
 import colors from '../config/colors';
+import {headerTitleCreater} from '../navigation/AppNavigator';
 
 function TopicScreen({navigation, route}) {
   const {params} = route;
+  params.title &&
+    navigation.setOptions({headerTitle: headerTitleCreater(params.title)});
   let items = Object.keys(params.items);
   const renderItem = ({item, index}) => {
     const noOfItems = Object.values(params.items[item]).filter(

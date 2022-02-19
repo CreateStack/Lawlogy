@@ -12,40 +12,32 @@ import database from '@react-native-firebase/database';
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
 
+const loadData = (path, setData, setLoading) => {
+  setLoading(true);
+  database()
+    .ref(path)
+    .once('value')
+    .then((snapshot) => {
+      console.log(`data ${path}: `, snapshot.val());
+      setData(snapshot.val());
+      setLoading(false);
+    })
+    .catch((e) => {
+      console.log(`Error fetching ${path}: `, e);
+      setLoading(false);
+    });
+};
+
 function MainScreen(props) {
   const [questions, setQuestions] = useState();
   const [quizzes, setQuizzes] = useState();
+  const [previousYearPapers, setPreviousYearPapers] = useState();
   const [loading, setLoading] = useState(false);
 
-  const loadData = () => {
-    setLoading(true);
-    database()
-      .ref('/questions')
-      .once('value')
-      .then((snapshot) => {
-        setQuestions(snapshot.val());
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log('Error fetching questions: ', e);
-        setLoading(false);
-      });
-    setLoading(true);
-    database()
-      .ref('/quizes')
-      .once('value')
-      .then((snapshot) => {
-        setQuizzes(snapshot.val());
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log('Error fetching quizes: ', e);
-        setLoading(false);
-      });
-  };
-
   useEffect(() => {
-    loadData();
+    loadData('/questions', setQuestions, setLoading);
+    loadData('/quizes', setQuizzes, setLoading);
+    loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
   }, []);
 
   const data = [
@@ -92,12 +84,22 @@ function MainScreen(props) {
         : 'Coming soon',
     },
     {
-      onPress: () => {},
-      disabled: null,
+      onPress: () =>
+        props.navigation.navigate('Topics', {
+          itemName: 'Year',
+          items: previousYearPapers,
+          image: require('../assets/previousYearPapers.jpg'),
+          navigateToScreen: 'Years',
+          title: 'States',
+        }),
+      disabled: previousYearPapers,
       imageBackground: require('../assets/previousYearPapers.jpg'),
       blurRadius: 0.5,
       text: 'Previous Year Papers',
-      extraInfo: 'Coming soon',
+      extraInfo: previousYearPapers
+        ? Object.keys(previousYearPapers).length +
+          (Object.keys(previousYearPapers).length > 1 ? ' Years' : ' Year')
+        : 'Coming soon',
     },
     {
       onPress: () => {},

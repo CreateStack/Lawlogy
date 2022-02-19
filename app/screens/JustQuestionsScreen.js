@@ -18,7 +18,7 @@ const JustQuestionsScreen = ({route}) => {
     if (!item) return null;
     return (
       <View style={styles.question}>
-        <Text style={styles.questionText}>{index + '. ' + item}</Text>
+        <Text style={styles.questionText}>{index + 1 + '. ' + item}</Text>
         <TouchableOpacity
           activeOpacity={0.6}
           onPress={() => console.log('hello')}
@@ -48,7 +48,7 @@ const JustQuestionsScreen = ({route}) => {
       </LinearGradient>
       <FlatList
         contentContainerStyle={styles.flatlistContent}
-        data={params.quizzes}
+        data={params.quizzes?.filter((quizzes) => quizzes)}
         keyExtractor={(item, index) => index.toString()}
         renderItem={render}
         style={styles.flatlist}
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   gradient: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     height: '25%',
     justifyContent: 'space-between',
@@ -85,11 +85,11 @@ const styles = StyleSheet.create({
   },
   gradientText: {
     color: colors.white,
-    fontSize: 22,
+    fontSize: 20,
   },
   gradientTopic: {
     color: colors.white,
-    fontSize: 35,
+    fontSize: 30,
   },
   image: {
     borderColor: colors.white,

@@ -9,10 +9,11 @@ import QuestionsScreen from '../screens/QuestionsScreen';
 import PurchaseScreen from '../screens/PurchaseScreen';
 import {StyleSheet, Text, View} from 'react-native';
 import JustQuestionsScreen from '../screens/JustQuestionsScreen';
+import YearScreen from '../screens/YearScreen';
 
 const Stack = createStackNavigator();
 
-const headerTitleCreater = (title) => (
+export const headerTitleCreater = (title) => (
   <View style={styles.header}>
     {/* <Image source={require('../assets/logo.jpg')} style={styles.image} /> */}
     <Text style={styles.title}>{title}</Text>
@@ -75,6 +76,18 @@ const AppNavigator = () => (
       options={{
         headerShown: true,
         headerTitle: () => headerTitleCreater(''),
+        headerStyle: {
+          height: 50,
+          backgroundColor: colors.primary,
+          elevation: 0,
+        },
+      }}
+    />
+    <Stack.Screen
+      name="Years"
+      component={YearScreen}
+      options={{
+        headerShown: true,
         headerStyle: {
           height: 50,
           backgroundColor: colors.primary,
