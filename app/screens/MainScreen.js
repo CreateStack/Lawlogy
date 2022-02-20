@@ -34,10 +34,14 @@ function MainScreen(props) {
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const loadFunc = () => {
     loadData('/questions', setQuestions, setLoading);
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
+  };
+
+  useEffect(() => {
+    loadFunc();
   }, []);
 
   const data = [
@@ -98,7 +102,7 @@ function MainScreen(props) {
       text: 'Previous Year Papers',
       extraInfo: previousYearPapers
         ? Object.keys(previousYearPapers).length +
-          (Object.keys(previousYearPapers).length > 1 ? ' Years' : ' Year')
+          (Object.keys(previousYearPapers).length > 1 ? ' States' : ' State')
         : 'Coming soon',
     },
     {
@@ -153,7 +157,7 @@ function MainScreen(props) {
         data={data}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
-        onRefresh={loadData}
+        onRefresh={loadFunc}
         refreshing={loading}
         renderItem={({item}) => render(item)}
         style={styles.flatlist}
@@ -164,7 +168,7 @@ function MainScreen(props) {
 
 const styles = StyleSheet.create({
   extraInfo: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.yellow,
     paddingHorizontal: 8,
     paddingVertical: 4,
     position: 'absolute',
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
   },
   extraInfoText: {
     fontSize: 16,
-    color: colors.white,
+    color: colors.black,
   },
   flatlist: {
     flex: 1,

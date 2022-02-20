@@ -101,7 +101,7 @@ function QuizzesScreen(props) {
                 name: props.route.params.name,
               });
             }}>
-            <Text style={{color: colors.white, fontSize: 14}}>
+            <Text style={{color: colors.black, fontSize: 14}}>
               {(_.get(data, item.toUpperCase().trim() + '.completed', false)
                 ? 'Re-'
                 : '') + 'Take quiz'}
@@ -166,11 +166,11 @@ function QuizzesScreen(props) {
 const styles = StyleSheet.create({
   button: {
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: colors.yellow,
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.yellow,
   },
   container: {
     alignItems: 'center',
@@ -188,12 +188,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.blue,
+    backgroundColor: colors.yellow,
     borderRadius: 10,
     width: '100%',
   },
   headerText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',

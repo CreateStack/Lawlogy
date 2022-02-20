@@ -28,7 +28,7 @@ const AppNavigator = () => (
         backgroundColor: colors.primary,
         elevation: 8,
       },
-      headerTitle: () => headerTitleCreater('Lawlogy'),
+      headerTitle: () => headerTitleCreater('LAWLOGY'),
       headerTitleAlign: 'center',
     }}>
     <Stack.Screen
@@ -43,7 +43,7 @@ const AppNavigator = () => (
       component={TopicScreen}
       options={{
         headerShown: true,
-        headerTitle: () => headerTitleCreater('Topics'),
+        headerTitle: () => headerTitleCreater('TOPICS'),
       }}
     />
     <Stack.Screen
@@ -51,7 +51,7 @@ const AppNavigator = () => (
       component={QuizzesScreen}
       options={{
         headerShown: true,
-        headerTitle: () => headerTitleCreater('Quizzes'),
+        headerTitle: () => headerTitleCreater('QUIZZES'),
       }}
     />
     <Stack.Screen
@@ -59,7 +59,7 @@ const AppNavigator = () => (
       component={QuestionsScreen}
       options={{
         headerShown: true,
-        headerTitle: () => headerTitleCreater('Quiz'),
+        headerTitle: () => headerTitleCreater('QUIZ'),
       }}
     />
     <Stack.Screen
@@ -67,7 +67,7 @@ const AppNavigator = () => (
       component={PurchaseScreen}
       options={{
         headerShown: true,
-        headerTitle: () => headerTitleCreater('Lawlogy complete course'),
+        headerTitle: () => headerTitleCreater('Lawlogy Complete Course'),
       }}
     />
     <Stack.Screen

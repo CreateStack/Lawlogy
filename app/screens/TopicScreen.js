@@ -16,7 +16,9 @@ import {headerTitleCreater} from '../navigation/AppNavigator';
 function TopicScreen({navigation, route}) {
   const {params} = route;
   params.title &&
-    navigation.setOptions({headerTitle: headerTitleCreater(params.title)});
+    navigation.setOptions({
+      headerTitle: headerTitleCreater(params.title.toUpperCase()),
+    });
   let items = Object.keys(params.items);
   const renderItem = ({item, index}) => {
     const noOfItems = Object.values(params.items[item]).filter(
@@ -32,7 +34,7 @@ function TopicScreen({navigation, route}) {
             name: item,
           })
         }>
-        <Image source={params.image} style={styles.imageBackground} />
+        {/* <Image source={params.image} style={styles.imageBackground} /> */}
         <Text key={index} style={styles.text}>
           {_.startCase(_.toLower(item))}
         </Text>
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   extraInfo: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.yellow,
     paddingHorizontal: 8,
     paddingVertical: 2,
     position: 'absolute',
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
   },
   extraInfoText: {
     fontSize: 14,
-    color: colors.white,
+    color: colors.black,
   },
   flatlist: {
     paddingHorizontal: 16,
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     overflow: 'hidden',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 20,
     width: Dimensions.get('window').width - 40,
   },
 });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   FlatList,
   Linking,
@@ -11,32 +11,73 @@ import {
 import colors from '../config/colors';
 import {headerTitleCreater} from '../navigation/AppNavigator';
 
-const YearScreen = ({route, navigation}) => {
-  const {params} = route;
-  navigation.setOptions({headerTitle: headerTitleCreater(params.name)});
-
-  const renderItem = ({item, index}) => {
-    return (
+const OptionButton = ({item, index, params}) => {
+  const [showOptions, setShowOptions] = useState(false);
+  return showOptions ? (
+    <View style={styles.topic}>
       <TouchableOpacity
-        key={index}
-        style={styles.topic}
+        key={index + 'prelims'}
+        style={{
+          backgroundColor: colors.primary,
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+          width: '50%',
+        }}
         onPress={() => {
-          Linking.openURL(params.quizzes[item]);
+          Linking.openURL(params.quizzes[item].prelims);
         }}>
-        <Text key={index} style={styles.text}>
-          {item}
+        <Text key={index} style={{...styles.text, color: colors.white}}>
+          Preliminary
         </Text>
       </TouchableOpacity>
-    );
+      <TouchableOpacity
+        key={index + 'mains'}
+        style={{
+          backgroundColor: colors.yellow,
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+          width: '50%',
+        }}
+        onPress={() => {
+          Linking.openURL(params.quizzes[item].mains);
+        }}>
+        <Text key={index} style={styles.text}>
+          Mains
+        </Text>
+      </TouchableOpacity>
+    </View>
+  ) : (
+    <TouchableOpacity
+      key={index}
+      style={{...styles.topic, paddingHorizontal: 16, paddingVertical: 16}}
+      onPress={() => {
+        setShowOptions(true);
+        setTimeout(() => {
+          setShowOptions(false);
+        }, 5000);
+      }}>
+      <Text key={index} style={styles.text}>
+        {item}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+const YearScreen = ({route, navigation}) => {
+  const {params} = route;
+  navigation.setOptions({
+    headerTitle: headerTitleCreater(params.name.toUpperCase()),
+  });
+
+  const renderItem = ({item, index}) => {
+    return <OptionButton item={item} index={index} params={params} />;
   };
   return (
     <View style={styles.container}>
       <FlatList
-        columnWrapperStyle={{justifyContent: 'space-between'}}
         data={Object.keys(params.quizzes).sort()}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
-        numColumns={2}
         style={styles.flatlist}
       />
     </View>
@@ -57,7 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   text: {
-    color: colors.primary,
+    color: colors.black,
     flex: 1,
     fontSize: 16,
     marginLeft: 4,
@@ -74,9 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 8,
     overflow: 'hidden',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    width: '46%',
+    width: '100%',
   },
 });
 
