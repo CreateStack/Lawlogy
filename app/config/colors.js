@@ -27,4 +27,5 @@ export default {
   redText: '#C92D21',
   secondary: '#4B4FA633',
   yellow: '#ffbf45',
+  green: '#50C878',
 };

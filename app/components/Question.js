@@ -5,6 +5,7 @@ import RadioForm, {
   RadioButtonLabel,
 } from 'react-native-simple-radio-button';
 import database from '@react-native-firebase/database';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
 
@@ -68,15 +69,49 @@ function Question({
           labelWrapStyle={{width: '82%'}}
           disabled={view ? true : false}
         />
-        <RadioButtonInput
-          index={1}
-          obj={{label: question.a, value: 0}}
-          onPress={() => setValue(option.toLowerCase())}
-          isSelected={value === option}
-          buttonInnerColor={colors.primary}
-          buttonOuterColor={colors.primary}
-          disabled={view ? true : false}
-        />
+        {view ? (
+          value === option ? (
+            option === question.correct.toLowerCase() ? (
+              <MaterialCommunityIcons
+                name={'check'}
+                size={30}
+                color={colors.green}
+              />
+            ) : (
+              <MaterialCommunityIcons
+                name={'close'}
+                size={30}
+                color={colors.redText}
+              />
+            )
+          ) : value !== option && option === question.correct.toLowerCase() ? (
+            <MaterialCommunityIcons
+              name={'check'}
+              size={30}
+              color={colors.green}
+            />
+          ) : (
+            <RadioButtonInput
+              index={1}
+              obj={{label: question.a, value: 0}}
+              onPress={() => setValue(option.toLowerCase())}
+              isSelected={false}
+              buttonInnerColor={colors.primary}
+              buttonOuterColor={colors.primary}
+              disabled={view ? true : false}
+            />
+          )
+        ) : (
+          <RadioButtonInput
+            index={1}
+            obj={{label: question.a, value: 0}}
+            onPress={() => setValue(option.toLowerCase())}
+            isSelected={value === option}
+            buttonInnerColor={colors.primary}
+            buttonOuterColor={colors.primary}
+            disabled={view ? true : false}
+          />
+        )}
       </View>
     );
   };
@@ -84,11 +119,16 @@ function Question({
     <View
       style={{
         ...styles.container,
-        backgroundColor: view
-          ? value === question.correct.toLowerCase()
-            ? '#0f02'
-            : '#f002'
-          : colors.white,
+        backgroundColor: colors.white,
+        ...(view
+          ? {
+              borderWidth: 3,
+              borderColor:
+                value === question.correct.toLowerCase()
+                  ? colors.green
+                  : colors.redText,
+            }
+          : {}),
       }}>
       <Text style={styles.question}>
         {'Q.' + Number(index + 1) + ' ' + question.Question}
