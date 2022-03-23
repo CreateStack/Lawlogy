@@ -159,7 +159,7 @@ function QuestionsScreen(props) {
     }, 5000);
   };
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         data={quiz}
         ListFooterComponent={view ? null : footerItem}
@@ -175,7 +175,12 @@ function QuestionsScreen(props) {
         ListHeaderComponentStyle={{width: '100%'}}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={{alignItems: 'center', padding: 16}}
+        contentContainerStyle={{
+          alignItems: 'center',
+          width: '100%',
+          padding: 16,
+        }}
+        style={{width: '100%'}}
       />
       {showScore ? (
         <>
@@ -213,6 +218,10 @@ function QuestionsScreen(props) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    width: '100%',
+  },
   header: {
     alignItems: 'center',
     marginBottom: 20,

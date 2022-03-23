@@ -66,7 +66,7 @@ function Question({
           labelHorizontal={true}
           onPress={() => setValue(option)}
           labelStyle={styles.option}
-          labelWrapStyle={{width: '82%'}}
+          labelWrapStyle={{width: '90%'}}
           disabled={view ? true : false}
         />
         {view ? (
@@ -99,6 +99,7 @@ function Question({
               buttonInnerColor={colors.primary}
               buttonOuterColor={colors.primary}
               disabled={view ? true : false}
+              buttonSize={12}
             />
           )
         ) : (
@@ -110,6 +111,7 @@ function Question({
             buttonInnerColor={colors.primary}
             buttonOuterColor={colors.primary}
             disabled={view ? true : false}
+            buttonSize={12}
           />
         )}
       </View>
@@ -183,21 +185,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   container: {
+    alignItems: 'center',
     backgroundColor: colors.white,
     borderRadius: 10,
     elevation: 5,
     overflow: 'hidden',
     padding: 16,
     marginVertical: 8,
-    alignItems: 'center',
+    width: '100%',
   },
   option: {
     fontSize: 16,
+    textAlign: 'justify',
+    paddingLeft: 0,
   },
   question: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,
+    textAlign: 'justify',
+    alignSelf: 'flex-start',
   },
   radioContainer: {
     flexDirection: 'row',
@@ -205,9 +212,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 8,
     alignItems: 'center',
+    padding: 0,
   },
   radioform: {
-    width: '85%',
+    width: '100%',
   },
 });
 
