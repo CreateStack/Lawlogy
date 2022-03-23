@@ -75,7 +75,9 @@ const YearScreen = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={Object.keys(params.quizzes).sort()}
+        data={Object.keys(params.quizzes).sort(
+          (a, b) => parseInt(a) - parseInt(b),
+        )}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         style={styles.flatlist}
