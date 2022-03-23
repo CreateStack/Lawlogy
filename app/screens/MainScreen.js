@@ -18,7 +18,6 @@ const loadData = (path, setData, setLoading) => {
     .ref(path)
     .once('value')
     .then((snapshot) => {
-      console.log(`data ${path}: `, snapshot.val());
       setData(snapshot.val());
       setLoading(false);
     })

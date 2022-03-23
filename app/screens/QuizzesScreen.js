@@ -115,7 +115,7 @@ function QuizzesScreen(props) {
     return (
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          {_.startCase(props.route.params.name)}
+          {_.startCase(_.toLower(props.route.params.name))}
         </Text>
       </View>
     );
