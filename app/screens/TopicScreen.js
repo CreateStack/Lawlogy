@@ -20,6 +20,11 @@ function TopicScreen({navigation, route}) {
       headerTitle: headerTitleCreater(params.title.toUpperCase()),
     });
   let items = Object.keys(params.items);
+  if (items.length) {
+    items = items.sort((a, b) => {
+      return a.normalize().localeCompare(b.normalize());
+    });
+  }
   const renderItem = ({item, index}) => {
     const noOfItems = Object.values(params.items[item]).filter(
       (item) => item !== null,

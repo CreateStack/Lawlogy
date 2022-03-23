@@ -22,19 +22,26 @@ const fetchData = (path, phone, setLoading, setData) => {
     .ref(ref)
     .once('value')
     .then((snapshot) => {
-      setLoading(false);
       setData(snapshot.val() || {});
+      setLoading(false);
     })
     .catch((e) => {
       console.log('Error while fetching: ', e);
-      setLoading(false);
       setData({});
+      setLoading(false);
     });
 };
 
 function QuizzesScreen(props) {
   const {user} = useContext(AuthContext);
-  const quizzes = Object.keys(props.route.params.quizzes);
+  let quizzes = Object.keys(props.route.params.quizzes);
+  if (quizzes.length) {
+    quizzes = quizzes.sort((a, b) => {
+      a = parseInt(a.replace(/^\D+/g, ''));
+      b = parseInt(b.replace(/^\D+/g, ''));
+      return a - b;
+    });
+  }
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
 
