@@ -99,6 +99,13 @@ function QuizzesScreen(props) {
                 quizName: item.toUpperCase(),
                 total: total,
                 name: props.route.params.name,
+                onGoBack: () =>
+                  fetchData(
+                    'quizzes/' + props.route.params.name,
+                    user,
+                    setLoading,
+                    setData,
+                  ),
               });
             }}>
             <Text style={{color: colors.black, fontSize: 14}}>

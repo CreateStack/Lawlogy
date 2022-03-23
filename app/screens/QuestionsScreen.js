@@ -118,7 +118,13 @@ function QuestionsScreen(props) {
               'Leave quiz?',
               'All your progress for this quiz will be lost. Are you sure to leave?',
               [
-                {text: 'Leave', onPress: () => props.navigation.goBack()},
+                {
+                  text: 'Leave',
+                  onPress: () => {
+                    props.route.params.onGoBack();
+                    props.navigation.goBack();
+                  },
+                },
                 {text: 'Cancel'},
               ],
             )
@@ -148,6 +154,7 @@ function QuestionsScreen(props) {
     setShowScore(true);
     setTimeout(() => {
       setShowScore(false);
+      props.route.params.onGoBack();
       props.navigation.goBack();
     }, 5000);
   };
@@ -173,14 +180,14 @@ function QuestionsScreen(props) {
       {showScore ? (
         <>
           <ActivityIndicator
-            opacity={0.3}
+            opacity={0.7}
             source={require('../assets/animations/confetti.json')}
             visible={showScore}
           />
           <View
             style={{
               alignItems: 'center',
-              backgroundColor: colors.white,
+              backgroundColor: colors.yellow,
               justifyContent: 'center',
               position: 'absolute',
               zIndex: 5,
