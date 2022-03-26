@@ -31,12 +31,14 @@ function MainScreen(props) {
   const [questions, setQuestions] = useState();
   const [quizzes, setQuizzes] = useState();
   const [previousYearPapers, setPreviousYearPapers] = useState();
+  const [testSeries, setTestSeries] = useState();
   const [loading, setLoading] = useState(false);
 
   const loadFunc = () => {
     loadData('/questions', setQuestions, setLoading);
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
+    loadData('/testSeries', setTestSeries, setLoading);
   };
 
   useEffect(() => {
@@ -51,6 +53,7 @@ function MainScreen(props) {
           items: quizzes,
           image: require('../assets/quizzes.jpg'),
           navigateToScreen: 'Quizzes',
+          showExtraInfo: true,
         }),
       disabled: quizzes,
       imageBackground: require('../assets/quizzes.jpg'),
@@ -62,12 +65,21 @@ function MainScreen(props) {
         : 'Coming soon',
     },
     {
-      onPress: () => {},
-      disabled: null,
+      onPress: () =>
+        props.navigation.navigate('TestSeries', {
+          itemName: 'Year',
+          items: testSeries,
+          image: require('../assets/previousYearPapers.jpg'),
+          title: 'States',
+        }),
+      disabled: testSeries,
       imageBackground: require('../assets/testSeries.jpg'),
       blurRadius: 0.5,
       text: 'Test Series',
-      extraInfo: 'Coming soon',
+      extraInfo: testSeries
+        ? Object.keys(testSeries).length +
+          (Object.keys(testSeries).length > 1 ? ' States' : ' State')
+        : 'Coming soon',
     },
     {
       onPress: () =>
@@ -76,6 +88,7 @@ function MainScreen(props) {
           items: questions,
           image: require('../assets/questions.jpg'),
           navigateToScreen: 'JustQuestions',
+          showExtraInfo: true,
         }),
       disabled: questions,
       imageBackground: require('../assets/questions.jpg'),
@@ -93,6 +106,7 @@ function MainScreen(props) {
           items: previousYearPapers,
           image: require('../assets/previousYearPapers.jpg'),
           navigateToScreen: 'Years',
+          showExtraInfo: true,
           title: 'States',
         }),
       disabled: previousYearPapers,

@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Dimensions,
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,7 +18,7 @@ function TopicScreen({navigation, route}) {
     navigation.setOptions({
       headerTitle: headerTitleCreater(params.title.toUpperCase()),
     });
-  let items = Object.keys(params.items);
+  let items = Object.keys(params.items || {});
   if (items.length) {
     items = items.sort((a, b) => {
       return a.normalize().localeCompare(b.normalize());
@@ -43,12 +42,13 @@ function TopicScreen({navigation, route}) {
         <Text key={index} style={styles.text}>
           {_.startCase(_.toLower(item))}
         </Text>
-
-        <View style={styles.extraInfo}>
-          <Text style={styles.extraInfoText}>
-            {(noOfItems || 0) + ' ' + params.itemName}
-          </Text>
-        </View>
+        {params.showExtraInfo && (
+          <View style={styles.extraInfo}>
+            <Text style={styles.extraInfoText}>
+              {(noOfItems || 0) + ' ' + params.itemName}
+            </Text>
+          </View>
+        )}
       </TouchableOpacity>
     );
   };

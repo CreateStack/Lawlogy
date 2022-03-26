@@ -10,6 +10,8 @@ import PurchaseScreen from '../screens/PurchaseScreen';
 import {StyleSheet, Text, View} from 'react-native';
 import JustQuestionsScreen from '../screens/JustQuestionsScreen';
 import YearScreen from '../screens/YearScreen';
+import TestSeriesScreen from '../screens/TestSeriesScreen';
+import MainsTestSeriesScreen from '../screens/MainsTestSeriesScreen';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +46,22 @@ const AppNavigator = () => (
       options={{
         headerShown: true,
         headerTitle: () => headerTitleCreater('TOPICS'),
+      }}
+    />
+    <Stack.Screen
+      name="TestSeries"
+      component={TestSeriesScreen}
+      options={{
+        headerShown: true,
+        headerTitle: () => headerTitleCreater('TOPICS'),
+      }}
+    />
+    <Stack.Screen
+      name="MainsTestSeries"
+      component={MainsTestSeriesScreen}
+      options={{
+        headerShown: true,
+        headerTitle: () => headerTitleCreater('MAINS'),
       }}
     />
     <Stack.Screen
