@@ -35,6 +35,11 @@ function TopicScreen({navigation, route}) {
               ? params.extraInfoData[item]?.attempts || 0
               : null,
             ...(params.data || {}),
+            onPressRightIcon: () =>
+              navigation.navigate('LeaderBoard', {
+                state: params.data?.state,
+                quiz: item,
+              }),
           })
         }>
         {/* <Image source={params.image} style={styles.imageBackground} /> */}

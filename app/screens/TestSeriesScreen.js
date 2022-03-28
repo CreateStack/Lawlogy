@@ -69,7 +69,6 @@ function TopicScreen({navigation, route}) {
                 items: params.items[item].prelims,
                 navigateToScreen: 'PrelimsTestSeries',
                 data: {
-                  onPressRightIcon: () => navigation.navigate('LeaderBoard'),
                   rightIcon: 'podium',
                   showRightIcon: true,
                   state: item,
