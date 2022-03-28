@@ -1,6 +1,8 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Alert,
+  BackHandler,
+  Dimensions,
   FlatList,
   Image,
   StyleSheet,
@@ -22,8 +24,20 @@ function QuestionsScreen(props) {
   const [totalAttempt, setTotalAttempt] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const {data, view} = props.route.params;
+  useEffect(() => {
+    props.navigation.setParams({
+      onPressBack: leaveQuiz,
+    });
+  }, []);
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', leaveQuiz);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', leaveQuiz);
+    };
+  }, []);
   let name = props.route.params.name;
-  name = name.trim();
+  let path = props.route.params.path || 'quizzes/';
+  name = name?.trim();
   let quizName = props.route.params.quizName;
   quizName = quizName.trim();
   let quiz = props.route.params.quiz;
@@ -62,6 +76,7 @@ function QuestionsScreen(props) {
     return (
       <Question
         index={index}
+        path={path}
         question={item}
         setScore={setScore}
         setTotalAttempt={setTotalAttempt}
@@ -111,42 +126,46 @@ function QuestionsScreen(props) {
             paddingHorizontal: 16,
             paddingVertical: 8,
             borderRadius: 10,
-            backgroundColor: colors.secondary,
+            backgroundColor: colors.yellow,
           }}
-          onPress={() =>
-            Alert.alert(
-              'Leave quiz?',
-              'All your progress for this quiz will be lost. Are you sure to leave?',
-              [
-                {
-                  text: 'Leave',
-                  onPress: () => {
-                    props.route.params.onGoBack();
-                    props.navigation.goBack();
-                  },
-                },
-                {text: 'Cancel'},
-              ],
-            )
-          }>
-          <Text style={{fontSize: 16, color: colors.white}}>Leave Quiz</Text>
+          onPress={leaveQuiz}>
+          <Text style={{fontSize: 16, color: colors.black}}>Leave Quiz</Text>
         </TouchableOpacity>
       </View>
     );
   };
+
+  const leaveQuiz = () => {
+    Alert.alert(
+      'Leave quiz?',
+      'All your progress for this quiz will be lost. Are you sure to leave?',
+      [
+        {
+          text: 'Leave',
+          onPress: () => {
+            props.route.params.onGoBack && props.route.params.onGoBack();
+            const popScreens = props.route.params.popScreens;
+            popScreens
+              ? props.navigation.pop(popScreens)
+              : props.navigation.goBack();
+          },
+        },
+        {text: 'Cancel'},
+      ],
+    );
+    return true;
+  };
+
   const submit = () => {
-    const ref = (
-      'student/' +
-      user +
-      '/quizzes/' +
-      name +
-      '/' +
-      quizName
-    ).trim();
+    const ref = ('student/' + user + '/' + path + name + '/' + quizName).trim();
     console.log('Ref: ', ref);
+    const updatation = {completed: true, score: score};
+    if (props.route.params.attempts !== null) {
+      updatation.attempts = props.route.params.attempts + 1;
+    }
     database()
       .ref(ref)
-      .update({completed: true, score: score})
+      .update(updatation)
       .then(() => {})
       .catch((e) => {
         Alert.alert('Error', 'There was error in setting score on cloud: ' + e);
@@ -154,23 +173,15 @@ function QuestionsScreen(props) {
     setShowScore(true);
     setTimeout(() => {
       setShowScore(false);
-      props.route.params.onGoBack();
-      props.navigation.goBack();
+      props.route.params.onGoBack && props.route.params.onGoBack();
+      const popScreens = props.route.params.popScreens;
+      popScreens ? props.navigation.pop(popScreens) : props.navigation.goBack();
     }, 5000);
   };
   return (
     <View style={styles.container}>
       <FlatList
         data={quiz}
-        ListFooterComponent={view ? null : footerItem}
-        ListFooterComponentStyle={{
-          backgroundColor: 'rgb(245,222,179)',
-          elevation: 5,
-          paddingHorizontal: 40,
-          paddingVertical: 8,
-          width: '100%',
-          marginTop: 20,
-        }}
         ListHeaderComponent={headerItem}
         ListHeaderComponentStyle={{width: '100%'}}
         renderItem={renderItem}
@@ -180,8 +191,20 @@ function QuestionsScreen(props) {
           width: '100%',
           padding: 16,
         }}
-        style={{width: '100%'}}
+        style={{width: '100%', marginBottom: 88}}
       />
+      <View
+        style={{
+          backgroundColor: colors.lightBlue,
+          elevation: 5,
+          paddingHorizontal: 40,
+          paddingVertical: 8,
+          width: Dimensions.get('window').width - 16,
+          position: 'absolute',
+          bottom: 16,
+        }}>
+        {view ? null : footerItem()}
+      </View>
       {showScore ? (
         <>
           <ActivityIndicator
@@ -220,6 +243,7 @@ function QuestionsScreen(props) {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    flex: 1,
     width: '100%',
   },
   header: {

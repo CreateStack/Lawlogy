@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -8,17 +8,33 @@ import {
   View,
 } from 'react-native';
 import _ from 'lodash';
+import database from '@react-native-firebase/database';
 
 import colors from '../config/colors';
-import {headerTitleCreater} from '../navigation/AppNavigator';
+import AuthContext from '../auth/context';
+import ActivityIndicator from '../components/ActivityIndicator';
+
+const fetchData = (path, phone, setLoading, setData) => {
+  const ref = ('/student/' + phone + '/' + path).trim();
+  setLoading(true);
+  database()
+    .ref(ref)
+    .once('value')
+    .then((snapshot) => {
+      setData(snapshot.val() || {});
+      setLoading(false);
+    })
+    .catch((e) => {
+      console.log('Error while fetching: ', e);
+      setData({});
+      setLoading(false);
+    });
+};
 
 function TopicScreen({navigation, route}) {
+  const {user} = useContext(AuthContext);
   const {params} = route;
-  console.log('params: ', params);
-  params.title &&
-    navigation.setOptions({
-      headerTitle: headerTitleCreater(params.title.toUpperCase()),
-    });
+  const [loading, setLoading] = useState(false);
   let items = Object.keys(params.items);
   if (items.length) {
     items = items.sort((a, b) => {
@@ -45,7 +61,25 @@ function TopicScreen({navigation, route}) {
             width: '50%',
           }}
           onPress={() => {
-            Linking.openURL(params.items[item].prelims);
+            const setData = (data) => {
+              console.log('data: ', data);
+              navigation.navigate('Topics', {
+                extraInfoData: data,
+                itemName: 'Tests',
+                items: params.items[item].prelims,
+                navigateToScreen: 'PrelimsTestSeries',
+                data: {
+                  onPressRightIcon: () => navigation.navigate('LeaderBoard'),
+                  rightIcon: 'podium',
+                  showRightIcon: true,
+                  state: item,
+                },
+                showExtraInfo: true,
+                title: 'Tests',
+              });
+            };
+            fetchData('prelimsTestSeries/' + item, user, setLoading, setData);
+            console.log(params.items[item].prelims);
           }}>
           <Text key={index} style={{...styles.text, color: colors.white}}>
             Preliminary
@@ -76,7 +110,6 @@ function TopicScreen({navigation, route}) {
             navigation.navigate('Topics', {
               itemName: 'Tests',
               items: params.items[item].mains,
-              navigateToScreen: 'Years',
               navigateToScreen: 'MainsTestSeries',
               showExtraInfo: false,
               title: 'Tests',
@@ -122,15 +155,18 @@ function TopicScreen({navigation, route}) {
     return <StateButton item={item} index={index} />;
   };
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={items}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderItem}
-        style={styles.flatlist}
-        contentContainerStyle={{alignItems: 'center'}}
-      />
-    </View>
+    <>
+      <ActivityIndicator visible={loading} />
+      <View style={styles.container}>
+        <FlatList
+          data={items}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderItem}
+          style={styles.flatlist}
+          contentContainerStyle={{alignItems: 'center'}}
+        />
+      </View>
+    </>
   );
 }
 

@@ -69,7 +69,6 @@ function MainScreen(props) {
         props.navigation.navigate('TestSeries', {
           itemName: 'Year',
           items: testSeries,
-          image: require('../assets/previousYearPapers.jpg'),
           title: 'States',
         }),
       disabled: testSeries,

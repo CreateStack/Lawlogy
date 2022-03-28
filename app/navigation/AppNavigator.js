@@ -12,106 +12,59 @@ import JustQuestionsScreen from '../screens/JustQuestionsScreen';
 import YearScreen from '../screens/YearScreen';
 import TestSeriesScreen from '../screens/TestSeriesScreen';
 import MainsTestSeriesScreen from '../screens/MainsTestSeriesScreen';
+import Header from '../components/Header';
+import PrelimsTestSeriesScreen from '../screens/PrelimsTestSeriesScreen';
+import LeaderBoardScreen from '../screens/LeaderBoardScreen';
 
 const Stack = createStackNavigator();
-
-export const headerTitleCreater = (title) => (
-  <View style={styles.header}>
-    {/* <Image source={require('../assets/logo.jpg')} style={styles.image} /> */}
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
 
 const AppNavigator = () => (
   <Stack.Navigator
     screenOptions={{
-      headerStyle: {
-        height: 50,
-        backgroundColor: colors.primary,
-        elevation: 8,
-      },
-      headerTitle: () => headerTitleCreater('LAWLOGY'),
-      headerTitleAlign: 'center',
+      header: (props) => <Header {...props} />,
     }}>
     <Stack.Screen
       name="Main"
       component={MainScreen}
-      options={{
-        headerShown: true,
-      }}
+      initialParams={{title: 'LAWLOGY'}}
     />
     <Stack.Screen
       name="Topics"
       component={TopicScreen}
-      options={{
-        headerShown: true,
-        headerTitle: () => headerTitleCreater('TOPICS'),
-      }}
+      initialParams={{title: 'Topics'}}
     />
     <Stack.Screen
       name="TestSeries"
       component={TestSeriesScreen}
-      options={{
-        headerShown: true,
-        headerTitle: () => headerTitleCreater('TOPICS'),
-      }}
+      initialParams={{title: 'Topics'}}
     />
     <Stack.Screen
       name="MainsTestSeries"
       component={MainsTestSeriesScreen}
-      options={{
-        headerShown: true,
-        headerTitle: () => headerTitleCreater('MAINS'),
-      }}
+      initialParams={{title: 'Mains'}}
+    />
+    <Stack.Screen
+      name="PrelimsTestSeries"
+      component={PrelimsTestSeriesScreen}
+      initialParams={{title: 'Prelims'}}
     />
     <Stack.Screen
       name="Quizzes"
       component={QuizzesScreen}
-      options={{
-        headerShown: true,
-        headerTitle: () => headerTitleCreater('QUIZZES'),
-      }}
+      initialParams={{title: 'Quizzes'}}
     />
     <Stack.Screen
       name="Quiz"
       component={QuestionsScreen}
-      options={{
-        headerShown: true,
-        headerTitle: () => headerTitleCreater('QUIZ'),
-      }}
+      initialParams={{title: 'Quiz'}}
     />
+    <Stack.Screen name="Purchase" component={PurchaseScreen} />
+    <Stack.Screen name="JustQuestions" component={JustQuestionsScreen} />
+    <Stack.Screen name="Years" component={YearScreen} />
     <Stack.Screen
-      name="Purchase"
-      component={PurchaseScreen}
-      options={{
-        headerShown: true,
-        headerTitle: () => headerTitleCreater('Lawlogy Complete Course'),
-      }}
-    />
-    <Stack.Screen
-      name="JustQuestions"
-      component={JustQuestionsScreen}
-      options={{
-        headerShown: true,
-        headerTitle: () => headerTitleCreater(''),
-        headerStyle: {
-          height: 50,
-          backgroundColor: colors.primary,
-          elevation: 0,
-        },
-      }}
-    />
-    <Stack.Screen
-      name="Years"
-      component={YearScreen}
-      options={{
-        headerShown: true,
-        headerStyle: {
-          height: 50,
-          backgroundColor: colors.primary,
-          elevation: 0,
-        },
-      }}
+      name="LeaderBoard"
+      component={LeaderBoardScreen}
+      initialParams={{title: 'Prelims Leaderboard'}}
     />
   </Stack.Navigator>
 );

@@ -10,14 +10,9 @@ import {
 import _ from 'lodash';
 
 import colors from '../config/colors';
-import {headerTitleCreater} from '../navigation/AppNavigator';
 
 function TopicScreen({navigation, route}) {
   const {params} = route;
-  params.title &&
-    navigation.setOptions({
-      headerTitle: headerTitleCreater(params.title.toUpperCase()),
-    });
   let items = Object.keys(params.items || {});
   if (items.length) {
     items = items.sort((a, b) => {
@@ -36,6 +31,10 @@ function TopicScreen({navigation, route}) {
           navigation.navigate(params.navigateToScreen, {
             quizzes: params.items[item],
             name: item,
+            attempts: params.extraInfoData
+              ? params.extraInfoData[item]?.attempts || 0
+              : null,
+            ...(params.data || {}),
           })
         }>
         {/* <Image source={params.image} style={styles.imageBackground} /> */}
@@ -45,7 +44,9 @@ function TopicScreen({navigation, route}) {
         {params.showExtraInfo && (
           <View style={styles.extraInfo}>
             <Text style={styles.extraInfoText}>
-              {(noOfItems || 0) + ' ' + params.itemName}
+              {params.extraInfoData
+                ? (params.extraInfoData[item]?.attempts || 0) + ' Attempts'
+                : (noOfItems || 0) + ' ' + params.itemName}
             </Text>
           </View>
         )}

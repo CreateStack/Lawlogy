@@ -10,6 +10,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import colors from '../config/colors';
 
 const updateOption = (path, value, index) => {
+  console.log('path: ', path);
   let x = {};
   x[index] = value;
   database().ref(path).update(x);
@@ -17,6 +18,7 @@ const updateOption = (path, value, index) => {
 
 function Question({
   setScore,
+  path,
   question,
   index = 0,
   prefill = '',
@@ -50,7 +52,7 @@ function Question({
       }
     }
     updateOption(
-      ('student/' + user + '/quizzes/' + name + '/' + quizName).trim(),
+      ('student/' + user + '/' + path + name + '/' + quizName).trim(),
       value,
       index,
     );

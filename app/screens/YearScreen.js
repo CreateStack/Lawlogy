@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Linking,
@@ -10,7 +10,6 @@ import {
 import Modal from 'react-native-modal';
 
 import colors from '../config/colors';
-import {headerTitleCreater} from '../navigation/AppNavigator';
 
 const OptionButton = ({
   item,
@@ -75,9 +74,6 @@ const YearScreen = ({route, navigation}) => {
   const {params} = route;
   const [showMainsPapers, setShowMainsPapers] = useState(false);
   const [mainsPapers, setMainsPapers] = useState({});
-  navigation.setOptions({
-    headerTitle: headerTitleCreater(params.name.toUpperCase()),
-  });
 
   const renderItem = ({item, index}) => {
     return (
