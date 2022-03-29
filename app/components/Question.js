@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   option: {
     fontSize: 16,
-    textAlign: 'justify',
+    textAlign: 'left',
     paddingLeft: 0,
   },
   question: {

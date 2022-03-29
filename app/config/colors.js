@@ -28,4 +28,7 @@ export default {
   secondary: '#4B4FA633',
   yellow: '#ffbf45',
   green: '#50C878',
+  gold: '#FFBC00',
+  silver: '#AFAFAF',
+  bronze: '#CD7F32',
 };

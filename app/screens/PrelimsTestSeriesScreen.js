@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginTop: 16,
     lineHeight: 32,
-    textAlign: 'justify',
+    textAlign: 'left',
   },
   instructionsHeading: {
     color: colors.black,

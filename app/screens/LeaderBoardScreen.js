@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import database from '@react-native-firebase/database';
 import ActivityIndicator from '../components/ActivityIndicator';
@@ -49,12 +50,43 @@ const LeaderBoardScreen = ({route: {params}}) => {
         return;
       }
     });
-    setData(board.sort((a, b) => a.score - b.score));
+    setData(board.sort((a, b) => b.score - a.score));
   };
 
   useEffect(() => {
     fetchData('/student/', setLoading, rankStudents);
   }, []);
+
+  const getName = (name = '') => {
+    name = name.split(' ');
+    name = name[0] + ' ' + (name.length > 1 ? name[name.length - 1][0] : '');
+    return name;
+  };
+
+  const getRank = (index) => {
+    let color = colors.gold;
+    switch (index) {
+      case 0:
+        color = colors.gold;
+        break;
+      case 1:
+        color = colors.silver;
+        break;
+      case 2:
+        color = colors.bronze;
+        break;
+    }
+    return index < 4 ? (
+      <MaterialCommunityIcons
+        name={'medal'}
+        color={color}
+        size={24}
+        style={{...styles.rank, textAlign: 'center'}}
+      />
+    ) : (
+      <Text style={{...styles.rank, textAlign: 'center'}}>{index + 1}</Text>
+    );
+  };
 
   const renderItem = ({item, index}) => {
     return (
@@ -64,16 +96,16 @@ const LeaderBoardScreen = ({route: {params}}) => {
             styles.rankContainer,
             index % 2 === 0 ? {backgroundColor: colors.lightBlue} : {},
           ]}>
-          <Text style={{...styles.rank, textAlign: 'center'}}>{index + 1}</Text>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={{...styles.score, textAlign: 'right'}}>
+          {getRank(index)}
+          <Text style={styles.name}>{getName(item.name)}</Text>
+          <Text style={{...styles.score, textAlign: 'center'}}>
             {item.score}
           </Text>
-          <Text style={{...styles.attempts, textAlign: 'right'}}>
+          <Text style={{...styles.attempts, textAlign: 'center'}}>
             {item.attempts}
           </Text>
         </View>
-        <Separator dashColor={colors.greyLight} />
+        <Separator dashColor={colors.greyLight} dashThickness={2} />
       </>
     );
   };
@@ -105,7 +137,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: colors.greyDark,
+    backgroundColor: colors.blue,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
@@ -113,21 +145,21 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   attempts: {
-    flex: 0.2,
-    textAlign: 'left',
+    flex: 0.3,
+    textAlign: 'center',
   },
   name: {
-    flex: 0.5,
+    flex: 0.4,
     textAlign: 'left',
   },
   rank: {
     flex: 0.15,
     fontWeight: 'bold',
-    textAlign: 'left',
+    textAlign: 'center',
   },
   score: {
     flex: 0.15,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   rankContainer: {
     alignItems: 'center',

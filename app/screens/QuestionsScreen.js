@@ -136,23 +136,25 @@ function QuestionsScreen(props) {
   };
 
   const leaveQuiz = () => {
-    Alert.alert(
-      'Leave quiz?',
-      'All your progress for this quiz will be lost. Are you sure to leave?',
-      [
-        {
-          text: 'Leave',
-          onPress: () => {
-            props.route.params.onGoBack && props.route.params.onGoBack();
-            const popScreens = props.route.params.popScreens;
-            popScreens
-              ? props.navigation.pop(popScreens)
-              : props.navigation.goBack();
-          },
-        },
-        {text: 'Cancel'},
-      ],
-    );
+    view
+      ? props.navigation.goBack()
+      : Alert.alert(
+          'Leave quiz?',
+          'All your progress for this quiz will be lost. Are you sure to leave?',
+          [
+            {
+              text: 'Leave',
+              onPress: () => {
+                props.route.params.onGoBack && props.route.params.onGoBack();
+                const popScreens = props.route.params.popScreens;
+                popScreens
+                  ? props.navigation.pop(popScreens)
+                  : props.navigation.goBack();
+              },
+            },
+            {text: 'Cancel'},
+          ],
+        );
     return true;
   };
 
@@ -160,7 +162,7 @@ function QuestionsScreen(props) {
     const ref = ('student/' + user + '/' + path + name + '/' + quizName).trim();
     console.log('Ref: ', ref);
     const updatation = {completed: true, score: score};
-    if (props.route.params.attempts !== null) {
+    if (!isNaN(parseInt(props.route.params.attempts))) {
       updatation.attempts = props.route.params.attempts + 1;
     }
     database()
@@ -191,20 +193,22 @@ function QuestionsScreen(props) {
           width: '100%',
           padding: 16,
         }}
-        style={{width: '100%', marginBottom: 88}}
+        style={{width: '100%', marginBottom: view ? 0 : 88}}
       />
-      <View
-        style={{
-          backgroundColor: colors.lightBlue,
-          elevation: 5,
-          paddingHorizontal: 40,
-          paddingVertical: 8,
-          width: Dimensions.get('window').width - 16,
-          position: 'absolute',
-          bottom: 16,
-        }}>
-        {view ? null : footerItem()}
-      </View>
+      {view ? null : (
+        <View
+          style={{
+            backgroundColor: colors.lightBlue,
+            elevation: 5,
+            paddingHorizontal: 40,
+            paddingVertical: 8,
+            width: Dimensions.get('window').width - 16,
+            position: 'absolute',
+            bottom: 16,
+          }}>
+          {footerItem()}
+        </View>
+      )}
       {showScore ? (
         <>
           <ActivityIndicator
