@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   instructions: {
     color: colors.black,
-    fontSize: 22,
+    fontSize: 20,
     marginTop: 16,
     lineHeight: 32,
     textAlign: 'left',
