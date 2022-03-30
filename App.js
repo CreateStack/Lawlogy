@@ -1,13 +1,23 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
+import CodePush from 'react-native-code-push';
 
 import AuthContext from './app/auth/context';
 import AuthNavigator from './app/navigation/AuthNavigator';
 import navigationTheme from './app/navigation/navigationTheme';
 import authStorage from './app/auth/storage';
-import {ImageBackground, View} from 'react-native';
+import {ImageBackground, Text, View} from 'react-native';
 import OfflineNotice from './app/components/OfflineNotice';
 import AppNavigator from './app/navigation/AppNavigator';
+
+let CodePushOptions = {
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
+  updateDialog: {
+    appendReleaseDescription: true,
+    title: 'A new update is available!',
+  },
+};
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -67,4 +77,7 @@ const App = () => {
   );
 };
 
-export default App;
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+
+export default CodePush(CodePushOptions)(App);
