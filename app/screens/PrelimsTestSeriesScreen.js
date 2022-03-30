@@ -6,6 +6,9 @@ const PrelimsTestSeriesScreen = ({route, navigation}) => {
   const {params} = route;
   const testTime = parseInt(params.quizzes.testTime || 2) * 60 * 60;
   const quiz = params.quizzes.questions.filter((ques) => ques);
+  const negativeMarking = Math.abs(
+    parseFloat(params.quizzes.negativeMarking) || 0,
+  );
   return (
     <View style={styles.container}>
       <Text style={styles.instructionsHeading}>Test Instructions</Text>
@@ -15,6 +18,7 @@ const PrelimsTestSeriesScreen = ({route, navigation}) => {
           navigation.navigate('Quiz', {
             attempts: params.attempts,
             name: params.state,
+            negativeMarking: negativeMarking,
             path: 'prelimsTestSeries/',
             popScreens: 3,
             quiz: quiz,

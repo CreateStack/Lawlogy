@@ -23,7 +23,7 @@ function QuestionsScreen(props) {
   const [score, setScore] = useState(0);
   const [totalAttempt, setTotalAttempt] = useState(0);
   const [showScore, setShowScore] = useState(false);
-  const {data, view} = props.route.params;
+  const {data, negativeMarking = 0, view} = props.route.params;
   useEffect(() => {
     props.navigation.setParams({
       onPressBack: leaveQuiz,
@@ -82,6 +82,7 @@ function QuestionsScreen(props) {
         setTotalAttempt={setTotalAttempt}
         user={user}
         name={name}
+        negativeMarking={negativeMarking}
         quizName={quizName}
         prefill={view ? data[index] : ''}
         view={view}

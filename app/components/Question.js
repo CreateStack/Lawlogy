@@ -25,6 +25,7 @@ function Question({
   setTotalAttempt,
   user,
   name,
+  negativeMarking = 0,
   quizName,
   view,
 }) {
@@ -41,14 +42,14 @@ function Question({
         if (previousValue) {
           if (previousValue === question.correct.toLowerCase())
             setScore((v) => v);
-          else setScore((v) => v + 0.25 + 1);
+          else setScore((v) => v + negativeMarking + 1);
         } else setScore((v) => v + 1);
       } else {
         if (previousValue) {
           if (previousValue === question.correct.toLowerCase())
-            setScore((v) => v - 1 - 0.25);
+            setScore((v) => v - 1 - negativeMarking);
           else setScore((v) => v);
-        } else setScore((v) => v - 0.25);
+        } else setScore((v) => v - negativeMarking);
       }
     }
     updateOption(
@@ -127,10 +128,11 @@ function Question({
         ...(view
           ? {
               borderWidth: 3,
-              borderColor:
-                value === question.correct.toLowerCase()
+              borderColor: value
+                ? value === question.correct.toLowerCase()
                   ? colors.green
-                  : colors.redText,
+                  : colors.redText
+                : colors.white,
             }
           : {}),
       }}>
@@ -159,7 +161,7 @@ function Question({
               previousValue &&
               previousValue !== question.correct.toLowerCase()
             ) {
-              setScore((v) => v + 0.25);
+              setScore((v) => v + negativeMarking);
             }
             setValue('');
             if (selected) {
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,
-    textAlign: 'justify',
+    textAlign: 'left',
     alignSelf: 'flex-start',
   },
   radioContainer: {
