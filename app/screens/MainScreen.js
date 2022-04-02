@@ -105,6 +105,7 @@ function MainScreen(props) {
           items: previousYearPapers,
           image: require('../assets/previousYearPapers.jpg'),
           navigateToScreen: 'Years',
+          passTitle: true,
           showExtraInfo: true,
           title: 'States',
         }),

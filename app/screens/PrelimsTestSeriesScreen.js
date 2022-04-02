@@ -5,7 +5,13 @@ import colors from '../config/colors';
 const PrelimsTestSeriesScreen = ({route, navigation}) => {
   const {params} = route;
   const testTime = parseInt(params.quizzes.testTime || 2) * 60 * 60;
-  const quiz = params.quizzes.questions.filter((ques) => ques);
+  const getQuiz = (quiz) => {
+    if (quiz.length === undefined) {
+      quiz = Object.values(quiz);
+    }
+    return quiz;
+  };
+  const quiz = getQuiz(params.quizzes.questions).filter((ques) => ques);
   const negativeMarking = Math.abs(
     parseFloat(params.quizzes.negativeMarking) || 0,
   );
@@ -24,6 +30,7 @@ const PrelimsTestSeriesScreen = ({route, navigation}) => {
             quiz: quiz,
             quizName: params.name,
             showSessionTimer: true,
+            testSeries: true,
             time: testTime,
             timeToChangeStyle: testTime * 0.1,
             total: quiz.length,

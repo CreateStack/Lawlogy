@@ -12,7 +12,6 @@ import database from '@react-native-firebase/database';
 
 import AuthContext from '../auth/context';
 import colors from '../config/colors';
-import Separator from '../components/Separator';
 import ActivityIndicator from '../components/ActivityIndicator';
 
 const fetchData = (path, phone, setLoading, setData) => {
@@ -34,11 +33,14 @@ const fetchData = (path, phone, setLoading, setData) => {
 
 function QuizzesScreen(props) {
   const {user} = useContext(AuthContext);
+  const testSeries = props.route.params.testSeries || false;
+  const fetchPath =
+    (testSeries ? 'prelimsTestSeries/' : 'quizzes/') + props.route.params.name;
   let quizzes = Object.keys(props.route.params.quizzes);
   if (quizzes.length) {
     quizzes = quizzes.sort((a, b) => {
-      a = parseInt(a.replace(/^\D+/g, ''));
-      b = parseInt(b.replace(/^\D+/g, ''));
+      a = parseInt(testSeries ? a.split('-')[1] : a.replace(/^\D+/g, ''));
+      b = parseInt(testSeries ? b.split('-')[1] : b.replace(/^\D+/g, ''));
       return a - b;
     });
   }
@@ -46,82 +48,123 @@ function QuizzesScreen(props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchData('quizzes/' + props.route.params.name, user, setLoading, setData);
+    fetchData(fetchPath, user, setLoading, setData);
   }, []);
+
+  const getQuiz = (quiz) => {
+    if (testSeries) {
+      quiz = quiz.questions;
+      if (quiz.length === undefined) {
+        quiz = Object.values(quiz);
+      }
+    }
+    return quiz;
+  };
+
   const renderItem = ({item, index}) => {
-    const total = props.route.params.quizzes[item].filter(
-      (ques) => ques,
-    ).length;
+    const questions = getQuiz(props.route.params.quizzes[item]);
+    const total = questions.filter((ques) => ques).length;
+    const testCompletionData = _.get(
+      data,
+      testSeries ? item : item.toUpperCase().trim(),
+      {},
+    );
+    const score = _.get(testCompletionData, 'score', 'N_A');
+    const completed = _.get(testCompletionData, 'completed', false);
     return (
       <View key={index} style={styles.topic}>
-        <Text key={index} style={styles.text}>
-          {item.toUpperCase()}
-        </Text>
-        <Separator
-          dashColor={colors.primary}
-          style={styles.separator}
-          dashThickness={1.1}
-          dashGap={2}
-        />
-        <View style={styles.quizOptionsView}>
-          <Text style={{color: colors.black, fontSize: 16, fontWeight: 'bold'}}>
-            {'Score: ' +
-              _.get(data, item.toUpperCase().trim() + '.score', 'N_A') +
-              '/' +
-              total}
+        <View
+          style={[
+            styles.seriesTime,
+            {backgroundColor: colors.blue, paddingVertical: 8},
+          ]}>
+          <Text key={index} style={styles.text}>
+            {item.toUpperCase()}
           </Text>
-          {_.get(data, item.toUpperCase().trim() + '.completed', false) ? (
+        </View>
+        <View style={{paddingHorizontal: 16, paddingVertical: 24}}>
+          <View style={styles.quizOptionsView}>
+            <Text
+              style={{color: colors.black, fontSize: 16, fontWeight: 'bold'}}>
+              {'Score: ' + score + '/' + total}
+            </Text>
+            {completed ? (
+              <TouchableOpacity
+                style={{
+                  ...styles.button,
+                  backgroundColor: colors.danger,
+                  borderColor: colors.danger,
+                }}
+                onPress={() => {
+                  props.navigation.navigate('Quiz', {
+                    quiz: getQuiz(props.route.params.quizzes[item]),
+                    quizName: item.toUpperCase(),
+                    total: total,
+                    name: props.route.params.name,
+                    data: testCompletionData,
+                    view: true,
+                  });
+                }}>
+                <Text style={{color: colors.white, fontSize: 14}}>View</Text>
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity
               style={{
                 ...styles.button,
-                backgroundColor: colors.danger,
-                borderColor: colors.danger,
+                ...(completed
+                  ? {
+                      borderColor: colors.secondary,
+                      backgroundColor: colors.secondary,
+                    }
+                  : {}),
               }}
               onPress={() => {
-                props.navigation.navigate('Quiz', {
-                  quiz: props.route.params.quizzes[item],
-                  quizName: item.toUpperCase(),
-                  total: total,
-                  name: props.route.params.name,
-                  data: _.get(data, item.toUpperCase().trim(), {}),
-                  view: true,
-                });
+                props.navigation.navigate(
+                  testSeries ? 'PrelimsTestSeries' : 'Quiz',
+                  {
+                    attempts: props.route.params.extraInfoData[item]?.attempts,
+                    name: item,
+                    onPressRightIcon: () =>
+                      props.navigation.navigate('LeaderBoard', {
+                        state: props.route.params.name,
+                        quiz: item,
+                      }),
+                    quiz: getQuiz(props.route.params.quizzes[item]),
+                    quizzes: props.route.params.quizzes[item],
+                    quizName: item.toUpperCase(),
+                    rightIcon: 'podium',
+                    showRightIcon: testSeries ? true : false,
+                    total: total,
+                    state: props.route.params.name,
+                    onGoBack: () => {
+                      console.log('fetching: ', fetchPath);
+                      fetchData(fetchPath, user, setLoading, setData);
+                    },
+                  },
+                );
               }}>
-              <Text style={{color: colors.white, fontSize: 14}}>View</Text>
+              <Text style={{color: colors.black, fontSize: 14}}>
+                {(completed ? 'Re-' : '') +
+                  (testSeries ? 'Attempt Series' : 'Take Quiz')}
+              </Text>
             </TouchableOpacity>
-          ) : null}
-          <TouchableOpacity
-            style={{
-              ...styles.button,
-              ...(_.get(data, item.toUpperCase().trim() + '.completed', false)
-                ? {
-                    borderColor: colors.secondary,
-                    backgroundColor: colors.secondary,
-                  }
-                : {}),
-            }}
-            onPress={() => {
-              props.navigation.navigate('Quiz', {
-                quiz: props.route.params.quizzes[item],
-                quizName: item.toUpperCase(),
-                total: total,
-                name: props.route.params.name,
-                onGoBack: () =>
-                  fetchData(
-                    'quizzes/' + props.route.params.name,
-                    user,
-                    setLoading,
-                    setData,
-                  ),
-              });
-            }}>
-            <Text style={{color: colors.black, fontSize: 14}}>
-              {(_.get(data, item.toUpperCase().trim() + '.completed', false)
-                ? 'Re-'
-                : '') + 'Take quiz'}
-            </Text>
-          </TouchableOpacity>
+          </View>
         </View>
+        {testSeries && (
+          <View style={styles.seriesTime}>
+            <Text style={styles.seriesTimeText}>
+              {props.route.params.quizzes[item].testTime + ' hours'}
+            </Text>
+          </View>
+        )}
+        {props.route.params.showExtraInfo && (
+          <View style={styles.extraInfo}>
+            <Text style={styles.extraInfoText}>
+              {(props.route.params.extraInfoData[item]?.attempts || 0) +
+                ' Attempts'}
+            </Text>
+          </View>
+        )}
       </View>
     );
   };
@@ -162,14 +205,7 @@ function QuizzesScreen(props) {
           contentContainerStyle={{
             alignItems: 'center',
           }}
-          onRefresh={() =>
-            fetchData(
-              'quizzes/' + props.route.params.name,
-              user,
-              setLoading,
-              setData,
-            )
-          }
+          onRefresh={() => fetchData(fetchPath, user, setLoading, setData)}
           refreshing={loading}
         />
       </View>
@@ -180,17 +216,30 @@ function QuizzesScreen(props) {
 const styles = StyleSheet.create({
   button: {
     borderWidth: 1,
-    borderColor: colors.yellow,
+    borderColor: colors.seaGreen,
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.seaGreen,
   },
   container: {
     alignItems: 'center',
     backgroundColor: '#fff',
     justifyContent: 'center',
     paddingVertical: 16,
+  },
+  extraInfo: {
+    backgroundColor: colors.yellow,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    borderBottomLeftRadius: 10,
+  },
+  extraInfoText: {
+    fontSize: 14,
+    color: colors.black,
   },
   flatlist: {
     paddingHorizontal: 16,
@@ -223,7 +272,20 @@ const styles = StyleSheet.create({
     width: '60%',
     alignSelf: 'center',
   },
+  seriesTime: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    paddingVertical: 3,
+    paddingHorizontal: 16,
+    width: '100%',
+  },
+  seriesTimeText: {
+    color: colors.white,
+    fontSize: 14,
+  },
   text: {
+    color: colors.white,
     fontSize: 14,
     fontWeight: 'bold',
   },
@@ -235,7 +297,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginVertical: 8,
     overflow: 'hidden',
-    padding: 16,
     width: Dimensions.get('window').width - 40,
   },
 });

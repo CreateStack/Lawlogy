@@ -13,6 +13,7 @@ import colors from '../config/colors';
 
 function TopicScreen({navigation, route}) {
   const {params} = route;
+  console.log('Params: ', params);
   let items = Object.keys(params.items || {});
   if (items.length) {
     items = items.sort((a, b) => {
@@ -40,6 +41,7 @@ function TopicScreen({navigation, route}) {
                 state: params.data?.state,
                 quiz: item,
               }),
+            title: params.passTitle ? item : params.itemName,
           })
         }>
         {/* <Image source={params.image} style={styles.imageBackground} /> */}
