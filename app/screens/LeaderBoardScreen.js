@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import database from '@react-native-firebase/database';
 import ActivityIndicator from '../components/ActivityIndicator';
@@ -19,6 +20,7 @@ const fetchData = (path, setLoading, setData) => {
     })
     .catch((e) => {
       console.log('Error while fetching: ', e);
+      crashlytics().log('Error while fetching: ', e);
       setData({});
       setLoading(false);
     });

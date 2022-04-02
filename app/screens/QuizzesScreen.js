@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import _ from 'lodash';
 import database from '@react-native-firebase/database';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import AuthContext from '../auth/context';
 import colors from '../config/colors';
@@ -26,6 +27,7 @@ const fetchData = (path, phone, setLoading, setData) => {
     })
     .catch((e) => {
       console.log('Error while fetching: ', e);
+      crashlytics().log('Error while fetching: ', e);
       setData({});
       setLoading(false);
     });

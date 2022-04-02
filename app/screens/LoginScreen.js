@@ -3,6 +3,7 @@ import {Alert, Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import LottieView from 'lottie-react-native';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import Screen from '../components/Screen';
 import {
@@ -119,6 +120,7 @@ function LoginScreen(props) {
                     .catch((e) => {
                       setErrorMsg(e);
                       console.log('error logging in: ', e);
+                      crashlytics().log('error logging in: ', e);
                       setLoading(false);
                       setAutoVerifying(false);
                       setRegisterFailed(true);
@@ -127,6 +129,7 @@ function LoginScreen(props) {
                 .catch((e) => {
                   setErrorMsg('Login failed: ', e);
                   console.log('error logging in: ', e);
+                  crashlytics().log('error logging in: ', e);
                   setLoading(false);
                   setAutoVerifying(false);
                   setRegisterFailed(true);
@@ -135,6 +138,7 @@ function LoginScreen(props) {
             default:
               setErrorMsg('Login failed');
               console.log('error logging in');
+              crashlytics().log('error logging in');
               setLoading(false);
               setAutoVerifying(false);
               setRegisterFailed(true);
@@ -143,6 +147,7 @@ function LoginScreen(props) {
         },
         (error) => {
           console.log('Error: ', error);
+          crashlytics().log('Error: ', error);
           setLoading(false);
         },
       );
@@ -188,6 +193,7 @@ function LoginScreen(props) {
         .catch((e) => {
           setLoading(false);
           console.log('Error: ', e);
+          crashlytics().log('Error in logging in: ', e);
           setErrorMsg('Login failed: ', e);
           setRegisterFailed(true);
         });

@@ -1,6 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import CodePush from 'react-native-code-push';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import AuthContext from './app/auth/context';
 import AuthNavigator from './app/navigation/AuthNavigator';
@@ -37,13 +38,23 @@ const App = () => {
       .then((token) => {
         if (!token) {
           setIsReady(true);
+          crashlytics().log('User not signed in.');
           return;
         }
         setUser(JSON.parse(token));
-        setIsReady(true);
+        crashlytics().log('User signed in.');
+        crashlytics()
+          .setUserId(JSON.stringify(user))
+          .then(() => {
+            setIsReady(true);
+          })
+          .catch((error) => {
+            crashlytics().log('Not able to set user: ', error);
+          });
       })
       .catch((error) => {
         console.log('Error: ', error);
+        crashlytics().log('Error in App.js while fetching authtoken: ', error);
         setIsReady(true);
       });
   }, []);

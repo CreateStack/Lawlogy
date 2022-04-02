@@ -37,26 +37,7 @@ function Header(props) {
       timeToChangeStyle,
     }));
   }, [props]);
-  /* const ok = {
-    onPressBack,
-    showRightIcon,
-    onPressRightIcon,
-    rightIcon,
-    onlyTitle,
-    time,
-    styleTime,
-    styleText,
-    onFinish,
-    timeToChangeStyle,
-    styleTimeChange,
-    styleTextChange,
-    hideText,
-    showSessionTimer,
-    navigation,
-    ...rest,
-  }; */ /* 
-  console.log('rest: ', rest);
-  console.log('navigation: ', navigation?.canGoBack()); */
+
   return (
     <View style={styles.container}>
       <View style={styles.detailCont}>
@@ -74,19 +55,7 @@ function Header(props) {
           </TouchableOpacity>
         ) : null}
         <View style={styles.headerTitleContainer}>
-          <HeaderTitle
-            {...data}
-            /* onlyTitle={onlyTitle}
-            time={time}
-            styleTime={styleTime}
-            styleText={styleText}
-            onFinish={onFinish}
-            timeToChangeStyle={timeToChangeStyle}
-            styleTimeChange={styleTimeChange}
-            styleTextChange={styleTextChange}
-            hideText={hideText}
-            showSessionTimer={showSessionTimer} */
-          />
+          <HeaderTitle {...data} />
         </View>
       </View>
       {data.showRightIcon && (

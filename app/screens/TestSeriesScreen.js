@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import _ from 'lodash';
 import database from '@react-native-firebase/database';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import colors from '../config/colors';
 import AuthContext from '../auth/context';
@@ -26,6 +27,7 @@ const fetchData = (path, phone, setLoading, setData) => {
     })
     .catch((e) => {
       console.log('Error while fetching: ', e);
+      crashlytics().log('Error while fetching in TestSeriesScreen: ', e);
       setData({});
       setLoading(false);
     });
@@ -62,7 +64,6 @@ function TopicScreen({navigation, route}) {
           }}
           onPress={() => {
             const setData = (data) => {
-              console.log('data: ', data);
               navigation.navigate('Quizzes', {
                 extraInfoData: data,
                 itemName: 'Tests',

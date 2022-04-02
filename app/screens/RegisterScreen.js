@@ -4,6 +4,7 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import * as Yup from 'yup';
 import LottieView from 'lottie-react-native';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import Screen from '../components/Screen';
 import {
@@ -150,6 +151,7 @@ function RegisterScreen(props) {
                             setRegisterFailed(true);
                             setLoading(false);
                             console.log('Error: ', e);
+                            crashlytics().log('Error in registration:  ', e);
                             setErrorMsg(e);
                           });
                       }
@@ -159,6 +161,7 @@ function RegisterScreen(props) {
                       setRegisterFailed(true);
                       setLoading(false);
                       console.log('Error: ', e);
+                      crashlytics().log('Error in registration: ', e);
                       setErrorMsg(e);
                     });
                 })
@@ -167,6 +170,7 @@ function RegisterScreen(props) {
                   setRegisterFailed(true);
                   setLoading(false);
                   console.log('Error: ', e);
+                  crashlytics().log('Error in registration: ', e);
                   setErrorMsg('Error: ', e);
                 });
               break;
@@ -174,6 +178,7 @@ function RegisterScreen(props) {
         },
         (error) => {
           console.log('Error: ', error);
+          crashlytics().log('Error in registration: ', error);
           setErrorMsg(error.message);
           setAutoVerifying(false);
           setLoading(false);
@@ -231,6 +236,7 @@ function RegisterScreen(props) {
                 setRegisterFailed(true);
                 setLoading(false);
                 console.log('Error: ', e);
+                crashlytics().log('Error in fetching student database: ', e);
                 setErrorMsg(e);
               });
           }
@@ -239,6 +245,7 @@ function RegisterScreen(props) {
           setRegisterFailed(true);
           setLoading(false);
           console.log('Error: ', e);
+          crashlytics().log('Error in auth: ', e);
           setErrorMsg(e);
         });
     } catch (error) {

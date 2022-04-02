@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import database from '@react-native-firebase/database';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
@@ -23,6 +24,7 @@ const loadData = (path, setData, setLoading) => {
     })
     .catch((e) => {
       console.log(`Error fetching ${path}: `, e);
+      crashlytics().log(`Error fetching ${path}: `, e);
       setLoading(false);
     });
 };
