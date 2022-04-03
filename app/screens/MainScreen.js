@@ -34,6 +34,7 @@ function MainScreen(props) {
   const [quizzes, setQuizzes] = useState();
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [testSeries, setTestSeries] = useState();
+  const [premium, setPremium] = useState();
   const [loading, setLoading] = useState(false);
 
   const loadFunc = () => {
@@ -41,6 +42,7 @@ function MainScreen(props) {
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
     loadData('/testSeries', setTestSeries, setLoading);
+    loadData('/premium', setPremium, setLoading);
   };
 
   useEffect(() => {
@@ -56,6 +58,7 @@ function MainScreen(props) {
           image: require('../assets/quizzes.jpg'),
           navigateToScreen: 'Quizzes',
           showExtraInfo: true,
+          premium: premium.quizes,
         }),
       disabled: quizzes,
       imageBackground: require('../assets/quizzes.jpg'),
@@ -72,6 +75,7 @@ function MainScreen(props) {
           itemName: 'Year',
           items: testSeries,
           title: 'States',
+          premium: premium.testSeries,
         }),
       disabled: testSeries,
       imageBackground: require('../assets/testSeries.jpg'),

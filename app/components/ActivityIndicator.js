@@ -7,18 +7,20 @@ function ActivityIndicator({
   visible = false,
   source = require('../assets/animations/loader.json'),
   opacity = 0.6,
+  progress = false,
 }) {
   if (!visible) return null;
   return (
     <View style={{...styles.overlay, opacity: opacity}}>
       <LottieView
-        autoPlay
-        loop
+        autoPlay={progress === false ? true : false}
+        loop={progress === false ? true : false}
         source={source}
         style={{
           zIndex: 1,
           elevation: Platform.OS === 'android' ? 1 : 0,
         }}
+        progress={progress === false ? 0 : progress}
       />
     </View>
   );

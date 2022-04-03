@@ -46,11 +46,26 @@ function QuizzesScreen(props) {
       return a - b;
     });
   }
+  const premium = props.route.params.premium;
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [studentPremium, setStudentPremium] = useState(false);
 
   useEffect(() => {
     fetchData(fetchPath, user, setLoading, setData);
+    fetchData('premium', user, setLoading, (value) => {
+      if (typeof value === 'string') {
+        value = value.toLowerCase();
+        setStudentPremium(value === 'true' ? true : false);
+        return;
+      } else if (typeof value === 'boolean') {
+        setStudentPremium(value);
+        return;
+      } else {
+        setStudentPremium(false);
+        return;
+      }
+    });
   }, []);
 
   const getQuiz = (quiz) => {
@@ -62,8 +77,19 @@ function QuizzesScreen(props) {
     }
     return quiz;
   };
+  const decideText = (index, setLocked) => {
+    if (studentPremium) {
+      setLocked(false);
+    } else {
+      if (index < parseInt(premium.trials)) {
+        setLocked(false);
+      } else {
+        setLocked(true);
+      }
+    }
+  };
 
-  const renderItem = ({item, index}) => {
+  const RenderItem = ({item, index}) => {
     const questions = getQuiz(props.route.params.quizzes[item]);
     const total = questions.filter((ques) => ques).length;
     const testCompletionData = _.get(
@@ -73,6 +99,10 @@ function QuizzesScreen(props) {
     );
     const score = _.get(testCompletionData, 'score', 'N_A');
     const completed = _.get(testCompletionData, 'completed', false);
+    const [locked, setLocked] = useState(true);
+    useEffect(() => {
+      decideText(index, setLocked);
+    }, []);
     return (
       <View key={index} style={styles.topic}>
         <View
@@ -121,33 +151,43 @@ function QuizzesScreen(props) {
                   : {}),
               }}
               onPress={() => {
-                props.navigation.navigate(
-                  testSeries ? 'PrelimsTestSeries' : 'Quiz',
-                  {
-                    attempts: props.route.params.extraInfoData[item]?.attempts,
-                    name: item,
-                    onPressRightIcon: () =>
-                      props.navigation.navigate('LeaderBoard', {
+                locked
+                  ? props.navigation.navigate('Purchase', {
+                      item: testSeries ? 'testSeries' : 'quizzes',
+                      popScreens: 3,
+                      premium: premium,
+                      title: testSeries ? 'Buy Test Series' : 'Buy Quizzes',
+                    })
+                  : props.navigation.navigate(
+                      testSeries ? 'PrelimsTestSeries' : 'Quiz',
+                      {
+                        attempts:
+                          props.route.params.extraInfoData?.[item]?.attempts,
+                        name: testSeries ? item : props.route.params.name,
+                        onPressRightIcon: () =>
+                          props.navigation.navigate('LeaderBoard', {
+                            state: props.route.params.name,
+                            quiz: item,
+                          }),
+                        quiz: getQuiz(props.route.params.quizzes[item]),
+                        quizzes: props.route.params.quizzes[item],
+                        quizName: item.toUpperCase(),
+                        rightIcon: 'podium',
+                        showRightIcon: testSeries ? true : false,
+                        total: total,
                         state: props.route.params.name,
-                        quiz: item,
-                      }),
-                    quiz: getQuiz(props.route.params.quizzes[item]),
-                    quizzes: props.route.params.quizzes[item],
-                    quizName: item.toUpperCase(),
-                    rightIcon: 'podium',
-                    showRightIcon: testSeries ? true : false,
-                    total: total,
-                    state: props.route.params.name,
-                    onGoBack: () => {
-                      console.log('fetching: ', fetchPath);
-                      fetchData(fetchPath, user, setLoading, setData);
-                    },
-                  },
-                );
+                        onGoBack: () => {
+                          console.log('fetching: ', fetchPath);
+                          fetchData(fetchPath, user, setLoading, setData);
+                        },
+                      },
+                    );
               }}>
               <Text style={{color: colors.black, fontSize: 14}}>
-                {(completed ? 'Re-' : '') +
-                  (testSeries ? 'Attempt Series' : 'Take Quiz')}
+                {locked
+                  ? 'Unlock'
+                  : (completed ? 'Re-' : '') +
+                    (testSeries ? 'Attempt Series' : 'Take Quiz')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -186,23 +226,11 @@ function QuizzesScreen(props) {
         <FlatList
           data={quizzes}
           keyExtractor={(item, index) => index.toString()}
-          ListFooterComponent={() => (
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate('Purchase')}
-              style={{
-                width: '100%',
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                backgroundColor: colors.secondary,
-              }}>
-              <Text style={{color: colors.black, fontSize: 14, lineHeight: 21}}>
-                Purchase full course
-              </Text>
-            </TouchableOpacity>
-          )}
           ListHeaderComponent={headerItem}
           ListHeaderComponentStyle={{width: '100%'}}
-          renderItem={renderItem}
+          renderItem={({item, index}) => (
+            <RenderItem item={item} index={index} />
+          )}
           style={styles.flatlist}
           contentContainerStyle={{
             alignItems: 'center',

@@ -65,18 +65,19 @@ function TopicScreen({navigation, route}) {
           onPress={() => {
             const setData = (data) => {
               navigation.navigate('Quizzes', {
-                extraInfoData: data,
-                itemName: 'Tests',
-                quizzes: params.items[item].prelims,
-                name: item,
-                navigateToScreen: 'PrelimsTestSeries',
-                testSeries: true,
                 data: {
                   rightIcon: 'podium',
                   showRightIcon: true,
                   state: item,
                 },
+                extraInfoData: data,
+                itemName: 'Tests',
+                name: item,
+                navigateToScreen: 'PrelimsTestSeries',
+                premium: params.premium,
+                quizzes: params.items[item].prelims,
                 showExtraInfo: true,
+                testSeries: true,
                 title: 'Tests',
               });
             };

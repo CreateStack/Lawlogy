@@ -13,6 +13,7 @@ function Header(props) {
     const params = props.scene.route.params || {};
     const {navigation} = props;
     const {
+      disableLeftButton = false,
       title: onlyTitle,
       onFinish,
       onPressBack,
@@ -25,6 +26,7 @@ function Header(props) {
     } = params;
     setData((v) => ({
       ...v,
+      disableLeftButton,
       onFinish,
       onlyTitle,
       navigation,
@@ -41,7 +43,8 @@ function Header(props) {
   return (
     <View style={styles.container}>
       <View style={styles.detailCont}>
-        {data.onPressBack || data.navigation?.canGoBack() ? (
+        {!data.disableLeftButton &&
+        (data.onPressBack || data.navigation?.canGoBack()) ? (
           <TouchableOpacity
             onPress={() =>
               data.onPressBack ? data.onPressBack() : data.navigation.goBack()

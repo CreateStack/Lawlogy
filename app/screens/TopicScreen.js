@@ -30,17 +30,18 @@ function TopicScreen({navigation, route}) {
         style={styles.topic}
         onPress={() =>
           navigation.navigate(params.navigateToScreen, {
-            quizzes: params.items[item],
-            name: item,
             attempts: params.extraInfoData
               ? params.extraInfoData[item]?.attempts || 0
               : null,
             ...(params.data || {}),
+            name: item,
             onPressRightIcon: () =>
               navigation.navigate('LeaderBoard', {
                 state: params.data?.state,
                 quiz: item,
               }),
+            premium: params.premium,
+            quizzes: params.items[item],
             title: params.passTitle ? item : params.itemName,
           })
         }>
