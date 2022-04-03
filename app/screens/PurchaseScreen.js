@@ -32,7 +32,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     const handleCompletion = () => {
       setLoading(false);
       navigation.setParams({disableLeftButton: true});
-      startRedirection(true);
+      setStartRedirection(true);
     };
     setLoading(true);
     database()
@@ -74,7 +74,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   }
 
   const successCallback = (data) => {
-    console.log('See: ', data);
+    console.log('See success: ', data);
     if (data['Status']?.toLowerCase() === 'success') {
       setPayment('Success!!');
       setTxnId(data['txnId']);
@@ -83,12 +83,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   };
 
   const failureCallback = (data) => {
-    console.log('See: ', data);
-    if (data['Status']?.toLowerCase() === 'success') {
-      setPayment('Success!!');
-      setTxnId(data['txnId']);
-      setPaymentInfo(setLoading, data['txnId']);
-    } else setPayment('Failure');
+    console.log('See failure: ', data);
+    setPayment('Failure');
   };
 
   const initializePayment = () => {
@@ -164,7 +160,12 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                 {payment}
               </Text>
             </View>
-            {true ? (
+            {!txnId ? (
+              <Text style={styles.payment}>
+                {'(Please pay only using PayTM or GPay)'}
+              </Text>
+            ) : null}
+            {txnId ? (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.payment}>{'TxnId: '}</Text>
                 <Text
@@ -173,6 +174,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     {
                       color:
                         payment === 'Success!!' ? colors.green : colors.redText,
+                      flex: 1,
+                      flexWrap: 'wrap',
                     },
                   ]}>
                   {txnId}
