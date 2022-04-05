@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">lawlogy</string>
+    <string name="app_name">Lawlogy</string>
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string name="CodePushDeploymentKey">a4a97554-10b2-4dff-83f4-cd8b8f3bcf19</string>
