@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Dimensions, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import * as Yup from 'yup';
@@ -267,8 +274,10 @@ function RegisterScreen(props) {
           height: Dimensions.get('window').height,
           position: 'absolute',
           flex: 1,
-        }}>
-        <ActivityIndicator visible={loading} />
+        }}
+      />
+      <ActivityIndicator visible={loading} />
+      <ScrollView style={{}}>
         <Screen style={styles.container}>
           <AppForm
             initialValues={{
@@ -365,7 +374,7 @@ function RegisterScreen(props) {
             disabled={getOTP === 61 ? false : true}
           />
         </Screen>
-      </ImageBackground>
+      </ScrollView>
       {autoVerifying ? (
         <View
           style={{

@@ -11,6 +11,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import _ from 'lodash';
 
 import colors from '../config/colors';
+import {ms, s} from '../utils/scalingUtils';
 
 const JustQuestionsScreen = ({route}) => {
   const {params} = route;
@@ -80,23 +81,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: '25%',
     justifyContent: 'space-between',
-    paddingHorizontal: 32,
+    paddingHorizontal: s(28),
     width: '100%',
   },
   gradientText: {
     color: colors.white,
-    fontSize: 20,
+    fontSize: ms(18),
   },
   gradientTopic: {
     color: colors.white,
-    fontSize: 30,
+    fontSize: ms(26),
   },
   image: {
     borderColor: colors.white,
-    borderRadius: 50,
+    borderRadius: 99,
     borderWidth: 6,
-    height: 100,
-    width: 100,
+    height: s(86),
+    width: s(86),
   },
   question: {
     backgroundColor: colors.secondary,
@@ -108,15 +109,15 @@ const styles = StyleSheet.create({
   },
   questionText: {
     color: colors.black,
-    fontSize: 18,
+    fontSize: ms(16),
   },
   share: {
     alignSelf: 'flex-end',
     marginRight: 16,
   },
   shareImage: {
-    height: 20,
-    width: 20,
+    height: s(18),
+    width: s(18),
   },
   title: {
     flex: 1,

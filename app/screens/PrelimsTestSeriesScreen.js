@@ -1,6 +1,14 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
 import colors from '../config/colors';
+import {ms, vs} from '../utils/scalingUtils';
 
 const PrelimsTestSeriesScreen = ({route, navigation}) => {
   const {params} = route;
@@ -18,7 +26,9 @@ const PrelimsTestSeriesScreen = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.instructionsHeading}>Test Instructions</Text>
-      <Text style={styles.instructions}>{params.quizzes.rules}</Text>
+      <ScrollView>
+        <Text style={styles.instructions}>{params.quizzes.rules}</Text>
+      </ScrollView>
       <TouchableOpacity
         onPress={() =>
           navigation.navigate('Quiz', {
@@ -67,14 +77,15 @@ const styles = StyleSheet.create({
   },
   instructions: {
     color: colors.black,
-    fontSize: 20,
-    marginTop: 16,
-    lineHeight: 32,
+    fontSize: ms(18),
+    marginTop: vs(14),
+    lineHeight: vs(32),
     textAlign: 'left',
+    marginBottom: 60,
   },
   instructionsHeading: {
     color: colors.black,
-    fontSize: 30,
+    fontSize: ms(26),
     textAlign: 'center',
   },
 });

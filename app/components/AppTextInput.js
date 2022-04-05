@@ -3,6 +3,7 @@ import {View, TextInput, StyleSheet} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import defaultStyles from '../config/styles';
+import {s, vs} from '../utils/scalingUtils';
 
 function AppTextInput({
   icon,
@@ -28,14 +29,14 @@ export default AppTextInput;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: defaultStyles.colors.light,
-    borderRadius: 16,
+    borderRadius: s(16),
     flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    marginVertical: 10,
+    paddingHorizontal: s(12),
+    paddingVertical: vs(4),
+    marginVertical: vs(10),
     alignItems: 'center',
   },
   icon: {
-    marginRight: 10,
+    marginRight: s(10),
   },
 });

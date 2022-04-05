@@ -4,6 +4,7 @@ import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
+import {s, ms, vs} from '../utils/scalingUtils';
 import SessionTimer from './SessionTimer';
 
 function Header(props) {
@@ -52,7 +53,7 @@ function Header(props) {
             style={styles.backButtonContainer}>
             <MaterialCommunityIcons
               name={'arrow-left'}
-              size={24}
+              size={s(22)}
               color={colors.white}
             />
           </TouchableOpacity>
@@ -110,16 +111,16 @@ const HeaderTitle = ({
 };
 const styles = StyleSheet.create({
   backButtonContainer: {
-    height: Platform.OS === 'android' ? 56 : 44,
+    height: Platform.OS === 'android' ? vs(47) : vs(37),
     justifyContent: 'center',
     alignItems: 'flex-start',
-    left: 16,
+    left: s(16),
     position: 'absolute',
   },
   container: {
     alignItems: 'center',
     flexDirection: 'row',
-    height: Platform.OS === 'android' ? 56 : 44,
+    height: Platform.OS === 'android' ? vs(47) : vs(37),
     justifyContent: 'space-between',
     width: '100%',
     backgroundColor: colors.primary,
@@ -130,27 +131,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headerTitleContainer: {
-    height: Platform.OS === 'android' ? 56 : 44,
+    height: Platform.OS === 'android' ? vs(47) : vs(37),
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
   },
   rightIconContainer: {
-    height: Platform.OS === 'android' ? 56 : 44,
+    height: Platform.OS === 'android' ? vs(47) : vs(37),
     justifyContent: 'center',
     alignItems: 'flex-end',
-    right: 16,
+    right: s(16),
     position: 'absolute',
   },
   titleText: {
     color: colors.white,
-    fontSize: 20,
-    lineHeight: 24,
+    fontSize: ms(18),
+    lineHeight: vs(24),
   },
   headerText: {
     alignItems: 'center',
     flexDirection: 'row',
-    marginLeft: 8,
+    marginLeft: s(8),
   },
 });
 

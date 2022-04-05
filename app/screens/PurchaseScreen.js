@@ -9,6 +9,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import ActivityIndicator from '../components/ActivityIndicator';
 import AuthContext from '../auth/context';
 import colors from '../config/colors';
+import {ms, s, vs} from '../utils/scalingUtils';
 
 const PurchaseScreen = ({navigation, route: {params}}) => {
   const premium = params.premium;
@@ -118,7 +119,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           <MaterialCommunityIcons
             name={'scale-balance'}
             color={colors.primary}
-            size={64}
+            size={s(60)}
           />
           <Text style={styles.header}>WHAT YOU WILL GET</Text>
           {premium.info.split('\n')?.map((item, index) => {
@@ -127,7 +128,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                 <Text style={styles.point}>{item}</Text>
                 <MaterialCommunityIcons
                   name={'check-decagram'}
-                  size={24}
+                  size={s(20)}
                   color={colors.green}
                 />
               </View>
@@ -136,9 +137,9 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           <View
             style={{
               backgroundColor: colors.secondary,
-              padding: 8,
+              padding: s(6),
               position: 'absolute',
-              bottom: 40,
+              bottom: vs(32),
               width: '100%',
             }}>
             <View style={{flexDirection: 'row'}}>
@@ -195,7 +196,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                 <MaterialCommunityIcons
                   name={'currency-inr'}
                   color={colors.yellow}
-                  size={20}
+                  size={ms(18)}
                 />
                 {parseInt(premium.cost)}
               </Text>
@@ -211,7 +212,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           </View>
           {parseInt(premium.discount) ? (
             <View style={{alignItems: 'center', flexDirection: 'row'}}>
-              <Text style={[styles.purchaseText, {fontSize: 14}]}>
+              <Text style={[styles.purchaseText, {fontSize: ms(12)}]}>
                 {'YOU SAVE '}
               </Text>
               <Text
@@ -219,7 +220,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                   styles.purchaseText,
                   {
                     color: colors.green,
-                    fontSize: 18,
+                    fontSize: ms(16),
                     textDecorationLine: 'underline',
                   },
                 ]}>
@@ -229,7 +230,9 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     100,
                 ) / 100}
               </Text>
-              <Text style={[styles.purchaseText, {fontSize: 14}]}>{'% !'}</Text>
+              <Text style={[styles.purchaseText, {fontSize: ms(12)}]}>
+                {'% !'}
+              </Text>
             </View>
           ) : null}
         </TouchableOpacity>
@@ -244,14 +247,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightBlue,
     flex: 1,
     paddingHorizontal: 16,
-    marginTop: 64,
+    marginTop: vs(60),
   },
   header: {
     color: colors.primary,
-    fontSize: 20,
+    fontSize: ms(18),
     lineHeight: 25,
-    marginBottom: 16,
-    marginTop: 56,
+    marginBottom: vs(14),
+    marginTop: vs(50),
     fontWeight: 'bold',
   },
   info: {
@@ -268,12 +271,12 @@ const styles = StyleSheet.create({
   },
   payment: {
     color: colors.black,
-    fontSize: 16,
+    fontSize: ms(14),
     lineHeight: 24,
   },
   point: {
     color: colors.black,
-    fontSize: 16,
+    fontSize: ms(14),
     lineHeight: 21,
     textAlign: 'right',
   },
@@ -289,7 +292,7 @@ const styles = StyleSheet.create({
   purchaseText: {
     alignItems: 'center',
     color: colors.white,
-    fontSize: 20,
+    fontSize: ms(18),
     lineHeight: 25,
   },
 });

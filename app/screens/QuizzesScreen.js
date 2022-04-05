@@ -14,6 +14,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import AuthContext from '../auth/context';
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
+import {ms, s, vs} from '../utils/scalingUtils';
 
 const fetchData = (path, phone, setLoading, setData) => {
   const ref = ('/student/' + phone + '/' + path).trim();
@@ -119,7 +120,11 @@ function QuizzesScreen(props) {
         <View style={{paddingHorizontal: 16, paddingVertical: 24}}>
           <View style={styles.quizOptionsView}>
             <Text
-              style={{color: colors.black, fontSize: 16, fontWeight: 'bold'}}>
+              style={{
+                color: colors.black,
+                fontSize: ms(14),
+                fontWeight: 'bold',
+              }}>
               {'Score: ' + score + '/' + total}
             </Text>
             {completed ? (
@@ -139,7 +144,9 @@ function QuizzesScreen(props) {
                     view: true,
                   });
                 }}>
-                <Text style={{color: colors.white, fontSize: 14}}>View</Text>
+                <Text style={{color: colors.white, fontSize: ms(12)}}>
+                  View
+                </Text>
               </TouchableOpacity>
             ) : null}
             <TouchableOpacity
@@ -186,11 +193,8 @@ function QuizzesScreen(props) {
                       },
                     );
               }}>
-              <Text style={{color: colors.black, fontSize: 14}}>
-                {locked
-                  ? 'Unlock'
-                  : (completed ? 'Re-' : '') +
-                    (testSeries ? 'Attempt Series' : 'Take Quiz')}
+              <Text style={{color: colors.black, fontSize: ms(12)}}>
+                {locked ? 'Unlock' : (completed ? 'Re-' : '') + 'Attempt'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -251,8 +255,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.seaGreen,
     borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: s(6),
+    paddingVertical: vs(4),
     backgroundColor: colors.seaGreen,
   },
   container: {
@@ -271,7 +275,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   extraInfoText: {
-    fontSize: 14,
+    fontSize: ms(13),
     color: colors.black,
   },
   flatlist: {

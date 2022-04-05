@@ -12,6 +12,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
+import {ms} from '../utils/scalingUtils';
 
 const loadData = (path, setData, setLoading) => {
   setLoading(true);
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   extraInfoText: {
-    fontSize: 16,
+    fontSize: ms(12),
     color: colors.black,
   },
   flatlist: {

@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import colors from '../config/colors';
+import {s, ms, vs} from '../utils/scalingUtils';
 
 function AppButton({
   title,
@@ -25,13 +26,13 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 15,
+    padding: s(12),
     width: '100%',
-    marginVertical: 5,
+    marginVertical: vs(5),
   },
   text: {
     color: colors.white,
-    fontSize: 18,
+    fontSize: ms(18),
     textTransform: 'uppercase',
     fontWeight: 'bold',
   },

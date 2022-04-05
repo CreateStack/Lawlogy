@@ -13,6 +13,7 @@ import backgroundImage from '../assets/background.jpg';
 import logoImage from '../assets/logo.jpg';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
+import {s, ms, vs} from '../utils/scalingUtils';
 
 export default function WelcomeScreen({navigation}) {
   return (
@@ -47,17 +48,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     flex: 1,
-    marginTop: StatusBar.currentHeight,
     backgroundColor: colors.white,
     justifyContent: 'space-between',
   },
   logo: {
-    borderRadius: 75,
-    height: 150,
+    borderRadius: 999,
+    height: vs(150),
     position: 'absolute',
     resizeMode: 'center',
-    top: Dimensions.get('window').height / 2 - 190,
-    width: 150,
+    top: Dimensions.get('window').height / 2 - vs(190),
+    width: vs(150),
   },
 
   logoContainer: {
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '100%',
-    top: 40,
+    top: vs(40),
   },
   loginCont: {
     width: '100%',
@@ -74,15 +74,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: 20,
-    bottom: 80,
+    padding: s(20),
+    bottom: vs(80),
   },
   tagline: {
-    fontSize: 22,
+    fontSize: ms(22),
     fontWeight: 'bold',
-    paddingVertical: 20,
+    paddingVertical: vs(20),
     textAlign: 'center',
     color: colors.black,
-    paddingHorizontal: 16,
+    paddingHorizontal: s(16),
   },
 });

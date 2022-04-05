@@ -10,6 +10,7 @@ import {
 import _ from 'lodash';
 
 import colors from '../config/colors';
+import {ms} from '../utils/scalingUtils';
 
 function TopicScreen({navigation, route}) {
   const {params} = route;
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   extraInfoText: {
-    fontSize: 14,
+    fontSize: ms(13),
     color: colors.black,
   },
   flatlist: {
