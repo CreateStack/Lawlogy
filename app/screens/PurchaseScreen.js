@@ -12,6 +12,7 @@ import colors from '../config/colors';
 
 const PurchaseScreen = ({navigation, route: {params}}) => {
   const premium = params.premium;
+  const premiumPath = params.premiumPath;
   const [payment, setPayment] = useState('Not initialized');
   const [txnId, setTxnId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,11 +23,13 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const total = parseInt(premium.cost) - parseInt(premium.discount || 0);
 
   const setPaymentInfo = (setLoading, txnId) => {
-    const ref = ('student/' + user).trim();
+    const ref = ('student/' + user + '/' + premiumPath).trim();
     const updatation = {
       item: premium.item,
       discount: premium.discount || 0,
       payment: total,
+      premium: true,
+      premiumStartTime: Date.now(),
       txnId: txnId,
     };
     const handleCompletion = () => {
@@ -36,19 +39,10 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     };
     setLoading(true);
     database()
-      .ref(ref + '/paymentInfo')
+      .ref(ref)
       .update(updatation)
       .then(() => {
-        database()
-          .ref(ref)
-          .update({premium: true})
-          .then(() => {
-            handleCompletion();
-          })
-          .catch((e) => {
-            crashlytics().log('Failed to set premium: ', e);
-            handleCompletion();
-          });
+        handleCompletion();
       })
       .catch((e) => {
         crashlytics().log('Failed to uplaod txn details: ', e);

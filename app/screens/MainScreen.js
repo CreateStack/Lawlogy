@@ -107,7 +107,7 @@ function MainScreen(props) {
     {
       onPress: () =>
         props.navigation.navigate('Topics', {
-          itemName: 'Year',
+          itemName: 'Years',
           items: previousYearPapers,
           image: require('../assets/previousYearPapers.jpg'),
           navigateToScreen: 'Years',

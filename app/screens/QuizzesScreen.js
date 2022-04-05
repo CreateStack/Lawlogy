@@ -38,6 +38,7 @@ function QuizzesScreen(props) {
   const testSeries = props.route.params.testSeries || false;
   const fetchPath =
     (testSeries ? 'prelimsTestSeries/' : 'quizzes/') + props.route.params.name;
+  const premiumPath = testSeries ? 'testSeriesPremium/' : 'quizzesPremium/';
   let quizzes = Object.keys(props.route.params.quizzes);
   if (quizzes.length) {
     quizzes = quizzes.sort((a, b) => {
@@ -53,13 +54,14 @@ function QuizzesScreen(props) {
 
   useEffect(() => {
     fetchData(fetchPath, user, setLoading, setData);
-    fetchData('premium', user, setLoading, (value) => {
-      if (typeof value === 'string') {
-        value = value.toLowerCase();
-        setStudentPremium(value === 'true' ? true : false);
+    fetchData(premiumPath, user, setLoading, (value) => {
+      let premium = value.premium;
+      if (typeof premium === 'string') {
+        premium = premium.toLowerCase();
+        setStudentPremium(premium === 'true' ? true : false);
         return;
-      } else if (typeof value === 'boolean') {
-        setStudentPremium(value);
+      } else if (typeof premium === 'boolean') {
+        setStudentPremium(premium);
         return;
       } else {
         setStudentPremium(false);
@@ -156,6 +158,7 @@ function QuizzesScreen(props) {
                       item: testSeries ? 'testSeries' : 'quizzes',
                       popScreens: 3,
                       premium: premium,
+                      premiumPath: premiumPath,
                       title: testSeries ? 'Buy Test Series' : 'Buy Quizzes',
                     })
                   : props.navigation.navigate(

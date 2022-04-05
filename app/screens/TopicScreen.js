@@ -42,7 +42,9 @@ function TopicScreen({navigation, route}) {
               }),
             premium: params.premium,
             quizzes: params.items[item],
-            title: params.passTitle ? item : params.itemName,
+            title: _.startCase(
+              _.toLower(params.passTitle ? item : params.itemName),
+            ),
           })
         }>
         {/* <Image source={params.image} style={styles.imageBackground} /> */}
