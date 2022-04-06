@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "1020065741772-6423qtdoi4004f2628n6cmqhstdbuf2h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lawlogy",
+            "certificate_hash": "b131e94c4ddd7e8b944a44e609d2bd233ede63d2"
+          }
+        },
+        {
+          "client_id": "1020065741772-9e0vodked8mvav4kk1lo8r1j4c1f28pi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lawlogy",
+            "certificate_hash": "6109a573b061210bae15a7f6580658547a465150"
+          }
+        },
+        {
+          "client_id": "1020065741772-drij89r7jf677l0o0t5otmmupkvjr7hl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lawlogy",
+            "certificate_hash": "0fc2c2e1c07fad17dfd325a05bcde0f91649d458"
+          }
+        },
+        {
           "client_id": "1020065741772-sahge3c3r52g8k9o1atuuolgo78jao09.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -40,10 +64,10 @@
               "client_type": 3
             },
             {
-              "client_id": "1020065741772-r5vbb527kg02r8e6gsa882pomtcv8tke.apps.googleusercontent.com",
+              "client_id": "1020065741772-p03jphoqflqah8kk135jumaqme6248qr.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.reactjs.native.example.lawlogy-admin"
+                "bundle_id": "org.reactjs.native.example.lawlogy"
               }
             }
           ]

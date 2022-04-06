@@ -9,7 +9,9 @@
     "test": "jest",
     "lint": "eslint .",
     "build": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/ && cd android && ./gradlew assembleDebug && cd ../",
-    "codepush": "appcenter codepush release-react -a createstack/Lawlogy -d Staging"
+    "codepush": "appcenter codepush release-react -a createstack/Lawlogy -d Staging",
+    "build:release": "cd android && ./gradlew bundleRelease && cd ../",
+    "start:release": "npx react-native run-android --variant=release"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.11",
