@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import RNUpiPayment from 'react-native-upi-payment';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import database from '@react-native-firebase/database';
 import crashlytics from '@react-native-firebase/crashlytics';
+import RNPgReactNativeSDK from 'react-native-pg-react-native-sdk';
+import axios from 'axios';
 
 import ActivityIndicator from '../components/ActivityIndicator';
 import AuthContext from '../auth/context';
@@ -22,16 +22,19 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const [progress, setProgress] = useState(0);
   const {user} = useContext(AuthContext);
   const total = parseInt(premium.cost) - parseInt(premium.discount || 0);
-
-  const setPaymentInfo = (setLoading, txnId) => {
+  const ENV = 'TEST';
+  const orderNumber = parseInt(premium.orderNumber || 1) + 1;
+  const setPaymentInfo = (setLoading, data) => {
     const ref = ('student/' + user + '/' + premiumPath).trim();
     const updatation = {
-      item: premium.item,
+      item: params.item,
       discount: premium.discount || 0,
+      orderId: data.orderId,
       payment: total,
       premium: true,
       premiumStartTime: Date.now(),
-      txnId: txnId,
+      signature: data.signature,
+      txnId: data.referenceId,
     };
     const handleCompletion = () => {
       setLoading(false);
@@ -43,7 +46,19 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
       .ref(ref)
       .update(updatation)
       .then(() => {
-        handleCompletion();
+        database()
+          .ref(
+            'premium/' +
+              (params.item.includes('testSeries') ? 'testSeries' : 'quizes'),
+          )
+          .update({orderNumber: orderNumber})
+          .then(() => {
+            handleCompletion();
+          })
+          .catch((e) => {
+            crashlytics().log('Failed to update orderNumber: ', e);
+            handleCompletion();
+          });
       })
       .catch((e) => {
         crashlytics().log('Failed to uplaod txn details: ', e);
@@ -61,20 +76,20 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     return () => clearInterval(interval);
   }, [startRedirection]);
 
-  if (progress === 10) {
-    setProgress(0);
-    clearInterval(interval);
-    setStartRedirection(false);
-    navigation.pop(params.popScreens);
-  }
+  useEffect(() => {
+    if (progress === 10) {
+      setProgress(0);
+      clearInterval(interval);
+      setStartRedirection(false);
+      navigation.pop(params.popScreens);
+    }
+  }, [progress]);
 
   const successCallback = (data) => {
     console.log('See success: ', data);
-    if (data['Status']?.toLowerCase() === 'success') {
-      setPayment('Success!!');
-      setTxnId(data['txnId']);
-      setPaymentInfo(setLoading, data['txnId']);
-    } else setPayment('Failure');
+    setPayment('Success!!');
+    setTxnId(data.referenceId);
+    setPaymentInfo(setLoading, data);
   };
 
   const failureCallback = (data) => {
@@ -83,17 +98,56 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   };
 
   const initializePayment = () => {
-    RNUpiPayment.initializePayment(
-      {
-        vpa: 'BHARATPE.9050980041@fbpe',
-        payeeName: 'PARITOSH SHARMA',
-        amount: total.toString(),
-        transactionRef: 'LawlogyCourse',
-        transactionNote: 'Lawlogy complete series',
-      },
-      successCallback,
-      failureCallback,
-    );
+    setLoading(true);
+    const orderId = 'lawlogy_' + params.item + '_' + orderNumber;
+    axios
+      .post(
+        'https://test.cashfree.com/api/v2/cftoken/order',
+        {
+          orderId: orderId,
+          orderAmount: total.toString(),
+          orderCurrency: 'INR',
+        },
+        {
+          timeout: 60 * 1000,
+          headers: {
+            'x-client-id': '15201826579c8733507d992ebf810251',
+            'x-client-secret': '0489ea0c3a6e62994c4dbe0c5e02da931268679b',
+          },
+        },
+      )
+      .then((resp) => {
+        console.log('resp: ', resp);
+        crashlytics().log('token resp: ', resp);
+        let data = {
+          appId: '15201826579c8733507d992ebf810251',
+          customerEmail: 'lawlogyonlineclasses@gmail.com',
+          customerPhone: user.toString(),
+          orderAmount: total.toString(),
+          orderCurrency: 'INR',
+          orderId: orderId,
+          orderNote: 'lawlogy ' + params.item + ' pruchase',
+          tokenData: resp.data?.cftoken || '',
+        };
+        console.log('map: ', data);
+        RNPgReactNativeSDK.startPaymentUPI(data, ENV, (result) => {
+          result = JSON.parse(result);
+          console.log('result: ', result);
+          if (result.txStatus === 'SUCCESS') {
+            setLoading(false);
+            successCallback(result);
+          } else {
+            setLoading(false);
+            failureCallback(result);
+          }
+        });
+      })
+      .catch((e) => {
+        crashlytics().log('Error in fetching token: ', e);
+        console.log('Error in fetching token: ', e);
+        failureCallback(result);
+        setLoading(false);
+      });
   };
 
   return (
@@ -155,11 +209,6 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                 {payment}
               </Text>
             </View>
-            {!txnId ? (
-              <Text style={styles.payment}>
-                {'(Please pay only using PayTM or GPay)'}
-              </Text>
-            ) : null}
             {txnId ? (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.payment}>{'TxnId: '}</Text>
