@@ -11,6 +11,10 @@ import AuthContext from '../auth/context';
 import colors from '../config/colors';
 import {ms, s, vs} from '../utils/scalingUtils';
 
+const appId = '15201826579c8733507d992ebf810251';
+const key = '0489ea0c3a6e62994c4dbe0c5e02da931268679b';
+const endpoint = 'https://test.cashfree.com/api/v2/cftoken/order';
+
 const PurchaseScreen = ({navigation, route: {params}}) => {
   const premium = params.premium;
   const premiumPath = params.premiumPath;
@@ -105,7 +109,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     const orderId = 'lawlogy_' + params.item + '_' + orderNumber;
     axios
       .post(
-        'https://test.cashfree.com/api/v2/cftoken/order',
+        endpoint,
         {
           orderId: orderId,
           orderAmount: total.toString(),
@@ -114,8 +118,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
         {
           timeout: 60 * 1000,
           headers: {
-            'x-client-id': '15201826579c8733507d992ebf810251',
-            'x-client-secret': '0489ea0c3a6e62994c4dbe0c5e02da931268679b',
+            'x-client-id': appId,
+            'x-client-secret': key,
           },
         },
       )
@@ -123,7 +127,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
         console.log('resp: ', resp);
         crashlytics().log('token resp: ', resp);
         let data = {
-          appId: '15201826579c8733507d992ebf810251',
+          appId: appId,
           customerEmail: 'lawlogyonlineclasses@gmail.com',
           customerPhone: user.toString(),
           orderAmount: total.toString(),
