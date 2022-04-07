@@ -15,6 +15,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const premium = params.premium;
   const premiumPath = params.premiumPath;
   const [payment, setPayment] = useState('Not initialized');
+  const [paymentError, setPaymentError] = useState('');
   const [txnId, setTxnId] = useState('');
   const [loading, setLoading] = useState(false);
   const [startRedirection, setStartRedirection] = useState(false);
@@ -88,6 +89,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const successCallback = (data) => {
     console.log('See success: ', data);
     setPayment('Success!!');
+    setPaymentError('');
     setTxnId(data.referenceId);
     setPaymentInfo(setLoading, data);
   };
@@ -95,6 +97,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const failureCallback = (data) => {
     console.log('See failure: ', data);
     setPayment('Failure');
+    setPaymentError(data.txMsg);
   };
 
   const initializePayment = () => {
@@ -209,6 +212,11 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                 {payment}
               </Text>
             </View>
+            {paymentError ? (
+              <Text style={styles.payment}>
+                {'Payment error: ' + paymentError}
+              </Text>
+            ) : null}
             {txnId ? (
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.payment}>{'TxnId: '}</Text>
