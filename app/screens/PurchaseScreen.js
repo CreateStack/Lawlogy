@@ -337,9 +337,11 @@ const styles = StyleSheet.create({
   },
   point: {
     color: colors.black,
+    flex: 1,
+    flexWrap: 'wrap',
     fontSize: ms(14),
-    lineHeight: 21,
-    textAlign: 'right',
+    lineHeight: vs(24),
+    textAlign: 'left',
   },
   purchaseButton: {
     alignItems: 'center',

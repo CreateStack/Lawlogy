@@ -2,6 +2,7 @@ import React from 'react';
 import {
   FlatList,
   Image,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,6 +14,23 @@ import _ from 'lodash';
 import colors from '../config/colors';
 import {ms, s} from '../utils/scalingUtils';
 
+const onShare = (question, subject) => {
+  Share.share(
+    {
+      title: 'Share this important question with your friends',
+      message:
+        "Checkout this question from '" +
+        subject +
+        "'\n\nQuestion: " +
+        question +
+        '\n\n\nFor more such questions, install Lawlogy(link)',
+    },
+    {
+      dialogTitle: 'Share this important question with your friends',
+    },
+  );
+};
+
 const JustQuestionsScreen = ({route}) => {
   const {params} = route;
   const render = ({item, index}) => {
@@ -22,7 +40,7 @@ const JustQuestionsScreen = ({route}) => {
         <Text style={styles.questionText}>{index + 1 + '. ' + item}</Text>
         <TouchableOpacity
           activeOpacity={0.6}
-          onPress={() => console.log('hello')}
+          onPress={() => onShare(item, params.name)}
           style={styles.share}>
           <Image
             source={require('../assets/share.png')}

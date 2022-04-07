@@ -39,7 +39,9 @@ function QuizzesScreen(props) {
   const testSeries = props.route.params.testSeries || false;
   const fetchPath =
     (testSeries ? 'prelimsTestSeries/' : 'quizzes/') + props.route.params.name;
-  const premiumPath = testSeries ? 'testSeriesPremium/' : 'quizzesPremium/';
+  const premiumPath = testSeries
+    ? props.route.params.name.replace(' ', '') + '_TestSeriesPremium/'
+    : 'quizzesPremium/';
   let quizzes = Object.keys(props.route.params.quizzes);
   if (quizzes.length) {
     quizzes = quizzes.sort((a, b) => {
