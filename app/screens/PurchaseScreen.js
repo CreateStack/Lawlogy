@@ -28,7 +28,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const {user} = useContext(AuthContext);
   const total = parseInt(premium.cost) - parseInt(premium.discount || 0);
   const ENV = 'TEST';
-  const orderNumber = parseInt(premium.orderNumber || 1) + 1;
+  const orderNumber = Math.random().toString().split('.')[1];
   const setPaymentInfo = (setLoading, data) => {
     const ref = ('student/' + user + '/' + premiumPath).trim();
     const updatation = {
