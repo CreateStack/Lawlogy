@@ -163,9 +163,8 @@ function QuestionsScreen(props) {
     const ref = ('student/' + user + '/' + path + name + '/' + quizName).trim();
     console.log('Ref: ', ref);
     const updatation = {completed: true, score: score};
-    if (!isNaN(parseInt(props.route.params.attempts))) {
-      updatation.attempts = props.route.params.attempts + 1;
-    }
+    updatation.attempts = parseInt(props.route.params.attempts || 0) + 1;
+
     database()
       .ref(ref)
       .update(updatation)
