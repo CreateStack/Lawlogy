@@ -23,7 +23,7 @@ const onShare = (question, subject) => {
         subject +
         "'\n\nQuestion: " +
         question +
-        '\n\n\nFor more such questions, install Lawlogy(link)',
+        '\n\n\nFor more such questions, install Lawlogy (https://play.google.com/store/apps/details?id=com.lawlogy)',
     },
     {
       dialogTitle: 'Share this important question with your friends',
