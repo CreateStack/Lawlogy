@@ -29,7 +29,7 @@ export default AppTextInput;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: defaultStyles.colors.light,
-    borderRadius: s(16),
+    borderRadius: s(8),
     flexDirection: 'row',
     paddingHorizontal: s(12),
     paddingVertical: vs(4),

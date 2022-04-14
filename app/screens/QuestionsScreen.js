@@ -27,6 +27,7 @@ function QuestionsScreen(props) {
   useEffect(() => {
     props.navigation.setParams({
       onPressBack: leaveQuiz,
+      onFinish: submit,
     });
   }, []);
   useEffect(() => {

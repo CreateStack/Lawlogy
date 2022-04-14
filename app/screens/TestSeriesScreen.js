@@ -65,11 +65,11 @@ function TopicScreen({navigation, route}) {
           onPress={() => {
             const setData = (data) => {
               navigation.navigate('Quizzes', {
-                data: {
+                /* data: {
                   rightIcon: 'podium',
                   showRightIcon: true,
                   state: item,
-                },
+                }, */
                 extraInfoData: data,
                 itemName: 'Tests',
                 name: item,

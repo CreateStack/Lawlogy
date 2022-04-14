@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import crashlytics from '@react-native-firebase/crashlytics';
+import _ from 'lodash';
 
 import database from '@react-native-firebase/database';
 import ActivityIndicator from '../components/ActivityIndicator';
@@ -60,8 +61,11 @@ const LeaderBoardScreen = ({route: {params}}) => {
   }, []);
 
   const getName = (name = '') => {
-    name = name.split(' ');
-    name = name[0] + ' ' + (name.length > 1 ? name[name.length - 1][0] : '');
+    name = name.trim().split(' ');
+    name =
+      _.capitalize(name[0]) +
+      ' ' +
+      _.capitalize(name.length > 1 ? name[name.length - 1] : '');
     return name;
   };
 
@@ -78,7 +82,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
         color = colors.bronze;
         break;
     }
-    return index < 4 ? (
+    return index < 3 ? (
       <MaterialCommunityIcons
         name={'medal'}
         color={color}
