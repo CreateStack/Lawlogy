@@ -12,7 +12,7 @@ import {ms, vs} from '../utils/scalingUtils';
 
 const PrelimsTestSeriesScreen = ({route, navigation}) => {
   const {params} = route;
-  const testTime = 10;
+  const testTime = parseInt(params.quizzes.testTime || 2) * 60 * 60;
   const getQuiz = (quiz) => {
     if (quiz.length === undefined) {
       quiz = Object.values(quiz);
