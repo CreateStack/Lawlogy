@@ -105,6 +105,62 @@ function QuizzesScreen(props) {
     const score = _.get(testCompletionData, 'score', 'N_A');
     const completed = _.get(testCompletionData, 'completed', false);
     const [locked, setLocked] = useState(true);
+
+    const AttemptButton = () => {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            locked
+              ? props.navigation.navigate('Purchase', {
+                  item: testSeries ? 'testSeries' : 'quizzes',
+                  popScreens: 3,
+                  premium: premium,
+                  premiumPath: premiumPath,
+                  title: testSeries ? 'Buy Test Series' : 'Buy Quizzes',
+                })
+              : props.navigation.navigate(
+                  testSeries ? 'PrelimsTestSeries' : 'Quiz',
+                  {
+                    attempts:
+                      props.route.params.extraInfoData?.[item]?.attempts,
+                    name: testSeries ? item : props.route.params.name,
+                    /*  onPressRightIcon: () =>
+                    props.navigation.navigate('LeaderBoard', {
+                      state: props.route.params.name,
+                      quiz: item,
+                    }), */
+                    quiz: getQuiz(props.route.params.quizzes[item]),
+                    quizzes: props.route.params.quizzes[item],
+                    quizName: item.toUpperCase(),
+                    //rightIcon: 'podium',
+                    //showRightIcon: testSeries ? true : false,
+                    total: total,
+                    state: props.route.params.name,
+                    onGoBack: () => {
+                      console.log('fetching: ', fetchPath);
+                      fetchData(fetchPath, user, setLoading, setData);
+                    },
+                  },
+                );
+          }}
+          style={{
+            ...styles.attempt,
+            ...(testSeries ? {flex: 1, width: '100%'} : {}),
+            ...(completed
+              ? {
+                  borderColor: '#4B4FA655',
+                  backgroundColor: colors.secondary,
+                }
+              : {}),
+          }}>
+          <Text style={styles.seriesTimeText}>
+            {/* {props.route.params.quizzes[item].testTime + ' hours'} */}
+            {locked ? 'Unlock 🔓' : (completed ? 'Re-' : '') + 'Attempt'}
+          </Text>
+        </TouchableOpacity>
+      );
+    };
+
     useEffect(() => {
       decideText(index, setLocked);
     }, []);
@@ -124,7 +180,12 @@ function QuizzesScreen(props) {
             {item.toUpperCase()}
           </Text>
         </View>
-        <View style={{paddingHorizontal: 16, paddingVertical: 24}}>
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingBottom: testSeries ? 16 : 24,
+            paddingTop: 24,
+          }}>
           <View style={styles.quizOptionsView}>
             <Text
               style={{
@@ -157,7 +218,7 @@ function QuizzesScreen(props) {
               </TouchableOpacity>
             ) : null}
 
-            {testSeries && (
+            {testSeries ? (
               <Text
                 style={{
                   color: colors.black,
@@ -166,72 +227,28 @@ function QuizzesScreen(props) {
                 }}>
                 {'⌛ ' + props.route.params.quizzes[item].testTime + ' hours'}
               </Text>
+            ) : (
+              <AttemptButton />
             )}
           </View>
         </View>
-        <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('LeaderBoard', {
-                state: props.route.params.name,
-                quiz: item,
-              });
-            }}
-            style={styles.ledaerboard}>
-            <Text style={styles.ledaerboardText}>Leaderboard 🥇</Text>
-          </TouchableOpacity>
-          {testSeries && (
-            <TouchableOpacity
-              onPress={() => {
-                locked
-                  ? props.navigation.navigate('Purchase', {
-                      item: testSeries ? 'testSeries' : 'quizzes',
-                      popScreens: 3,
-                      premium: premium,
-                      premiumPath: premiumPath,
-                      title: testSeries ? 'Buy Test Series' : 'Buy Quizzes',
-                    })
-                  : props.navigation.navigate(
-                      testSeries ? 'PrelimsTestSeries' : 'Quiz',
-                      {
-                        attempts:
-                          props.route.params.extraInfoData?.[item]?.attempts,
-                        name: testSeries ? item : props.route.params.name,
-                        /*  onPressRightIcon: () =>
-                          props.navigation.navigate('LeaderBoard', {
-                            state: props.route.params.name,
-                            quiz: item,
-                          }), */
-                        quiz: getQuiz(props.route.params.quizzes[item]),
-                        quizzes: props.route.params.quizzes[item],
-                        quizName: item.toUpperCase(),
-                        //rightIcon: 'podium',
-                        //showRightIcon: testSeries ? true : false,
-                        total: total,
-                        state: props.route.params.name,
-                        onGoBack: () => {
-                          console.log('fetching: ', fetchPath);
-                          fetchData(fetchPath, user, setLoading, setData);
-                        },
-                      },
-                    );
-              }}
-              style={{
-                ...styles.attempt,
-                ...(completed
-                  ? {
-                      borderColor: '#4B4FA655',
-                      backgroundColor: colors.secondary,
-                    }
-                  : {}),
-              }}>
-              <Text style={styles.seriesTimeText}>
-                {/* {props.route.params.quizzes[item].testTime + ' hours'} */}
-                {locked ? 'Unlock 🔓' : (completed ? 'Re-' : '') + 'Attempt'}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        {testSeries && (
+          <View style={styles.footer}>
+            {!locked && (
+              <TouchableOpacity
+                onPress={() => {
+                  props.navigation.navigate('LeaderBoard', {
+                    state: props.route.params.name,
+                    quiz: item,
+                  });
+                }}
+                style={styles.ledaerboard}>
+                <Text style={styles.ledaerboardText}>Leaderboard</Text>
+              </TouchableOpacity>
+            )}
+            <AttemptButton />
+          </View>
+        )}
         {props.route.params.showExtraInfo && (
           <View style={styles.extraInfo}>
             <Text style={styles.extraInfoText}>
@@ -361,12 +378,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     borderColor: '#30b0b0',
-    flex: 1,
     justifyContent: 'flex-end',
     paddingVertical: 3,
     paddingHorizontal: 16,
     marginLeft: 2,
-    width: '100%',
   },
   ledaerboard: {
     alignItems: 'center',
