@@ -54,7 +54,6 @@ function QuizzesScreen(props) {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [studentPremium, setStudentPremium] = useState(false);
-
   useEffect(() => {
     fetchData(fetchPath, user, setLoading, setData);
     fetchData(premiumPath, user, setLoading, (value) => {
@@ -71,7 +70,7 @@ function QuizzesScreen(props) {
         return;
       }
     });
-  }, []);
+  }, [fetchPath, premiumPath, user]);
 
   const getQuiz = (quiz) => {
     if (testSeries) {
@@ -99,7 +98,7 @@ function QuizzesScreen(props) {
     const total = questions.filter((ques) => ques).length;
     const testCompletionData = _.get(
       data,
-      testSeries ? item : item.toUpperCase().trim(),
+      testSeries ? item.trim() : item.toUpperCase().trim(),
       {},
     );
     const score = _.get(testCompletionData, 'score', 'N_A');
@@ -163,7 +162,7 @@ function QuizzesScreen(props) {
 
     useEffect(() => {
       decideText(index, setLocked);
-    }, []);
+    }, [index]);
     return (
       <View key={index} style={styles.topic}>
         <View

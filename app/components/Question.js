@@ -4,37 +4,27 @@ import RadioForm, {
   RadioButtonInput,
   RadioButtonLabel,
 } from 'react-native-simple-radio-button';
-import database from '@react-native-firebase/database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '../config/colors';
 
-const updateOption = (path, value, index) => {
-  console.log('path: ', path);
-  let x = {};
-  x[index] = value;
-  database().ref(path).update(x);
-};
-
 function Question({
   setScore,
-  path,
   question,
   index = 0,
   prefill = '',
   setTotalAttempt,
-  user,
-  name,
   negativeMarking = 0,
-  quizName,
   view,
+  setSelections,
 }) {
   const [value, setValue] = useState(prefill);
   const [previousValue, setPreviousValue] = useState('');
   const [selected, setSelected] = useState(false);
+
   useEffect(() => {
     if (selected) setTotalAttempt((v) => v + 1);
-  }, [selected]);
+  }, [selected, setTotalAttempt]);
   useEffect(() => {
     if (value) {
       setSelected(true);
@@ -52,13 +42,20 @@ function Question({
         } else setScore((v) => v - negativeMarking);
       }
     }
-    updateOption(
-      ('student/' + user + '/' + path + name + '/' + quizName).trim(),
-      value,
-      index,
-    );
+    setSelections((v) => {
+      v[index] = value;
+      return {...v};
+    });
     setPreviousValue(value);
-  }, [value]);
+  }, [
+    value,
+    index,
+    negativeMarking,
+    previousValue,
+    question.correct,
+    setScore,
+    setSelections,
+  ]);
 
   const Radio = ({label, option}) => {
     return (

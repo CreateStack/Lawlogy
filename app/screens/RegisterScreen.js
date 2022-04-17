@@ -67,14 +67,14 @@ function RegisterScreen(props) {
         clearInterval(otpTimer);
       }
     };
-  }, []);
+  }, [otpTimer]);
 
   useEffect(() => {
     if (getOTP < 1 && otpTimer) {
       clearInterval(otpTimer);
       setGetOTP(61);
     }
-  }, [getOTP]);
+  }, [getOTP, otpTimer]);
 
   const startTimer = () => {
     const timer = setInterval(() => setGetOTP((v) => v - 1), 1000);
