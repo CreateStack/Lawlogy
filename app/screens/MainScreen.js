@@ -15,18 +15,33 @@ import ActivityIndicator from '../components/ActivityIndicator';
 import {ms} from '../utils/scalingUtils';
 
 const loadData = (path, setData, setLoading) => {
-  setLoading(true);
+  setLoading((v) => {
+    v.push(path);
+    return [...v];
+  });
   database()
     .ref(path)
     .once('value')
     .then((snapshot) => {
       setData(snapshot.val());
-      setLoading(false);
+      setLoading((v) => {
+        let index = v.indexOf(path);
+        if (index > -1) {
+          v.splice(index, 1);
+        }
+        return [...v];
+      });
     })
     .catch((e) => {
       console.log(`Error fetching ${path}: `, e);
       crashlytics().log(`Error fetching ${path}: `, e);
-      setLoading(false);
+      setLoading((v) => {
+        let index = v.indexOf(path);
+        if (index > -1) {
+          v.splice(index, 1);
+        }
+        return [...v];
+      });
     });
 };
 
@@ -36,7 +51,7 @@ function MainScreen(props) {
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [testSeries, setTestSeries] = useState();
   const [premium, setPremium] = useState();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState([]);
 
   const loadFunc = () => {
     loadData('/questions', setQuestions, setLoading);
@@ -171,14 +186,14 @@ function MainScreen(props) {
 
   return (
     <>
-      <ActivityIndicator visible={loading} />
+      <ActivityIndicator visible={loading.length > 0} />
       <FlatList
         columnWrapperStyle={{justifyContent: 'space-between'}}
         data={data}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
         onRefresh={loadFunc}
-        refreshing={loading}
+        refreshing={loading.length > 0}
         renderItem={({item}) => render(item)}
         style={styles.flatlist}
       />

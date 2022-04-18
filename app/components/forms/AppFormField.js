@@ -6,6 +6,7 @@ import AppTextInput from '../AppTextInput';
 import ErrorMessage from './ErrorMessage';
 import {StyleSheet, View} from 'react-native';
 import colors from '../../config/colors';
+import {s, vs} from '../../utils/scalingUtils';
 
 const AppFormField = ({
   dropDown = false,
@@ -67,12 +68,15 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     backgroundColor: colors.light,
-    borderRadius: 16,
+    borderRadius: 8,
     flexDirection: 'row',
   },
   dropDownContainer: {
-    borderRadius: 16,
+    backgroundColor: colors.light,
+    borderRadius: 8,
     overflow: 'hidden',
     marginVertical: 10,
+    paddingHorizontal: s(12),
+    paddingVertical: vs(1),
   },
 });

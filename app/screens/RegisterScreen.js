@@ -29,13 +29,15 @@ import stateData from '../utils/stateData.json';
 import preparingForData from '../utils/preparingForData.json';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required().label('Name'),
+  name: Yup.string().required().label('First name').trim(),
+  lastName: Yup.string().required().label('Last name').trim(),
   state: Yup.string().lowercase().required().label('State'),
   email: Yup.string()
     .lowercase()
     .email('Must be a valid email address')
     .required()
-    .label('Email address'),
+    .label('Email address')
+    .trim(),
   age: Yup.string().lowercase().required().label('Age'),
   preparingFor: Yup.string().lowercase().required().label('Preparing for'),
 });
@@ -52,6 +54,7 @@ function RegisterScreen(props) {
   const {logIn} = useAuth();
 
   const updateUserInfo = (name, value) => {
+    console.log('name: ', name, ' value: ', value);
     setUserInfo((info) => {
       info[name] = value;
       return info;
@@ -64,14 +67,14 @@ function RegisterScreen(props) {
         clearInterval(otpTimer);
       }
     };
-  }, []);
+  }, [otpTimer]);
 
   useEffect(() => {
     if (getOTP < 1 && otpTimer) {
       clearInterval(otpTimer);
       setGetOTP(61);
     }
-  }, [getOTP]);
+  }, [getOTP, otpTimer]);
 
   const startTimer = () => {
     const timer = setInterval(() => setGetOTP((v) => v - 1), 1000);
@@ -140,9 +143,12 @@ function RegisterScreen(props) {
                         database()
                           .ref('/student/' + phone)
                           .update({
-                            name: userInfo.name,
+                            name:
+                              userInfo.name.trim() +
+                              ' ' +
+                              userInfo.lastName.trim(),
                             state: userInfo.state,
-                            email: userInfo.email,
+                            email: userInfo.email.trim(),
                             age: userInfo.age,
                             preparingFor: userInfo.preparingFor,
                             premium: false,
@@ -227,9 +233,9 @@ function RegisterScreen(props) {
             database()
               .ref('/student/' + phone)
               .update({
-                name: userInfo.name,
+                name: userInfo.name.trim() + ' ' + userInfo.lastName.trim(),
                 state: userInfo.state,
-                email: userInfo.email,
+                email: userInfo.email.trim(),
                 age: userInfo.age,
                 preparingFor: userInfo.preparingFor,
                 premium: false,
@@ -282,6 +288,7 @@ function RegisterScreen(props) {
           <AppForm
             initialValues={{
               name: '',
+              lastName: '',
               state: '',
               email: '',
               age: '',
@@ -295,7 +302,14 @@ function RegisterScreen(props) {
               icon="account"
               name="name"
               onValueChange={updateUserInfo}
-              placeholder="Name"
+              placeholder="First name"
+            />
+            <AppFormField
+              autoCorrect={false}
+              icon="account"
+              name="lastName"
+              onValueChange={updateUserInfo}
+              placeholder="Last name"
             />
             <AppFormField
               autoCapitalize="none"

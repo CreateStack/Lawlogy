@@ -1,8 +1,7 @@
 export default {
   //primary: 'rgb(171,54,78)',
   seaGreen: '#4ecdc4',
-  black: '#000',
-  white: '#fff',
+  seaGreenDark: '#40c0c0',
   lightGrey: '#eee',
   dark: '#0c0c0c',
   medium: '#6e6969',

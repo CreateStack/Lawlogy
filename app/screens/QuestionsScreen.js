@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
   Alert,
   BackHandler,
@@ -23,23 +23,94 @@ function QuestionsScreen(props) {
   const [score, setScore] = useState(0);
   const [totalAttempt, setTotalAttempt] = useState(0);
   const [showScore, setShowScore] = useState(false);
+  const [selections, setSelections] = useState({});
   const {data, negativeMarking = 0, view} = props.route.params;
   useEffect(() => {
     props.navigation.setParams({
       onPressBack: leaveQuiz,
+      onFinish: submit,
     });
-  }, []);
+  }, [leaveQuiz, props.navigation, submit]);
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', leaveQuiz);
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', leaveQuiz);
     };
-  }, []);
+  }, [leaveQuiz]);
   let name = props.route.params.name;
   let path = props.route.params.path || 'quizzes/';
   name = name?.trim();
   let quizName = props.route.params.quizName;
   quizName = quizName.trim();
+
+  const leaveQuiz = useCallback(() => {
+    if (view) {
+      props.navigation.goBack();
+    } else {
+      Alert.alert(
+        'Leave quiz?',
+        'All your progress for this quiz will be lost. Are you sure to leave?',
+        [
+          {
+            text: 'Leave',
+            onPress: () => {
+              const onGoBack = props.route.params.onGoBack;
+              onGoBack && onGoBack();
+              const popScreens = props.route.params.popScreens;
+              popScreens
+                ? props.navigation.pop(popScreens)
+                : props.navigation.goBack();
+            },
+          },
+          {text: 'Cancel'},
+        ],
+      );
+    }
+    return true;
+  }, [
+    props.navigation,
+    view,
+    props.route.params.onGoBack,
+    props.route.params.popScreens,
+  ]);
+
+  const submit = useCallback(() => {
+    const ref = ('student/' + user + '/' + path + name + '/' + quizName).trim();
+    console.log('Ref: ', ref);
+    const updatation = {
+      completed: true,
+      score: score,
+      attempts: parseInt(props.route.params.attempts || 0) + 1,
+      ...selections,
+    };
+    console.log('updation: ', updatation);
+    database()
+      .ref(ref)
+      .update(updatation)
+      .then(() => {})
+      .catch((e) => {
+        Alert.alert('Error', 'There was error in setting score on cloud: ' + e);
+      });
+    setShowScore(true);
+    setTimeout(() => {
+      setShowScore(false);
+      const onGoBack = props.route.params.onGoBack;
+      onGoBack && onGoBack();
+      const popScreens = props.route.params.popScreens;
+      popScreens ? props.navigation.pop(popScreens) : props.navigation.goBack();
+    }, 5000);
+  }, [
+    user,
+    name,
+    path,
+    props.navigation,
+    props.route.params.onGoBack,
+    props.route.params.popScreens,
+    quizName,
+    score,
+    selections,
+    props.route.params.attempts,
+  ]);
   let quiz = props.route.params.quiz;
   if (!quiz)
     return (
@@ -76,16 +147,13 @@ function QuestionsScreen(props) {
     return (
       <Question
         index={index}
-        path={path}
         question={item}
         setScore={setScore}
         setTotalAttempt={setTotalAttempt}
-        user={user}
-        name={name}
         negativeMarking={negativeMarking}
-        quizName={quizName}
         prefill={view ? data[index] : ''}
         view={view}
+        setSelections={setSelections}
       />
     );
   };
@@ -134,51 +202,6 @@ function QuestionsScreen(props) {
         </TouchableOpacity>
       </View>
     );
-  };
-
-  const leaveQuiz = () => {
-    view
-      ? props.navigation.goBack()
-      : Alert.alert(
-          'Leave quiz?',
-          'All your progress for this quiz will be lost. Are you sure to leave?',
-          [
-            {
-              text: 'Leave',
-              onPress: () => {
-                props.route.params.onGoBack && props.route.params.onGoBack();
-                const popScreens = props.route.params.popScreens;
-                popScreens
-                  ? props.navigation.pop(popScreens)
-                  : props.navigation.goBack();
-              },
-            },
-            {text: 'Cancel'},
-          ],
-        );
-    return true;
-  };
-
-  const submit = () => {
-    const ref = ('student/' + user + '/' + path + name + '/' + quizName).trim();
-    console.log('Ref: ', ref);
-    const updatation = {completed: true, score: score};
-    updatation.attempts = parseInt(props.route.params.attempts || 0) + 1;
-
-    database()
-      .ref(ref)
-      .update(updatation)
-      .then(() => {})
-      .catch((e) => {
-        Alert.alert('Error', 'There was error in setting score on cloud: ' + e);
-      });
-    setShowScore(true);
-    setTimeout(() => {
-      setShowScore(false);
-      props.route.params.onGoBack && props.route.params.onGoBack();
-      const popScreens = props.route.params.popScreens;
-      popScreens ? props.navigation.pop(popScreens) : props.navigation.goBack();
-    }, 5000);
   };
   return (
     <View style={styles.container}>

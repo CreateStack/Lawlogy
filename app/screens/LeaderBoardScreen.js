@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import crashlytics from '@react-native-firebase/crashlytics';
+import _ from 'lodash';
 
 import database from '@react-native-firebase/database';
 import ActivityIndicator from '../components/ActivityIndicator';
@@ -31,37 +32,39 @@ const LeaderBoardScreen = ({route: {params}}) => {
   const [loading, setLoading] = useState(false);
   const state = params.state.trim();
   const quiz = params.quiz.trim();
-  const rankStudents = (students = {}) => {
-    const keys = Object.keys(students);
-    const board = [];
-    keys.forEach((student) => {
-      let info = null;
-      if (students[student].prelimsTestSeries)
-        info = students[student].prelimsTestSeries[state][quiz];
-      const score = info?.score;
-      const attempts = info?.attempts;
-      if (score !== undefined && score !== null) {
-        const final = {
-          name: students[student].name,
-          score: score,
-          attempts: attempts,
-        };
-        console.log('final: ', final);
-        board.push(final);
-      } else {
-        return;
-      }
-    });
-    setData(board.sort((a, b) => b.score - a.score));
-  };
-
   useEffect(() => {
+    const rankStudents = (students = {}) => {
+      const keys = Object.keys(students);
+      const board = [];
+      keys.forEach((student) => {
+        let info = null;
+        if (students[student].prelimsTestSeries)
+          info = students[student].prelimsTestSeries[state][quiz];
+        const score = info?.score;
+        const attempts = info?.attempts;
+        if (score !== undefined && score !== null) {
+          const final = {
+            name: students[student].name,
+            score: score,
+            attempts: attempts,
+          };
+          console.log('final: ', final);
+          board.push(final);
+        } else {
+          return;
+        }
+      });
+      setData(board.sort((a, b) => b.score - a.score));
+    };
     fetchData('/student/', setLoading, rankStudents);
-  }, []);
+  }, [quiz, state]);
 
   const getName = (name = '') => {
-    name = name.split(' ');
-    name = name[0] + ' ' + (name.length > 1 ? name[name.length - 1][0] : '');
+    name = name.trim().split(' ');
+    name =
+      _.capitalize(name[0]) +
+      ' ' +
+      _.capitalize(name.length > 1 ? name[name.length - 1] : '');
     return name;
   };
 
@@ -78,7 +81,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
         color = colors.bronze;
         break;
     }
-    return index < 4 ? (
+    return index < 3 ? (
       <MaterialCommunityIcons
         name={'medal'}
         color={color}

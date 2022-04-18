@@ -54,7 +54,6 @@ function QuizzesScreen(props) {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [studentPremium, setStudentPremium] = useState(false);
-
   useEffect(() => {
     fetchData(fetchPath, user, setLoading, setData);
     fetchData(premiumPath, user, setLoading, (value) => {
@@ -71,7 +70,7 @@ function QuizzesScreen(props) {
         return;
       }
     });
-  }, []);
+  }, [fetchPath, premiumPath, user]);
 
   const getQuiz = (quiz) => {
     if (testSeries) {
@@ -99,27 +98,93 @@ function QuizzesScreen(props) {
     const total = questions.filter((ques) => ques).length;
     const testCompletionData = _.get(
       data,
-      testSeries ? item : item.toUpperCase().trim(),
+      testSeries ? item.trim() : item.toUpperCase().trim(),
       {},
     );
     const score = _.get(testCompletionData, 'score', 'N_A');
     const completed = _.get(testCompletionData, 'completed', false);
     const [locked, setLocked] = useState(true);
+
+    const AttemptButton = () => {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            locked
+              ? props.navigation.navigate('Purchase', {
+                  item: testSeries ? 'testSeries' : 'quizzes',
+                  popScreens: 3,
+                  premium: premium,
+                  premiumPath: premiumPath,
+                  title: testSeries ? 'Buy Test Series' : 'Buy Quizzes',
+                })
+              : props.navigation.navigate(
+                  testSeries ? 'PrelimsTestSeries' : 'Quiz',
+                  {
+                    attempts:
+                      props.route.params.extraInfoData?.[item]?.attempts,
+                    name: testSeries ? item : props.route.params.name,
+                    /*  onPressRightIcon: () =>
+                    props.navigation.navigate('LeaderBoard', {
+                      state: props.route.params.name,
+                      quiz: item,
+                    }), */
+                    quiz: getQuiz(props.route.params.quizzes[item]),
+                    quizzes: props.route.params.quizzes[item],
+                    quizName: item.toUpperCase(),
+                    //rightIcon: 'podium',
+                    //showRightIcon: testSeries ? true : false,
+                    total: total,
+                    state: props.route.params.name,
+                    onGoBack: () => {
+                      console.log('fetching: ', fetchPath);
+                      fetchData(fetchPath, user, setLoading, setData);
+                    },
+                  },
+                );
+          }}
+          style={{
+            ...styles.attempt,
+            ...(testSeries ? {flex: 1, width: '100%'} : {}),
+            ...(completed
+              ? {
+                  borderColor: '#4B4FA655',
+                  backgroundColor: colors.secondary,
+                }
+              : {}),
+          }}>
+          <Text style={styles.seriesTimeText}>
+            {/* {props.route.params.quizzes[item].testTime + ' hours'} */}
+            {locked ? 'Unlock 🔓' : (completed ? 'Re-' : '') + 'Attempt'}
+          </Text>
+        </TouchableOpacity>
+      );
+    };
+
     useEffect(() => {
       decideText(index, setLocked);
-    }, []);
+    }, [index]);
     return (
       <View key={index} style={styles.topic}>
         <View
           style={[
             styles.seriesTime,
-            {backgroundColor: colors.blue, paddingVertical: 8},
+            {
+              backgroundColor: colors.blue,
+              paddingVertical: 8,
+              borderWidth: 0,
+              marginLeft: 0,
+            },
           ]}>
           <Text key={index} style={styles.text}>
             {item.toUpperCase()}
           </Text>
         </View>
-        <View style={{paddingHorizontal: 16, paddingVertical: 24}}>
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingBottom: testSeries ? 16 : 24,
+            paddingTop: 24,
+          }}>
           <View style={styles.quizOptionsView}>
             <Text
               style={{
@@ -151,61 +216,36 @@ function QuizzesScreen(props) {
                 </Text>
               </TouchableOpacity>
             ) : null}
-            <TouchableOpacity
-              style={{
-                ...styles.button,
-                ...(completed
-                  ? {
-                      borderColor: colors.secondary,
-                      backgroundColor: colors.secondary,
-                    }
-                  : {}),
-              }}
-              onPress={() => {
-                locked
-                  ? props.navigation.navigate('Purchase', {
-                      item: testSeries ? 'testSeries' : 'quizzes',
-                      popScreens: 3,
-                      premium: premium,
-                      premiumPath: premiumPath,
-                      title: testSeries ? 'Buy Test Series' : 'Buy Quizzes',
-                    })
-                  : props.navigation.navigate(
-                      testSeries ? 'PrelimsTestSeries' : 'Quiz',
-                      {
-                        attempts:
-                          props.route.params.extraInfoData?.[item]?.attempts,
-                        name: testSeries ? item : props.route.params.name,
-                        onPressRightIcon: () =>
-                          props.navigation.navigate('LeaderBoard', {
-                            state: props.route.params.name,
-                            quiz: item,
-                          }),
-                        quiz: getQuiz(props.route.params.quizzes[item]),
-                        quizzes: props.route.params.quizzes[item],
-                        quizName: item.toUpperCase(),
-                        rightIcon: 'podium',
-                        showRightIcon: testSeries ? true : false,
-                        total: total,
-                        state: props.route.params.name,
-                        onGoBack: () => {
-                          console.log('fetching: ', fetchPath);
-                          fetchData(fetchPath, user, setLoading, setData);
-                        },
-                      },
-                    );
-              }}>
-              <Text style={{color: colors.black, fontSize: ms(12)}}>
-                {locked ? 'Unlock' : (completed ? 'Re-' : '') + 'Attempt'}
+
+            {testSeries ? (
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: ms(14),
+                  fontWeight: 'bold',
+                }}>
+                {'⌛ ' + props.route.params.quizzes[item].testTime + ' hours'}
               </Text>
-            </TouchableOpacity>
+            ) : (
+              <AttemptButton />
+            )}
           </View>
         </View>
         {testSeries && (
-          <View style={styles.seriesTime}>
-            <Text style={styles.seriesTimeText}>
-              {props.route.params.quizzes[item].testTime + ' hours'}
-            </Text>
+          <View style={styles.footer}>
+            {!locked && (
+              <TouchableOpacity
+                onPress={() => {
+                  props.navigation.navigate('LeaderBoard', {
+                    state: props.route.params.name,
+                    quiz: item,
+                  });
+                }}
+                style={styles.ledaerboard}>
+                <Text style={styles.ledaerboardText}>Leaderboard</Text>
+              </TouchableOpacity>
+            )}
+            <AttemptButton />
           </View>
         )}
         {props.route.params.showExtraInfo && (
@@ -311,16 +351,56 @@ const styles = StyleSheet.create({
     width: '60%',
     alignSelf: 'center',
   },
-  seriesTime: {
+  footer: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
+    flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: 3,
-    paddingHorizontal: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
     width: '100%',
   },
-  seriesTimeText: {
+  seriesTime: {
+    alignItems: 'center',
+    backgroundColor: colors.seaGreen,
+    borderWidth: 2,
+    borderColor: '#30b0b0',
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingVertical: 3,
+    paddingHorizontal: 16,
+    marginLeft: 2,
+    width: '100%',
+  },
+  attempt: {
+    alignItems: 'center',
+    backgroundColor: colors.seaGreen,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#30b0b0',
+    justifyContent: 'flex-end',
+    paddingVertical: 3,
+    paddingHorizontal: 16,
+    marginLeft: 2,
+  },
+  ledaerboard: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: colors.secondaryDark,
+    flex: 1,
+    justifyContent: 'flex-start',
+    paddingVertical: 3,
+    paddingHorizontal: 16,
+    marginRight: 2,
+    width: '100%',
+  },
+  ledaerboardText: {
     color: colors.white,
+    fontSize: 14,
+  },
+  seriesTimeText: {
+    color: colors.black,
     fontSize: 14,
   },
   text: {

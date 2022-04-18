@@ -25,9 +25,8 @@ const App = () => {
   const [isReady, setIsReady] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
-  const timeOut = setTimeout(() => setShowSplash(false), 3000);
-
   useEffect(() => {
+    const timeOut = setTimeout(() => setShowSplash(false), 3000);
     return () => timeOut && clearTimeout(timeOut);
   }, []);
 
@@ -57,7 +56,7 @@ const App = () => {
         crashlytics().log('Error in App.js while fetching authtoken: ', error);
         setIsReady(true);
       });
-  }, []);
+  }, [user]);
 
   if (!isReady || showSplash) {
     return (

@@ -71,7 +71,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
       });
   };
   useEffect(() => {
-    if (startRedirection) {
+    if (startRedirection && !interval) {
       setIntervalValue(
         setInterval(() => {
           setProgress((v) => v + 1);
@@ -79,7 +79,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
       );
     }
     return () => clearInterval(interval);
-  }, [startRedirection]);
+  }, [startRedirection, interval]);
 
   useEffect(() => {
     if (progress === 10) {
@@ -88,7 +88,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
       setStartRedirection(false);
       navigation.pop(params.popScreens);
     }
-  }, [progress]);
+  }, [progress, interval, navigation, params.popScreens]);
 
   const successCallback = (data) => {
     console.log('See success: ', data);
@@ -152,7 +152,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
       .catch((e) => {
         crashlytics().log('Error in fetching token: ', e);
         console.log('Error in fetching token: ', e);
-        failureCallback(result);
+        failureCallback({txMsg: 'Error in fetching token'});
         setLoading(false);
       });
   };
