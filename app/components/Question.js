@@ -9,66 +9,31 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import colors from '../config/colors';
 
 function Question({
-  setScore,
   question,
   index = 0,
   prefill = '',
-  setTotalAttempt,
-  negativeMarking = 0,
   view,
+  selection,
   setSelections,
 }) {
-  const [value, setValue] = useState(prefill);
-  const [previousValue, setPreviousValue] = useState('');
-  const [selected, setSelected] = useState(false);
+  const [value, setValue] = useState(view ? prefill : selection);
 
   useEffect(() => {
-    if (selected) setTotalAttempt((v) => v + 1);
-  }, [selected, setTotalAttempt]);
-  useEffect(() => {
-    if (value) {
-      setSelected(true);
-      if (value === question.correct.toLowerCase()) {
-        if (previousValue) {
-          if (previousValue === question.correct.toLowerCase())
-            setScore((v) => v);
-          else setScore((v) => v + negativeMarking + 1);
-        } else setScore((v) => v + 1);
-      } else {
-        if (previousValue) {
-          if (previousValue === question.correct.toLowerCase())
-            setScore((v) => v - 1 - negativeMarking);
-          else setScore((v) => v);
-        } else setScore((v) => v - negativeMarking);
-      }
-    }
     setSelections((v) => {
       v[index] = value;
       return {...v};
     });
-    setPreviousValue(value);
-  }, [
-    value,
-    index,
-    negativeMarking,
-    previousValue,
-    question.correct,
-    setScore,
-    setSelections,
-  ]);
+  }, [value, index, setSelections]);
 
   const Radio = ({label, option}) => {
     return (
-      <View style={styles.radioContainer}>
-        <RadioButtonLabel
-          index={1}
-          obj={{label: label, value: 0}}
-          labelHorizontal={true}
-          onPress={() => setValue(option)}
-          labelStyle={styles.option}
-          labelWrapStyle={{width: '90%'}}
-          disabled={view ? true : false}
-        />
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => {
+          setValue(option.toLowerCase());
+        }}
+        keyboardShouldPersistTaps="always"
+        style={styles.radioContainer}>
         {view ? (
           value === option ? (
             option === question.correct.toLowerCase() ? (
@@ -94,7 +59,9 @@ function Question({
             <RadioButtonInput
               index={1}
               obj={{label: question.a, value: 0}}
-              onPress={() => setValue(option.toLowerCase())}
+              onPress={() => {
+                setValue(option.toLowerCase());
+              }}
               isSelected={false}
               buttonInnerColor={colors.primary}
               buttonOuterColor={colors.primary}
@@ -106,15 +73,29 @@ function Question({
           <RadioButtonInput
             index={1}
             obj={{label: question.a, value: 0}}
-            onPress={() => setValue(option.toLowerCase())}
+            onPress={() => {
+              setValue(option.toLowerCase());
+            }}
             isSelected={value === option}
             buttonInnerColor={colors.primary}
             buttonOuterColor={colors.primary}
             disabled={view ? true : false}
             buttonSize={12}
+            buttonWrapStyle={{paddingVertical: 8}}
           />
         )}
-      </View>
+        <RadioButtonLabel
+          index={1}
+          obj={{label: label, value: 0}}
+          labelHorizontal={true}
+          onPress={() => {
+            setValue(option.toLowerCase());
+          }}
+          labelStyle={styles.option}
+          labelWrapStyle={{width: '90%'}}
+          disabled={view ? true : false}
+        />
+      </TouchableOpacity>
     );
   };
   return (
@@ -149,23 +130,7 @@ function Question({
         <TouchableOpacity
           style={styles.clearSelection}
           onPress={() => {
-            if (
-              previousValue &&
-              previousValue === question.correct.toLowerCase()
-            ) {
-              setScore((v) => v - 1);
-            } else if (
-              previousValue &&
-              previousValue !== question.correct.toLowerCase()
-            ) {
-              setScore((v) => v + negativeMarking);
-            }
             setValue('');
-            if (selected) {
-              setTotalAttempt((v) => v - 1);
-              setSelected(false);
-            }
-            setSelected(false);
           }}>
           <Text style={styles.clearSelectionText}>Clear selection</Text>
         </TouchableOpacity>
@@ -198,7 +163,8 @@ const styles = StyleSheet.create({
   option: {
     fontSize: 16,
     textAlign: 'left',
-    paddingLeft: 0,
+    paddingLeft: 8,
+    paddingVertical: 8,
   },
   question: {
     fontSize: 18,
@@ -212,8 +178,12 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between',
     marginVertical: 8,
-    alignItems: 'center',
-    padding: 0,
+    alignItems: 'flex-start',
+    borderWidth: 2,
+    borderColor: colors.secondary,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   radioform: {
     width: '100%',

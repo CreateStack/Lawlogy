@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -18,19 +18,34 @@ import {ms, s, vs} from '../utils/scalingUtils';
 
 const fetchData = (path, phone, setLoading, setData) => {
   const ref = ('/student/' + phone + '/' + path).trim();
-  setLoading(true);
+  setLoading((v) => {
+    v.push(path);
+    return [...v];
+  });
   database()
     .ref(ref)
     .once('value')
     .then((snapshot) => {
       setData(snapshot.val() || {});
-      setLoading(false);
+      setLoading((v) => {
+        let index = v.indexOf(path);
+        if (index > -1) {
+          v.splice(index, 1);
+        }
+        return [...v];
+      });
     })
     .catch((e) => {
       console.log('Error while fetching: ', e);
       crashlytics().log('Error while fetching: ', e);
       setData({});
-      setLoading(false);
+      setLoading((v) => {
+        let index = v.indexOf(path);
+        if (index > -1) {
+          v.splice(index, 1);
+        }
+        return [...v];
+      });
     });
 };
 
@@ -52,9 +67,10 @@ function QuizzesScreen(props) {
   }
   const premium = props.route.params.premium;
   const [data, setData] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState([]);
   const [studentPremium, setStudentPremium] = useState(false);
-  useEffect(() => {
+
+  const fetch = useCallback(() => {
     fetchData(fetchPath, user, setLoading, setData);
     fetchData(premiumPath, user, setLoading, (value) => {
       let premium = value.premium;
@@ -71,6 +87,10 @@ function QuizzesScreen(props) {
       }
     });
   }, [fetchPath, premiumPath, user]);
+
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
 
   const getQuiz = (quiz) => {
     if (testSeries) {
@@ -137,7 +157,7 @@ function QuizzesScreen(props) {
                     state: props.route.params.name,
                     onGoBack: () => {
                       console.log('fetching: ', fetchPath);
-                      fetchData(fetchPath, user, setLoading, setData);
+                      fetch();
                     },
                   },
                 );
@@ -145,7 +165,7 @@ function QuizzesScreen(props) {
           style={{
             ...styles.attempt,
             ...(testSeries ? {flex: 1, width: '100%'} : {}),
-            ...(completed
+            ...(completed && !locked
               ? {
                   borderColor: '#4B4FA655',
                   backgroundColor: colors.secondary,
@@ -194,7 +214,7 @@ function QuizzesScreen(props) {
               }}>
               {'Score: ' + score + '/' + total}
             </Text>
-            {completed ? (
+            {completed && !locked ? (
               <TouchableOpacity
                 style={{
                   ...styles.button,
@@ -270,7 +290,7 @@ function QuizzesScreen(props) {
   };
   return (
     <>
-      <ActivityIndicator visible={loading} />
+      <ActivityIndicator visible={loading.length > 0} />
       <View style={styles.container}>
         <FlatList
           data={quizzes}
@@ -285,7 +305,7 @@ function QuizzesScreen(props) {
             alignItems: 'center',
           }}
           onRefresh={() => fetchData(fetchPath, user, setLoading, setData)}
-          refreshing={loading}
+          refreshing={loading.length > 0}
         />
       </View>
     </>
