@@ -17,11 +17,10 @@ import AuthContext from '../auth/context';
 import Question from '../components/Question';
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
+import {calculateScore} from '../utils/calculateScore';
 
 function QuestionsScreen(props) {
   const {user} = useContext(AuthContext);
-  const [score, setScore] = useState(0);
-  const [totalAttempt, setTotalAttempt] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [selections, setSelections] = useState({});
   const {data, negativeMarking = 0, view} = props.route.params;
@@ -79,7 +78,11 @@ function QuestionsScreen(props) {
     console.log('Ref: ', ref);
     const updatation = {
       completed: true,
-      score: score,
+      score: calculateScore(
+        negativeMarking,
+        props.route.params.quiz.filter((ques) => ques),
+        selections,
+      ),
       attempts: parseInt(props.route.params.attempts || 0) + 1,
       ...selections,
     };
@@ -107,9 +110,10 @@ function QuestionsScreen(props) {
     props.route.params.onGoBack,
     props.route.params.popScreens,
     quizName,
-    score,
     selections,
     props.route.params.attempts,
+    negativeMarking,
+    props.route.params.quiz,
   ]);
   let quiz = props.route.params.quiz;
   if (!quiz)
@@ -148,11 +152,9 @@ function QuestionsScreen(props) {
       <Question
         index={index}
         question={item}
-        setScore={setScore}
-        setTotalAttempt={setTotalAttempt}
-        negativeMarking={negativeMarking}
         prefill={view ? data[index] : ''}
         view={view}
+        selection={selections[index] || ''}
         setSelections={setSelections}
       />
     );
@@ -180,6 +182,9 @@ function QuestionsScreen(props) {
             backgroundColor: colors.primary,
           }}
           onPress={() => {
+            let totalAttempt = Object.keys(selections || {}).filter(
+              (selection) => selection,
+            ).length;
             if (totalAttempt !== props.route.params.total) {
               Alert.alert(
                 'Sure to submit?',
@@ -207,6 +212,8 @@ function QuestionsScreen(props) {
     <View style={styles.container}>
       <FlatList
         data={quiz}
+        disableVirtualization
+        initialNumToRender={20}
         ListHeaderComponent={headerItem}
         ListHeaderComponentStyle={{width: '100%'}}
         renderItem={renderItem}
@@ -217,21 +224,9 @@ function QuestionsScreen(props) {
           padding: 16,
         }}
         style={{width: '100%', marginBottom: view ? 0 : 88}}
+        keyboardShouldPersistTaps="always"
       />
-      {view ? null : (
-        <View
-          style={{
-            backgroundColor: colors.lightBlue,
-            elevation: 5,
-            paddingHorizontal: 40,
-            paddingVertical: 8,
-            width: Dimensions.get('window').width - 16,
-            position: 'absolute',
-            bottom: 16,
-          }}>
-          {footerItem()}
-        </View>
-      )}
+      {view ? null : <View style={styles.footer}>{footerItem()}</View>}
       {showScore ? (
         <>
           <ActivityIndicator
@@ -258,7 +253,11 @@ function QuestionsScreen(props) {
                 textAlign: 'center',
                 zIndex: 5,
               }}>
-              Your score is: {'\n' + score + ' / ' + props.route.params.total}
+              Your score is:{' '}
+              {'\n' +
+                calculateScore(negativeMarking, quiz, selections) +
+                ' / ' +
+                props.route.params.total}
             </Text>
           </View>
         </>
@@ -286,6 +285,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.white,
     textAlign: 'center',
+  },
+  footer: {
+    backgroundColor: colors.lightBlue,
+    elevation: 5,
+    paddingHorizontal: 40,
+    paddingVertical: 8,
+    width: Dimensions.get('window').width - 16,
+    position: 'absolute',
+    bottom: 16,
   },
 });
 
