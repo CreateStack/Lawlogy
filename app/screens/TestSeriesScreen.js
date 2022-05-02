@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,10 +11,13 @@ import {
 import _ from 'lodash';
 import database from '@react-native-firebase/database';
 import crashlytics from '@react-native-firebase/crashlytics';
+import LinearGradient from 'react-native-linear-gradient';
 
 import colors from '../config/colors';
 import AuthContext from '../auth/context';
 import ActivityIndicator from '../components/ActivityIndicator';
+import {vs} from '../utils/scalingUtils';
+import Separator from '../components/Separator';
 
 const fetchData = (path, phone, setLoading, setData) => {
   const ref = ('/student/' + phone + '/' + path).trim();
@@ -40,36 +44,64 @@ function TopicScreen({navigation, route}) {
   let items = Object.keys(params.items);
   if (items.length) {
     items = items.sort((a, b) => {
-      return a.normalize().localeCompare(b.normalize());
+      return a.normalize().localeCompare(b.normalize()); //alphabetically arranged confirm how to sort
     });
   }
 
   const StateButton = ({item, index}) => {
-    const [showOptions, setShowOptions] = useState(false);
-    const noOfMains = Object.values(params.items[item].mains || {}).filter(
-      (item) => item !== null,
-    ).length;
-    const noOfPrelims = Object.values(params.items[item].prelims || {}).filter(
-      (item) => item !== null,
-    ).length;
-    return showOptions ? (
-      <View style={styles.topic}>
-        <TouchableOpacity
-          key={index + 'prelims'}
-          style={{
-            backgroundColor: colors.primary,
-            paddingHorizontal: 16,
-            paddingVertical: 16,
-            width: '50%',
-          }}
+    const prelimsFlyerInfo = params.items[item].prelimsFlyer || {};
+    const mainsFlyerInfo = params.items[item].mainsFlyer || {};
+
+    const Flyer = ({flyerInfo, onPress}) => {
+      return (
+        <TouchableOpacity style={styles.topic} onPress={onPress}>
+          <LinearGradient colors={['#CCCCFF', '#fff']} style={styles.gradient}>
+            {flyerInfo.image ? (
+              <Image
+                source={{uri: flyerInfo.image}}
+                style={styles.flyerImage}
+              />
+            ) : null}
+            <Text key={index} style={styles.flyerTitle}>
+              {flyerInfo.title}
+            </Text>
+            <View style={styles.testNumberContainer}>
+              <Text style={styles.testNumber}>
+                {flyerInfo.testNumber?.split('|')[0] +
+                  (flyerInfo.testNumber?.split('|')[1] ? ' | ' : '')}
+              </Text>
+              <Text style={styles.freeTestNumber}>
+                {flyerInfo.testNumber?.split('|')[1]}
+              </Text>
+            </View>
+            <View style={styles.testsInfo}>
+              {Object.values(flyerInfo.info || {})
+                .filter((v) => v)
+                .map((info, index) => {
+                  return (
+                    <Text key={index.toString()} style={styles.info}>
+                      {info}
+                    </Text>
+                  );
+                })}
+            </View>
+            <Separator style={styles.separator} dashColor={colors.silver} />
+            <TouchableOpacity onPress={onPress} style={styles.view}>
+              <Text style={styles.viewText}>View</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </TouchableOpacity>
+      );
+    };
+
+    return (
+      <>
+        <Flyer
+          flyerInfo={prelimsFlyerInfo}
+          key={index.toString() + ' prelims'}
           onPress={() => {
             const setData = (data) => {
               navigation.navigate('Quizzes', {
-                /* data: {
-                  rightIcon: 'podium',
-                  showRightIcon: true,
-                  state: item,
-                }, */
                 extraInfoData: data,
                 itemName: 'Tests',
                 name: item,
@@ -82,33 +114,11 @@ function TopicScreen({navigation, route}) {
               });
             };
             fetchData('prelimsTestSeries/' + item, user, setLoading, setData);
-            console.log(params.items[item].prelims);
-          }}>
-          <Text key={index} style={{...styles.text, color: colors.white}}>
-            Preliminary
-          </Text>
-          <View
-            style={[
-              styles.extraInfo,
-              {
-                backgroundColor: colors.yellow,
-                borderBottomRightRadius: 10,
-                left: 0,
-              },
-            ]}>
-            <Text style={styles.extraInfoText}>
-              {(noOfPrelims || 0) + ' Test' + (noOfPrelims > 1 ? 's' : '')}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          key={index + 'mains'}
-          style={{
-            backgroundColor: colors.yellow,
-            paddingHorizontal: 16,
-            paddingVertical: 16,
-            width: '50%',
           }}
+        />
+        <Flyer
+          flyerInfo={mainsFlyerInfo}
+          key={index + 'mains'}
           onPress={() => {
             navigation.navigate('Topics', {
               itemName: 'Tests',
@@ -118,39 +128,9 @@ function TopicScreen({navigation, route}) {
               title: 'Tests',
             }),
               console.log(params.items[item].mains);
-          }}>
-          <Text key={index} style={styles.text}>
-            Mains
-          </Text>
-          <View
-            style={[
-              styles.extraInfo,
-              {
-                backgroundColor: colors.primary,
-                borderBottomLeftRadius: 10,
-                right: 0,
-              },
-            ]}>
-            <Text style={[styles.extraInfoText, {color: colors.white}]}>
-              {(noOfMains || 0) + ' Test' + (noOfMains > 1 ? 's' : '')}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    ) : (
-      <TouchableOpacity
-        key={index}
-        style={{...styles.topic, paddingHorizontal: 16, paddingVertical: 16}}
-        onPress={() => {
-          setShowOptions(true);
-          setTimeout(() => {
-            setShowOptions(false);
-          }, 5000);
-        }}>
-        <Text key={index} style={styles.text}>
-          {_.startCase(_.toLower(item))}
-        </Text>
-      </TouchableOpacity>
+          }}
+        />
+      </>
     );
   };
 
@@ -194,6 +174,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: '100%',
   },
+  flyerImage: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    position: 'absolute',
+    top: 8,
+    right: 8,
+  },
+  flyerTitle: {
+    color: colors.black,
+    flex: 1,
+    flexWrap: 'wrap',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  freeTestNumber: {
+    color: colors.green,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  gradient: {
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    width: '100%',
+  },
   imageBackground: {
     height: 62,
     width: '20%',
@@ -202,12 +209,23 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomLeftRadius: 8,
   },
-  text: {
+  info: {
+    color: colors.greyDark,
+    fontSize: 14,
+  },
+  separator: {
+    marginVertical: 16,
+    width: '100%',
+  },
+  testsInfo: {
+    marginTop: vs(12),
+  },
+  testNumber: {
     color: colors.black,
-    flex: 1,
-    flexWrap: 'wrap',
-    fontSize: 16,
-    marginLeft: 4,
+    fontSize: 18,
+  },
+  testNumberContainer: {
+    flexDirection: 'row',
   },
   topic: {
     alignItems: 'center',
@@ -220,6 +238,20 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     overflow: 'hidden',
     width: Dimensions.get('window').width - 40,
+  },
+  view: {
+    alignItems: 'center',
+    backgroundColor: colors.green,
+    borderRadius: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    width: '100%',
+  },
+  viewText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

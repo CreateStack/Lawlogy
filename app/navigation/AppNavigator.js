@@ -21,7 +21,11 @@ const Stack = createStackNavigator();
 const AppNavigator = () => (
   <Stack.Navigator
     screenOptions={{
-      header: (props) => <Header {...props} />,
+      header: (props) => {
+        return props.scene.route.params.hideHeader ? null : (
+          <Header {...props} />
+        );
+      },
     }}>
     <Stack.Screen
       name="Main"
