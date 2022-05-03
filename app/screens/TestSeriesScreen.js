@@ -96,40 +96,44 @@ function TopicScreen({navigation, route}) {
 
     return (
       <>
-        <Flyer
-          flyerInfo={prelimsFlyerInfo}
-          key={index.toString() + ' prelims'}
-          onPress={() => {
-            const setData = (data) => {
-              navigation.navigate('Quizzes', {
-                extraInfoData: data,
+        {params.items[item].prelims ? (
+          <Flyer
+            flyerInfo={prelimsFlyerInfo}
+            key={index.toString() + ' prelims'}
+            onPress={() => {
+              const setData = (data) => {
+                navigation.navigate('Quizzes', {
+                  extraInfoData: data,
+                  itemName: 'Tests',
+                  name: item,
+                  navigateToScreen: 'PrelimsTestSeries',
+                  premium: params.premium,
+                  quizzes: params.items[item].prelims,
+                  showExtraInfo: true,
+                  testSeries: true,
+                  title: 'Tests',
+                });
+              };
+              fetchData('prelimsTestSeries/' + item, user, setLoading, setData);
+            }}
+          />
+        ) : null}
+        {params.items[item].mains ? (
+          <Flyer
+            flyerInfo={mainsFlyerInfo}
+            key={index + 'mains'}
+            onPress={() => {
+              navigation.navigate('Topics', {
                 itemName: 'Tests',
-                name: item,
-                navigateToScreen: 'PrelimsTestSeries',
-                premium: params.premium,
-                quizzes: params.items[item].prelims,
-                showExtraInfo: true,
-                testSeries: true,
+                items: params.items[item].mains,
+                navigateToScreen: 'MainsTestSeries',
+                showExtraInfo: false,
                 title: 'Tests',
-              });
-            };
-            fetchData('prelimsTestSeries/' + item, user, setLoading, setData);
-          }}
-        />
-        <Flyer
-          flyerInfo={mainsFlyerInfo}
-          key={index + 'mains'}
-          onPress={() => {
-            navigation.navigate('Topics', {
-              itemName: 'Tests',
-              items: params.items[item].mains,
-              navigateToScreen: 'MainsTestSeries',
-              showExtraInfo: false,
-              title: 'Tests',
-            }),
-              console.log(params.items[item].mains);
-          }}
-        />
+              }),
+                console.log(params.items[item].mains);
+            }}
+          />
+        ) : null}
       </>
     );
   };

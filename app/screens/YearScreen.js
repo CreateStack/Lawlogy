@@ -19,7 +19,6 @@ const OptionButton = ({
   setShowMainsPapers,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
-
   const [newMainsPaper, setNewMainsPaper] = useState({});
   useEffect(() => {
     const mainsPapers = params.quizzes[item].mains;
@@ -41,7 +40,7 @@ const OptionButton = ({
         }
       });
     }
-  }, []);
+  }, [item, params.quizzes]);
   return showOptions && Object.keys(newMainsPaper).length ? (
     <View style={styles.topic}>
       <TouchableOpacity

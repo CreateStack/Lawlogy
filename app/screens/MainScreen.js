@@ -13,6 +13,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
 import {ms} from '../utils/scalingUtils';
+import Banner from '../components/Banner';
 
 const loadData = (path, setData, setLoading) => {
   setLoading((v) => {
@@ -51,6 +52,7 @@ function MainScreen(props) {
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [testSeries, setTestSeries] = useState();
   const [premium, setPremium] = useState();
+  const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
 
   const loadFunc = () => {
@@ -59,6 +61,11 @@ function MainScreen(props) {
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
     loadData('/testSeries', setTestSeries, setLoading);
     loadData('/premium', setPremium, setLoading);
+    loadData(
+      '/banner',
+      (data) => setBanners(Object.values(data) || {}),
+      setLoading,
+    );
   };
 
   useEffect(() => {
@@ -90,7 +97,7 @@ function MainScreen(props) {
         props.navigation.navigate('TestSeries', {
           itemName: 'Year',
           items: testSeries,
-          title: 'States',
+          title: 'Series',
           premium: premium.testSeries,
         }),
       disabled: testSeries,
@@ -114,7 +121,7 @@ function MainScreen(props) {
       disabled: questions,
       imageBackground: require('../assets/questions.jpg'),
       blurRadius: 1.2,
-      text: ' Mains Questions',
+      text: 'Mains Questions',
       extraInfo: questions
         ? Object.keys(questions).length +
           (Object.keys(questions).length > 1 ? ' Topics' : ' Topic')
@@ -184,12 +191,54 @@ function MainScreen(props) {
     );
   };
 
+  const handleBannerOnPress = ({navigateToScreen}) => {
+    switch (navigateToScreen) {
+      case 'Quizzes':
+        data[0].onPress();
+        break;
+      case 'TestSeries':
+        data[1].onPress();
+        break;
+      case 'Questions':
+        data[2].onPress();
+        break;
+      case 'Years':
+        data[3].onPress();
+        break;
+      case 'Study Material':
+        data[4].onPress();
+        break;
+      case 'Our Courses':
+        data[5].onPress();
+        break;
+      case 'Live Classes':
+        data[6].onPress();
+        break;
+      default:
+        break;
+    }
+  };
+
+  const headerComponent = () => {
+    return banners?.length ? (
+      <View style={styles.banner}>
+        <Banner
+          data={banners.filter((banner) => banner)}
+          height={150}
+          timer={2000}
+          handlePress={handleBannerOnPress}
+        />
+      </View>
+    ) : null;
+  };
+
   return (
     <>
       <ActivityIndicator visible={loading.length > 0} />
       <FlatList
         columnWrapperStyle={{justifyContent: 'space-between'}}
         data={data}
+        ListHeaderComponent={headerComponent}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
         onRefresh={loadFunc}
@@ -202,6 +251,11 @@ function MainScreen(props) {
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    borderRadius: 8,
+    marginTop: 8,
+    overflow: 'hidden',
+  },
   extraInfo: {
     backgroundColor: colors.yellow,
     paddingHorizontal: 8,

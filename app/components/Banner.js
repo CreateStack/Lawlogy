@@ -1,11 +1,10 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   View,
   StyleSheet,
   FlatList,
   Dimensions,
   TouchableOpacity,
-  Image,
   ImageBackground,
   Text,
 } from 'react-native';
@@ -36,6 +35,7 @@ function Card({
         }}>
         <ImageBackground
           testID={'image'}
+          resizeMode={'stretch'}
           source={{uri: imageUrl}}
           style={{
             flex: 1,
@@ -53,7 +53,7 @@ function Card({
 }
 
 function Banner({
-  height = 100,
+  height = 150,
   data = [],
   timer,
   handlePress = null,
@@ -65,17 +65,11 @@ function Banner({
   const [selectedBanner, setSelectedBanner] = useState(0);
   const [isUserInteracting, setIsUserInteracting] = useState(false);
 
-  const nextSlide = () => {
-    setSelectedBanner((prevState) => {
-      return prevState === data.length - 1 ? 0 : prevState + 1;
-    });
-  };
-
-  const validBanner = () => {
+  const validBanner = useCallback(() => {
     return (
       data.length > 0 && selectedBanner >= 0 && selectedBanner < data.length
     );
-  };
+  }, [data, selectedBanner]);
 
   const onChangeSlider = ({nativeEvent}) => {
     if (isUserInteracting) {
@@ -91,6 +85,11 @@ function Banner({
 
   useEffect(() => {
     let bannerTimer;
+    const nextSlide = () => {
+      setSelectedBanner((prevState) => {
+        return prevState === data.length - 1 ? 0 : prevState + 1;
+      });
+    };
     if (timer) {
       bannerTimer = setInterval(() => {
         if (isUserInteracting) {
@@ -103,14 +102,7 @@ function Banner({
     return () => {
       clearInterval(bannerTimer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserInteracting]);
-
-  const onHandlePress = (bannerData) => {
-    if (handlePress) {
-      handlePress(bannerData);
-    }
-  };
+  }, [data.length, isUserInteracting, timer]);
 
   useEffect(() => {
     if (scrollRef?.current && validBanner()) {
@@ -122,37 +114,45 @@ function Banner({
     if (didScroll && validBanner()) {
       didScroll(data[selectedBanner]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBanner]);
+  }, [data, didScroll, selectedBanner, validBanner]);
 
+  const renderItem = useCallback(
+    ({item}, index) => {
+      const onHandlePress = (bannerData) => {
+        if (handlePress) {
+          handlePress(bannerData);
+        }
+      };
+      return (
+        <Card
+          key={index}
+          imageUrl={item.imageUrl}
+          text={item.text || ''}
+          textColor={item.textColor || colors.white}
+          textSize={item.textSize || 16}
+          handlePress={() => onHandlePress(item)}
+          width={windowWidth}
+        />
+      );
+    },
+    [handlePress],
+  );
   return data?.length > 0 ? (
     <View
-      testID={'hero_banner'}
+      testID={'banner'}
       accessible={accessible}
       style={{...styles.container, height, width: windowWidth}}
       height={height}
       width={windowWidth}>
       <FlatList
         testID={'flat_list'}
-        initialScrollIndex={selectedBanner}
         getItemLayout={(item, index) => ({
           length: windowWidth,
           offset: windowWidth * index,
           index,
         })}
-        renderItem={({item}, index) => (
-          <Card
-            key={index}
-            imageUrl={item.imageUrl}
-            height={item.height}
-            text={item.text}
-            textColor={item.textColor}
-            textSize={item.textSize}
-            handlePress={() => onHandlePress(item)}
-            width={windowWidth}
-          />
-        )}
-        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
         style={styles.scrollViewStyles}
         ref={scrollRef}
         data={data}
@@ -164,21 +164,23 @@ function Banner({
         }}
         onMomentumScrollEnd={onChangeSlider}
       />
-      <View style={styles.wrapperIndicator}>
-        {data.map((_, i) => {
-          const isActive = i === selectedBanner;
-          return (
-            <View
-              key={i}
-              style={{
-                ...styles.indicator,
-                borderColor: isActive ? activeIndicatorColor : colors.white,
-                opacity: isActive ? 1 : 0.5,
-              }}
-            />
-          );
-        })}
-      </View>
+      {data.length > 1 && (
+        <View style={styles.wrapperIndicator}>
+          {data.map((_, i) => {
+            const isActive = i === selectedBanner;
+            return (
+              <View
+                key={i}
+                style={{
+                  ...styles.indicator,
+                  borderColor: isActive ? activeIndicatorColor : colors.white,
+                  opacity: isActive ? 1 : 0.5,
+                }}
+              />
+            );
+          })}
+        </View>
+      )}
     </View>
   ) : null;
 }

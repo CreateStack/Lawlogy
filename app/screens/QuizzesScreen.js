@@ -66,7 +66,6 @@ function QuizzesScreen(props) {
       b =
         parseInt(testSeries ? b.split('-')[1] : b.replace(/^\D+/g, '')) ||
         Number.POSITIVE_INFINITY;
-      console.log('a: ', a, ' b: ', b);
       return a - b;
     });
   }

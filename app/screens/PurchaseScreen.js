@@ -10,10 +10,10 @@ import ActivityIndicator from '../components/ActivityIndicator';
 import AuthContext from '../auth/context';
 import colors from '../config/colors';
 import {ms, s, vs} from '../utils/scalingUtils';
+import {secrets} from '../config/purchaseConstants';
 
-const appId = '15201826579c8733507d992ebf810251';
-const key = '0489ea0c3a6e62994c4dbe0c5e02da931268679b';
-const endpoint = 'https://test.cashfree.com/api/v2/cftoken/order';
+const ENV = 'TEST';
+const {appId, key, endpoint} = secrets[ENV];
 
 const PurchaseScreen = ({navigation, route: {params}}) => {
   const premium = params.premium;
@@ -27,7 +27,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const [progress, setProgress] = useState(0);
   const {user} = useContext(AuthContext);
   const total = parseFloat(premium.cost) - parseFloat(premium.discount || 0);
-  const ENV = 'TEST';
+
   const orderNumber = Math.random().toString().split('.')[1];
   const setPaymentInfo = (setLoading, data) => {
     const ref = ('student/' + user + '/' + premiumPath).trim();
@@ -56,7 +56,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
             'premium/' +
               (params.item.includes('testSeries') ? 'testSeries' : 'quizes'),
           )
-          .update({orderNumber: orderNumber})
+          .update({orderNumber: parseInt(premium.orderNumber) + 1})
           .then(() => {
             handleCompletion();
           })
@@ -137,7 +137,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           tokenData: resp.data?.cftoken || '',
         };
         console.log('map: ', data);
-        RNPgReactNativeSDK.startPaymentUPI(data, ENV, (result) => {
+        RNPgReactNativeSDK.startPaymentWEB(data, ENV, (result) => {
           result = JSON.parse(result);
           console.log('result: ', result);
           if (result.txStatus === 'SUCCESS') {
@@ -182,10 +182,10 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
             color={colors.primary}
             size={s(60)}
           />
-          <Text style={styles.header}>WHAT YOU WILL GET</Text>
+          <Text style={styles.header}>WHAT YOU WILL GET ?</Text>
           {premium.info.split('\n')?.map((item, index) => {
             return (
-              <View style={styles.info}>
+              <View style={styles.info} key={index.toString()}>
                 <Text style={styles.point}>{item}</Text>
                 <MaterialCommunityIcons
                   name={'check-decagram'}
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   },
   queriesNumber: {
     color: colors.primary,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginVertical: 8,
   },
