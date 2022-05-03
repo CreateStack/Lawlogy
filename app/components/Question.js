@@ -51,7 +51,7 @@ function Question({
               />
             )
           ) : (value !== option || !value) &&
-            option === question.correct.toLowerCase() ? (
+            option === question.correct.trim().toLowerCase() ? (
             <MaterialCommunityIcons
               name={'check'}
               size={30}
