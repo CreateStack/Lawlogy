@@ -38,8 +38,9 @@ const LeaderBoardScreen = ({route: {params}}) => {
       const board = [];
       keys.forEach((student) => {
         let info = null;
-        if (students[student].prelimsTestSeries)
+        if (students[student].prelimsTestSeries?.[state]) {
           info = students[student].prelimsTestSeries[state][quiz];
+        }
         const score = info?.score;
         const attempts = info?.attempts;
         if (score !== undefined && score !== null) {
@@ -126,7 +127,11 @@ const LeaderBoardScreen = ({route: {params}}) => {
           <Text style={[styles.attempts, styles.bold]}>Attempts</Text>
         </View>
         <Separator dashColor={colors.black} style={{width: '99%'}} />
-        <FlatList data={data} renderItem={renderItem} />
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+        />
       </View>
     </>
   );
