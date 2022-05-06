@@ -232,6 +232,7 @@ function QuizzesScreen(props) {
                     total: total,
                     name: props.route.params.name,
                     data: testCompletionData,
+                    title: 'Answers',
                     view: true,
                   });
                 }}>

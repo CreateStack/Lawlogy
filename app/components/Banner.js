@@ -35,7 +35,7 @@ function Card({
         }}>
         <ImageBackground
           testID={'image'}
-          resizeMode={'stretch'}
+          resizeMode={'cover'}
           source={{uri: imageUrl}}
           style={{
             flex: 1,

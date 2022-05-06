@@ -20,6 +20,7 @@ function Header(props) {
       onPressBack,
       onPressRightIcon,
       rightIcon,
+      leftIcon = 'arrow-left',
       showRightIcon,
       showSessionTimer,
       time,
@@ -34,6 +35,7 @@ function Header(props) {
       onPressBack,
       onPressRightIcon,
       rightIcon,
+      leftIcon,
       showRightIcon,
       showSessionTimer,
       time,
@@ -52,7 +54,7 @@ function Header(props) {
             }
             style={styles.backButtonContainer}>
             <MaterialCommunityIcons
-              name={'arrow-left'}
+              name={data.leftIcon}
               size={s(22)}
               color={colors.white}
             />

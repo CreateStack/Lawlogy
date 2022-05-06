@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -10,10 +10,12 @@ import {
 import database from '@react-native-firebase/database';
 import crashlytics from '@react-native-firebase/crashlytics';
 
+import AuthContext from '../auth/context';
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
 import {ms} from '../utils/scalingUtils';
 import Banner from '../components/Banner';
+import Menu from '../components/Menu';
 
 const loadData = (path, setData, setLoading) => {
   setLoading((v) => {
@@ -47,6 +49,8 @@ const loadData = (path, setData, setLoading) => {
 };
 
 function MainScreen(props) {
+  const {user} = useContext(AuthContext);
+
   const [questions, setQuestions] = useState();
   const [quizzes, setQuizzes] = useState();
   const [previousYearPapers, setPreviousYearPapers] = useState();
@@ -54,8 +58,30 @@ function MainScreen(props) {
   const [premium, setPremium] = useState();
   const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
 
   const loadFunc = () => {
+    loadData(
+      '/student/' + user + '/name',
+      (name) => {
+        setUserInfo((v) => {
+          v.name = name;
+          return {...v};
+        });
+      },
+      setLoading,
+    );
+    loadData(
+      '/student/' + user + '/email',
+      (email) => {
+        setUserInfo((v) => {
+          v.email = email;
+          return {...v};
+        });
+      },
+      setLoading,
+    );
     loadData('/questions', setQuestions, setLoading);
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
@@ -70,6 +96,10 @@ function MainScreen(props) {
 
   useEffect(() => {
     loadFunc();
+    props.navigation.setParams({
+      leftIcon: 'menu',
+      onPressBack: () => setShowMenu(true),
+    });
   }, []);
 
   const data = [
@@ -105,8 +135,7 @@ function MainScreen(props) {
       blurRadius: 0.5,
       text: 'Test Series',
       extraInfo: testSeries
-        ? Object.keys(testSeries).length +
-          (Object.keys(testSeries).length > 1 ? ' States' : ' State')
+        ? Object.keys(testSeries).length + ' Series'
         : 'Coming soon',
     },
     {
@@ -235,6 +264,7 @@ function MainScreen(props) {
   return (
     <>
       <ActivityIndicator visible={loading.length > 0} />
+      <Menu isVisible={showMenu} setVisible={setShowMenu} userInfo={userInfo} />
       <FlatList
         columnWrapperStyle={{justifyContent: 'space-between'}}
         data={data}
