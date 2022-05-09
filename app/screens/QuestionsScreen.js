@@ -89,7 +89,7 @@ function QuestionsScreen(props) {
     console.log('updation: ', updatation);
     database()
       .ref(ref)
-      .update(updatation)
+      .set(updatation)
       .then(() => {})
       .catch((e) => {
         Alert.alert('Error', 'There was error in setting score on cloud: ' + e);

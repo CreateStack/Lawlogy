@@ -57,7 +57,10 @@ function TopicScreen({navigation, route}) {
             <Text style={styles.extraInfoText}>
               {params.extraInfoData
                 ? (params.extraInfoData[item]?.attempts || 0) + ' Attempts'
-                : (noOfItems || 0) + ' ' + params.itemName}
+                : (noOfItems || 0) +
+                  ' ' +
+                  params.itemName +
+                  (noOfItems > 1 ? 's' : '')}
             </Text>
           </View>
         )}

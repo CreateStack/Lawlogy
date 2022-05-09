@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -10,9 +10,12 @@ import {
 import database from '@react-native-firebase/database';
 import crashlytics from '@react-native-firebase/crashlytics';
 
+import AuthContext from '../auth/context';
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
 import {ms} from '../utils/scalingUtils';
+import Banner from '../components/Banner';
+import Menu from '../components/Menu/Menu';
 
 const loadData = (path, setData, setLoading) => {
   setLoading((v) => {
@@ -46,23 +49,56 @@ const loadData = (path, setData, setLoading) => {
 };
 
 function MainScreen(props) {
+  const {user} = useContext(AuthContext);
+
   const [questions, setQuestions] = useState();
   const [quizzes, setQuizzes] = useState();
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [testSeries, setTestSeries] = useState();
   const [premium, setPremium] = useState();
+  const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const [userInfo, setUserInfo] = useState({phone: user});
 
   const loadFunc = () => {
+    loadData(
+      '/student/' + user,
+      (data) => {
+        setUserInfo((v) => {
+          v.name = data.name;
+          v.premium = {};
+          Object.keys(data).forEach((key) => {
+            if (
+              key.toLowerCase() !== 'premium' &&
+              key.toLowerCase().includes('premium')
+            ) {
+              v.premium[key] = data[key];
+            }
+          });
+          return {...v};
+        });
+      },
+      setLoading,
+    );
     loadData('/questions', setQuestions, setLoading);
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
     loadData('/testSeries', setTestSeries, setLoading);
     loadData('/premium', setPremium, setLoading);
+    loadData(
+      '/banner',
+      (data) => setBanners(Object.values(data) || {}),
+      setLoading,
+    );
   };
 
   useEffect(() => {
     loadFunc();
+    props.navigation.setParams({
+      leftIcon: 'menu',
+      onPressBack: () => setShowMenu(true),
+    });
   }, []);
 
   const data = [
@@ -90,7 +126,7 @@ function MainScreen(props) {
         props.navigation.navigate('TestSeries', {
           itemName: 'Year',
           items: testSeries,
-          title: 'States',
+          title: 'Series',
           premium: premium.testSeries,
         }),
       disabled: testSeries,
@@ -98,8 +134,7 @@ function MainScreen(props) {
       blurRadius: 0.5,
       text: 'Test Series',
       extraInfo: testSeries
-        ? Object.keys(testSeries).length +
-          (Object.keys(testSeries).length > 1 ? ' States' : ' State')
+        ? Object.keys(testSeries).length + ' Series'
         : 'Coming soon',
     },
     {
@@ -114,7 +149,7 @@ function MainScreen(props) {
       disabled: questions,
       imageBackground: require('../assets/questions.jpg'),
       blurRadius: 1.2,
-      text: ' Mains Questions',
+      text: 'Mains Questions',
       extraInfo: questions
         ? Object.keys(questions).length +
           (Object.keys(questions).length > 1 ? ' Topics' : ' Topic')
@@ -123,7 +158,7 @@ function MainScreen(props) {
     {
       onPress: () =>
         props.navigation.navigate('Topics', {
-          itemName: 'Years',
+          itemName: 'Year',
           items: previousYearPapers,
           image: require('../assets/previousYearPapers.jpg'),
           navigateToScreen: 'Years',
@@ -137,7 +172,7 @@ function MainScreen(props) {
       text: 'Previous Year Papers',
       extraInfo: previousYearPapers
         ? Object.keys(previousYearPapers).length +
-          (Object.keys(previousYearPapers).length > 1 ? ' States' : ' State')
+          (Object.keys(previousYearPapers).length > 1 ? ' Items' : ' Item')
         : 'Coming soon',
     },
     {
@@ -184,12 +219,55 @@ function MainScreen(props) {
     );
   };
 
+  const handleBannerOnPress = ({navigateToScreen}) => {
+    switch (navigateToScreen) {
+      case 'Quizzes':
+        data[0].onPress();
+        break;
+      case 'TestSeries':
+        data[1].onPress();
+        break;
+      case 'Questions':
+        data[2].onPress();
+        break;
+      case 'Years':
+        data[3].onPress();
+        break;
+      case 'Study Material':
+        data[4].onPress();
+        break;
+      case 'Our Courses':
+        data[5].onPress();
+        break;
+      case 'Live Classes':
+        data[6].onPress();
+        break;
+      default:
+        break;
+    }
+  };
+
+  const headerComponent = () => {
+    return banners?.length ? (
+      <View style={styles.banner}>
+        <Banner
+          data={banners.filter((banner) => banner)}
+          height={150}
+          timer={2000}
+          handlePress={handleBannerOnPress}
+        />
+      </View>
+    ) : null;
+  };
+
   return (
     <>
       <ActivityIndicator visible={loading.length > 0} />
+      <Menu isVisible={showMenu} setVisible={setShowMenu} userInfo={userInfo} />
       <FlatList
         columnWrapperStyle={{justifyContent: 'space-between'}}
         data={data}
+        ListHeaderComponent={headerComponent}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
         onRefresh={loadFunc}
@@ -202,6 +280,11 @@ function MainScreen(props) {
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    borderRadius: 8,
+    marginTop: 8,
+    overflow: 'hidden',
+  },
   extraInfo: {
     backgroundColor: colors.yellow,
     paddingHorizontal: 8,

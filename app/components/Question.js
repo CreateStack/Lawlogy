@@ -29,6 +29,7 @@ function Question({
     return (
       <TouchableOpacity
         activeOpacity={1}
+        disabled={view}
         onPress={() => {
           setValue(option.toLowerCase());
         }}
@@ -49,7 +50,8 @@ function Question({
                 color={colors.redText}
               />
             )
-          ) : value !== option && option === question.correct.toLowerCase() ? (
+          ) : (value !== option || !value) &&
+            option === question.correct.trim().toLowerCase() ? (
             <MaterialCommunityIcons
               name={'check'}
               size={30}
@@ -65,8 +67,9 @@ function Question({
               isSelected={false}
               buttonInnerColor={colors.primary}
               buttonOuterColor={colors.primary}
-              disabled={view ? true : false}
+              disabled={view}
               buttonSize={12}
+              buttonWrapStyle={{paddingVertical: 8}}
             />
           )
         ) : (
@@ -79,7 +82,7 @@ function Question({
             isSelected={value === option}
             buttonInnerColor={colors.primary}
             buttonOuterColor={colors.primary}
-            disabled={view ? true : false}
+            disabled={view}
             buttonSize={12}
             buttonWrapStyle={{paddingVertical: 8}}
           />
@@ -93,7 +96,7 @@ function Question({
           }}
           labelStyle={styles.option}
           labelWrapStyle={{width: '90%'}}
-          disabled={view ? true : false}
+          disabled={view}
         />
       </TouchableOpacity>
     );
@@ -110,7 +113,7 @@ function Question({
                 ? value === question.correct.toLowerCase()
                   ? colors.green
                   : colors.redText
-                : colors.white,
+                : colors.yellow,
             }
           : {}),
       }}>

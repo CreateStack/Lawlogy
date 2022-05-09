@@ -60,8 +60,12 @@ function QuizzesScreen(props) {
   let quizzes = Object.keys(props.route.params.quizzes);
   if (quizzes.length) {
     quizzes = quizzes.sort((a, b) => {
-      a = parseInt(testSeries ? a.split('-')[1] : a.replace(/^\D+/g, ''));
-      b = parseInt(testSeries ? b.split('-')[1] : b.replace(/^\D+/g, ''));
+      a =
+        parseInt(testSeries ? a.split('-')[1] : a.replace(/^\D+/g, '')) ||
+        Number.POSITIVE_INFINITY;
+      b =
+        parseInt(testSeries ? b.split('-')[1] : b.replace(/^\D+/g, '')) ||
+        Number.POSITIVE_INFINITY;
       return a - b;
     });
   }
@@ -95,7 +99,7 @@ function QuizzesScreen(props) {
   const getQuiz = (quiz) => {
     if (testSeries) {
       quiz = quiz.questions;
-      if (quiz.length === undefined) {
+      if (quiz?.length === undefined) {
         quiz = Object.values(quiz);
       }
     }
@@ -228,6 +232,7 @@ function QuizzesScreen(props) {
                     total: total,
                     name: props.route.params.name,
                     data: testCompletionData,
+                    title: 'Answers',
                     view: true,
                   });
                 }}>
@@ -244,7 +249,10 @@ function QuizzesScreen(props) {
                   fontSize: ms(14),
                   fontWeight: 'bold',
                 }}>
-                {'⌛ ' + props.route.params.quizzes[item].testTime + ' hours'}
+                {'⌛ ' +
+                  parseFloat(props.route.params.quizzes[item].testTime || 0) *
+                    60 +
+                  ' minutes'}
               </Text>
             ) : (
               <AttemptButton />
@@ -283,7 +291,9 @@ function QuizzesScreen(props) {
     return (
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          {_.startCase(_.toLower(props.route.params.name))}
+          {testSeries
+            ? props.route.params.heading
+            : _.startCase(_.toLower(props.route.params.name))}
         </Text>
       </View>
     );

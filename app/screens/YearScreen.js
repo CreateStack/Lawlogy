@@ -19,7 +19,29 @@ const OptionButton = ({
   setShowMainsPapers,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
-  return showOptions ? (
+  const [newMainsPaper, setNewMainsPaper] = useState({});
+  useEffect(() => {
+    const mainsPapers = params.quizzes[item].mains;
+    let mainsPapersKeys = Object.keys(mainsPapers);
+    if (Object.keys(mainsPapers).length) {
+      mainsPapersKeys.map((paper, index) => {
+        if (
+          mainsPapers[paper] === '' ||
+          !mainsPapers[paper] ||
+          mainsPapers[paper] ===
+            'https://media.tenor.com/images/21656c54eeccc746bf9df4b0bbdfd9d0/tenor.png'
+        ) {
+          return;
+        } else {
+          setNewMainsPaper((v) => {
+            v['paper' + index] = mainsPapers[paper];
+            return {...v};
+          });
+        }
+      });
+    }
+  }, [item, params.quizzes]);
+  return showOptions && Object.keys(newMainsPaper).length ? (
     <View style={styles.topic}>
       <TouchableOpacity
         key={index + 'prelims'}
@@ -46,7 +68,7 @@ const OptionButton = ({
         }}
         onPress={() => {
           setShowMainsPapers(true);
-          setMainsPapers(params.quizzes[item].mains);
+          setMainsPapers(newMainsPaper);
         }}>
         <Text key={index} style={styles.text}>
           Mains
@@ -58,10 +80,14 @@ const OptionButton = ({
       key={index}
       style={{...styles.topic, paddingHorizontal: 16, paddingVertical: 16}}
       onPress={() => {
-        setShowOptions(true);
-        setTimeout(() => {
-          setShowOptions(false);
-        }, 5000);
+        if (Object.keys(newMainsPaper).length) {
+          setShowOptions(true);
+          setTimeout(() => {
+            setShowOptions(false);
+          }, 5000);
+        } else {
+          Linking.openURL(params.quizzes[item].prelims);
+        }
       }}>
       <Text key={index} style={styles.text}>
         {item}
@@ -70,7 +96,7 @@ const OptionButton = ({
   );
 };
 
-const YearScreen = ({route, navigation}) => {
+const YearScreen = ({route}) => {
   const {params} = route;
   const [showMainsPapers, setShowMainsPapers] = useState(false);
   const [mainsPapers, setMainsPapers] = useState({});
@@ -106,6 +132,7 @@ const YearScreen = ({route, navigation}) => {
             .map((paper, index) => {
               return (
                 <TouchableOpacity
+                  key={index.toString()}
                   onPress={() => {
                     setShowMainsPapers(false);
                     Linking.openURL(mainsPapers[paper]);

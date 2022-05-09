@@ -30,4 +30,5 @@ export default {
   gold: '#FFBC00',
   silver: '#AFAFAF',
   bronze: '#CD7F32',
+  darkPink: '#C13584',
 };

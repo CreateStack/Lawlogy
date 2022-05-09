@@ -10,10 +10,10 @@ import ActivityIndicator from '../components/ActivityIndicator';
 import AuthContext from '../auth/context';
 import colors from '../config/colors';
 import {ms, s, vs} from '../utils/scalingUtils';
+import {secrets} from '../config/purchaseConstants';
 
-const appId = '15201826579c8733507d992ebf810251';
-const key = '0489ea0c3a6e62994c4dbe0c5e02da931268679b';
-const endpoint = 'https://test.cashfree.com/api/v2/cftoken/order';
+const ENV = 'TEST';
+const {appId, key, endpoint} = secrets[ENV];
 
 const PurchaseScreen = ({navigation, route: {params}}) => {
   const premium = params.premium;
@@ -26,14 +26,15 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
   const [interval, setIntervalValue] = useState(null);
   const [progress, setProgress] = useState(0);
   const {user} = useContext(AuthContext);
-  const total = parseInt(premium.cost) - parseInt(premium.discount || 0);
-  const ENV = 'TEST';
+  const total = parseFloat(premium.cost) - parseFloat(premium.discount || 0);
+
   const orderNumber = Math.random().toString().split('.')[1];
   const setPaymentInfo = (setLoading, data) => {
     const ref = ('student/' + user + '/' + premiumPath).trim();
     const updatation = {
       item: params.item,
       discount: premium.discount || 0,
+      expiry: premium.expiry,
       orderId: data.orderId,
       payment: total,
       premium: true,
@@ -56,11 +57,12 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
             'premium/' +
               (params.item.includes('testSeries') ? 'testSeries' : 'quizes'),
           )
-          .update({orderNumber: orderNumber})
+          .update({orderNumber: parseInt(premium.orderNumber || 0) + 1})
           .then(() => {
             handleCompletion();
           })
           .catch((e) => {
+            console.log('Failed to update orderNumber: ', e);
             crashlytics().log('Failed to update orderNumber: ', e);
             handleCompletion();
           });
@@ -137,7 +139,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           tokenData: resp.data?.cftoken || '',
         };
         console.log('map: ', data);
-        RNPgReactNativeSDK.startPaymentUPI(data, ENV, (result) => {
+        RNPgReactNativeSDK.startPaymentWEB(data, ENV, (result) => {
           result = JSON.parse(result);
           console.log('result: ', result);
           if (result.txStatus === 'SUCCESS') {
@@ -182,10 +184,10 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
             color={colors.primary}
             size={s(60)}
           />
-          <Text style={styles.header}>WHAT YOU WILL GET</Text>
+          <Text style={styles.header}>WHAT YOU WILL GET ?</Text>
           {premium.info.split('\n')?.map((item, index) => {
             return (
-              <View style={styles.info}>
+              <View style={styles.info} key={index.toString()}>
                 <Text style={styles.point}>{item}</Text>
                 <MaterialCommunityIcons
                   name={'check-decagram'}
@@ -195,6 +197,15 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
               </View>
             );
           })}
+
+          <View style={styles.queries}>
+            <Text style={styles.queriesText}>
+              For any issues related to payment, please contact
+            </Text>
+            <Text style={styles.queriesNumber}>
+              {'+91 98260 24430, +91 95756 52265'}
+            </Text>
+          </View>
           <View
             style={{
               backgroundColor: colors.secondary,
@@ -245,7 +256,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           style={styles.purchaseButton}>
           <Text style={styles.purchaseText}>PAY</Text>
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
-            {parseInt(premium.discount) ? (
+            {parseFloat(premium.discount) ? (
               <Text
                 style={[
                   styles.purchaseText,
@@ -259,7 +270,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                   color={colors.yellow}
                   size={ms(18)}
                 />
-                {parseInt(premium.cost)}
+                {parseFloat(premium.cost)}
               </Text>
             ) : null}
             <Text style={styles.purchaseText}>
@@ -271,7 +282,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
               {total}
             </Text>
           </View>
-          {parseInt(premium.discount) ? (
+          {parseFloat(premium.discount) ? (
             <View style={{alignItems: 'center', flexDirection: 'row'}}>
               <Text style={[styles.purchaseText, {fontSize: ms(12)}]}>
                 {'YOU SAVE '}
@@ -286,8 +297,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                   },
                 ]}>
                 {Math.round(
-                  ((parseInt(premium.discount || 0) * 100) /
-                    parseInt(premium.cost)) *
+                  ((parseFloat(premium.discount || 0) * 100) /
+                    parseFloat(premium.cost)) *
                     100,
                 ) / 100}
               </Text>
@@ -308,14 +319,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightBlue,
     flex: 1,
     paddingHorizontal: 16,
-    marginTop: vs(60),
+    marginTop: vs(32),
   },
   header: {
     color: colors.primary,
     fontSize: ms(18),
     lineHeight: 25,
     marginBottom: vs(14),
-    marginTop: vs(50),
+    marginTop: vs(32),
     fontWeight: 'bold',
   },
   info: {
@@ -357,6 +368,27 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: ms(18),
     lineHeight: 25,
+  },
+  queries: {
+    alignItems: 'center',
+    borderColor: colors.yellow,
+    borderRadius: 8,
+    borderWidth: 2,
+    justifyContent: 'center',
+    marginVertical: vs(16),
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    width: '100%',
+  },
+  queriesText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  queriesNumber: {
+    color: colors.primary,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginVertical: 8,
   },
 });
 
