@@ -11,16 +11,18 @@ import {
 
 import colors from '../config/colors';
 
-const {width: windowWidth} = Dimensions.get('window');
+const windowWidth = Dimensions.get('window').width - 32;
 
 function Card({
-  imageUrl,
-  width = windowWidth,
-  handlePress,
   accessible,
+  alignItems = 'center',
+  handlePress,
+  imageUrl,
+  justifyContent = 'center',
   text,
   textColor = colors.black,
   textSize = 16,
+  width = windowWidth,
 }) {
   return imageUrl ? (
     <View
@@ -40,10 +42,15 @@ function Card({
           style={{
             flex: 1,
             width,
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems,
+            justifyContent,
           }}>
-          <Text style={{...styles.text, color: textColor, fontSize: textSize}}>
+          <Text
+            style={{
+              ...styles.text,
+              color: textColor,
+              fontSize: parseInt(textSize),
+            }}>
             {text}
           </Text>
         </ImageBackground>
@@ -125,6 +132,8 @@ function Banner({
       };
       return (
         <Card
+          alignItems={item.alignItems || 'center'}
+          justifyContent={item.justifyContent || 'center'}
           key={index}
           imageUrl={item.imageUrl}
           text={item.text || ''}
@@ -190,12 +199,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    position: 'relative',
+    width: '100%',
   },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
   indicator: {
     marginRight: 8,

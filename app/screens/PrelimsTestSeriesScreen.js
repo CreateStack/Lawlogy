@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   instructions: {
     color: colors.black,
-    fontSize: ms(18),
+    fontSize: ms(16),
     marginTop: vs(14),
     lineHeight: vs(32),
     textAlign: 'left',
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   instructionsHeading: {
     color: colors.black,
-    fontSize: ms(26),
+    fontSize: ms(22),
     textAlign: 'center',
   },
 });

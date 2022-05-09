@@ -105,6 +105,7 @@ function TopicScreen({navigation, route}) {
                 navigation.navigate('Quizzes', {
                   extraInfoData: data,
                   itemName: 'Tests',
+                  heading: prelimsFlyerInfo.title,
                   name: item,
                   navigateToScreen: 'PrelimsTestSeries',
                   premium: params.premium,

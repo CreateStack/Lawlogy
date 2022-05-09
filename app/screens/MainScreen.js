@@ -15,7 +15,7 @@ import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
 import {ms} from '../utils/scalingUtils';
 import Banner from '../components/Banner';
-import Menu from '../components/Menu';
+import Menu from '../components/Menu/Menu';
 
 const loadData = (path, setData, setLoading) => {
   setLoading((v) => {
@@ -59,24 +59,23 @@ function MainScreen(props) {
   const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState({phone: user});
 
   const loadFunc = () => {
     loadData(
-      '/student/' + user + '/name',
-      (name) => {
+      '/student/' + user,
+      (data) => {
         setUserInfo((v) => {
-          v.name = name;
-          return {...v};
-        });
-      },
-      setLoading,
-    );
-    loadData(
-      '/student/' + user + '/email',
-      (email) => {
-        setUserInfo((v) => {
-          v.email = email;
+          v.name = data.name;
+          v.premium = {};
+          Object.keys(data).forEach((key) => {
+            if (
+              key.toLowerCase() !== 'premium' &&
+              key.toLowerCase().includes('premium')
+            ) {
+              v.premium[key] = data[key];
+            }
+          });
           return {...v};
         });
       },
@@ -159,7 +158,7 @@ function MainScreen(props) {
     {
       onPress: () =>
         props.navigation.navigate('Topics', {
-          itemName: 'Years',
+          itemName: 'Year',
           items: previousYearPapers,
           image: require('../assets/previousYearPapers.jpg'),
           navigateToScreen: 'Years',
@@ -173,7 +172,7 @@ function MainScreen(props) {
       text: 'Previous Year Papers',
       extraInfo: previousYearPapers
         ? Object.keys(previousYearPapers).length +
-          (Object.keys(previousYearPapers).length > 1 ? ' States' : ' State')
+          (Object.keys(previousYearPapers).length > 1 ? ' Items' : ' Item')
         : 'Coming soon',
     },
     {

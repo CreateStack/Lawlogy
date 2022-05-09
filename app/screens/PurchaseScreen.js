@@ -34,6 +34,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     const updatation = {
       item: params.item,
       discount: premium.discount || 0,
+      expiry: premium.expiry,
       orderId: data.orderId,
       payment: total,
       premium: true,
@@ -56,11 +57,12 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
             'premium/' +
               (params.item.includes('testSeries') ? 'testSeries' : 'quizes'),
           )
-          .update({orderNumber: parseInt(premium.orderNumber) + 1})
+          .update({orderNumber: parseInt(premium.orderNumber || 0) + 1})
           .then(() => {
             handleCompletion();
           })
           .catch((e) => {
+            console.log('Failed to update orderNumber: ', e);
             crashlytics().log('Failed to update orderNumber: ', e);
             handleCompletion();
           });
