@@ -34,7 +34,7 @@ const App = () => {
     setIsReady(false);
     authStorage
       .getToken()
-      .then((token) => {
+      .then(token => {
         if (!token) {
           setIsReady(true);
           crashlytics().log('User not signed in.');
@@ -47,11 +47,11 @@ const App = () => {
           .then(() => {
             setIsReady(true);
           })
-          .catch((error) => {
+          .catch(error => {
             crashlytics().log('Not able to set user: ', error);
           });
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('Error: ', error);
         crashlytics().log('Error in App.js while fetching authtoken: ', error);
         setIsReady(true);
@@ -66,7 +66,8 @@ const App = () => {
           flex: 1,
           alignItems: 'center',
           backgroundColor: '#fff',
-        }}>
+        }}
+      >
         <ImageBackground
           source={require('./app/assets/logo.jpg')}
           style={{
