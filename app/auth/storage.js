@@ -1,10 +1,10 @@
-import SecureStorage from 'react-native-secure-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import crashlytics from '@react-native-firebase/crashlytics';
 
 const key = 'authtoken';
-const storeToken = async (authToken) => {
+const storeToken = async authToken => {
   try {
-    await SecureStorage.setItem(key, authToken);
+    await AsyncStorage.setItem(key, authToken);
   } catch (error) {
     console.log('Error storing auth token: ', error);
     crashlytics().log('Error storing auth token: ', error);
@@ -13,7 +13,7 @@ const storeToken = async (authToken) => {
 
 const getToken = async () => {
   try {
-    return await SecureStorage.getItem(key);
+    return await AsyncStorage.getItem(key);
   } catch (error) {
     console.log('Error getting auth token: ', error);
     crashlytics().log('Error getting auth token: ', error);
@@ -22,7 +22,7 @@ const getToken = async () => {
 
 const removeToken = async () => {
   try {
-    await SecureStorage.removeItem(key);
+    await AsyncStorage.removeItem(key);
   } catch (error) {
     console.log('Error removing auth token: ', error);
     crashlytics().log('Error removing auth token: ', error);
