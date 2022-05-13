@@ -19,7 +19,7 @@ function Question({
   const [value, setValue] = useState(view ? prefill : selection);
 
   useEffect(() => {
-    setSelections((v) => {
+    setSelections(v => {
       v[index] = value;
       return {...v};
     });
@@ -34,7 +34,8 @@ function Question({
           setValue(option.toLowerCase());
         }}
         keyboardShouldPersistTaps="always"
-        style={styles.radioContainer}>
+        style={styles.radioContainer}
+      >
         {view ? (
           value === option ? (
             option === question.correct.toLowerCase() ? (
@@ -116,14 +117,16 @@ function Question({
                 : colors.yellow,
             }
           : {}),
-      }}>
+      }}
+    >
       <Text style={styles.question}>
         {'Q.' + Number(index + 1) + ' ' + question.Question}
       </Text>
       <RadioForm
         animation={true}
         formHorizontal={false}
-        style={styles.radioform}>
+        style={styles.radioform}
+      >
         <Radio label={'A) ' + question.a} option={'a'} />
         <Radio label={'B) ' + question.b} option={'b'} />
         <Radio label={'C) ' + question.c} option={'c'} />
@@ -134,7 +137,8 @@ function Question({
           style={styles.clearSelection}
           onPress={() => {
             setValue('');
-          }}>
+          }}
+        >
           <Text style={styles.clearSelectionText}>Clear selection</Text>
         </TouchableOpacity>
       )}

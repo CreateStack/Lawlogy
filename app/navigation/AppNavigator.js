@@ -15,18 +15,20 @@ import MainsTestSeriesScreen from '../screens/MainsTestSeriesScreen';
 import Header from '../components/Header';
 import PrelimsTestSeriesScreen from '../screens/PrelimsTestSeriesScreen';
 import LeaderBoardScreen from '../screens/LeaderBoardScreen';
+import QuizAnalysisScreen from '../screens/QuizAnalysisScreen';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => (
   <Stack.Navigator
     screenOptions={{
-      header: (props) => {
+      header: props => {
         return props.scene.route.params.hideHeader ? null : (
           <Header {...props} />
         );
       },
-    }}>
+    }}
+  >
     <Stack.Screen
       name="Main"
       component={MainScreen}
@@ -65,6 +67,7 @@ const AppNavigator = () => (
     <Stack.Screen name="Purchase" component={PurchaseScreen} />
     <Stack.Screen name="JustQuestions" component={JustQuestionsScreen} />
     <Stack.Screen name="Years" component={YearScreen} />
+    <Stack.Screen name="QuizAnalysis" component={QuizAnalysisScreen} />
     <Stack.Screen
       name="LeaderBoard"
       component={LeaderBoardScreen}

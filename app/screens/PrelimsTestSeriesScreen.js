@@ -13,13 +13,13 @@ import {ms, vs} from '../utils/scalingUtils';
 const PrelimsTestSeriesScreen = ({route, navigation}) => {
   const {params} = route;
   const testTime = parseFloat(params.quizzes.testTime || 2) * 60 * 60;
-  const getQuiz = (quiz) => {
+  const getQuiz = quiz => {
     if (quiz.length === undefined) {
       quiz = Object.values(quiz);
     }
     return quiz;
   };
-  const quiz = getQuiz(params.quizzes.questions).filter((ques) => ques);
+  const quiz = getQuiz(params.quizzes.questions).filter(ques => ques);
   const negativeMarking = Math.abs(
     parseFloat(params.quizzes.negativeMarking) || 0,
   );
@@ -46,7 +46,8 @@ const PrelimsTestSeriesScreen = ({route, navigation}) => {
             total: quiz.length,
           })
         }
-        style={styles.button}>
+        style={styles.button}
+      >
         <Text style={styles.buttonText}>Start</Text>
       </TouchableOpacity>
     </View>

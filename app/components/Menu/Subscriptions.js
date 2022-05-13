@@ -14,7 +14,7 @@ const Subscriptions = ({premiums = {}}) => {
     );
   };
   useEffect(() => {
-    Object.keys(premiums).forEach((premium) => {
+    Object.keys(premiums).forEach(premium => {
       let expiry = premiums[premium].expiry;
       if (expiry) {
         if (expiry.toString().includes('/')) {
@@ -22,7 +22,7 @@ const Subscriptions = ({premiums = {}}) => {
           expiry = Date.parse(date[1] + '/' + date[0] + '/' + date[2]);
           let remainingMiliSecs = expiry - Date.now();
           let remainingDays = remainingMiliSecs / daysToMiliSecs;
-          setSubs((prevState) => {
+          setSubs(prevState => {
             prevState.push({
               premium: trim(premium) + ': ',
               daysLeft:
@@ -40,7 +40,7 @@ const Subscriptions = ({premiums = {}}) => {
             expiry * daysToMiliSecs;
           let remainingMiliSecs = dateOfExpiry - Date.now();
           let remainingDays = remainingMiliSecs / daysToMiliSecs;
-          setSubs((prevState) => {
+          setSubs(prevState => {
             prevState.push({
               premium: trim(premium) + ': ',
               daysLeft:
@@ -66,7 +66,8 @@ const Subscriptions = ({premiums = {}}) => {
                 style={[
                   styles.subscriptions,
                   {color: sub.color, fontWeight: 'normal'},
-                ]}>
+                ]}
+              >
                 {sub.daysLeft}
               </Text>
             </Text>

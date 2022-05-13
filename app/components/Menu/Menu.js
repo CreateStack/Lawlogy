@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import VersionInfo from 'react-native-version-info';
 
 import colors from '../../config/colors';
 import {s} from '../../utils/scalingUtils';
@@ -64,7 +65,8 @@ const Item = ({
             <Animated.View
               style={{
                 transform: [{rotate: spin}],
-              }}>
+              }}
+            >
               <MaterialCommunityIcons
                 name={'chevron-down'}
                 size={20}
@@ -113,12 +115,15 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
       style={{margin: 0}}
       swipeDirection="left"
       onSwipeComplete={onMenuClose}
-      useNativeDriver={true}>
+      useNativeDriver={true}
+    >
       <View
         colors={[colors.seaGreen, colors.orangeLighter]}
-        style={styles.menuContainer}>
+        style={styles.menuContainer}
+      >
         <View
-          style={{backgroundColor: colors.primary, padding: 16, width: '100%'}}>
+          style={{backgroundColor: colors.primary, padding: 16, width: '100%'}}
+        >
           <View style={styles.logoContainer}>
             <MaterialCommunityIcons
               name={'account-tie'}
@@ -141,7 +146,7 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
               icon={'cash-usd'}
               iconColor={colors.silver}
               text={'My Subscriptions'}
-              onPress={() => setSubscriptionVisible((v) => !v)}
+              onPress={() => setSubscriptionVisible(v => !v)}
               showDropDownIcon={true}
             />
             {subscriptionVisible && (
@@ -151,9 +156,7 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
               icon={'star'}
               iconColor={colors.silver}
               text={'Rate Us'}
-              onPress={() => {
-                openURL('market://details?id=com.lawlogy');
-              }}
+              onPress={() => openURL('market://details?id=com.lawlogy')}
             />
             <Item
               icon={'share-variant'}
@@ -192,7 +195,7 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
               icon={'account-box'}
               iconColor={colors.silver}
               text={'Contact Us'}
-              onPress={() => setContactVisible((v) => !v)}
+              onPress={() => setContactVisible(v => !v)}
               showDropDownIcon
             />
             {contactVisible && (
@@ -221,28 +224,28 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
           <SocialIcon
             color={colors.darkPink}
             name={'instagram'}
-            onPress={() => openURL('https://www.instagram.com/lawlogy/')}
+            onPress={() => openURL('https://www.instagram.com/lawlogy/', true)}
           />
           <SocialIcon
             color={'#25D366'}
             name={'whatsapp'}
             onPress={() =>
-              openURL('https://chat.whatsapp.com/FoOp1UTf6IAHFraWD2JE43')
+              openURL('https://chat.whatsapp.com/FoOp1UTf6IAHFraWD2JE43', true)
             }
           />
           <SocialIcon
             color={'#229ED9'}
             name={'telegram'}
-            onPress={() => openURL('https://t.me/lawlogyclasses')}
+            onPress={() => openURL('https://t.me/lawlogyclasses', true)}
           />
           <SocialIcon
             color={'#4267B2'}
             name={'facebook'}
-            onPress={() => openURL('https://m.facebook.com/lawlogy/')}
+            onPress={() => openURL('https://m.facebook.com/lawlogy/', true)}
           />
         </View>
         <View style={styles.version}>
-          <Text style={styles.versionText}>v1.1</Text>
+          <Text style={styles.versionText}>{'v' + VersionInfo.appVersion}</Text>
         </View>
       </View>
     </Modal>
@@ -310,7 +313,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.white,
-    justifyContent: 'center',
     borderRadius: 20,
     width: 40,
     height: 40,

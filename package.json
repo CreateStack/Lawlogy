@@ -36,14 +36,18 @@
     "react-native-code-push": "^7.0.4",
     "react-native-dash": "^0.0.11",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-inappbrowser-reborn": "^3.6.3",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-modal": "^13.0.1",
     "react-native-pg-react-native-sdk": "^2.1.7",
     "react-native-reanimated": "^2.8.0",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "^3.3.0",
+    "react-native-share": "^7.4.1",
     "react-native-simple-radio-button": "^2.7.4",
     "react-native-vector-icons": "^9.0.0",
+    "react-native-version-info": "^1.1.1",
+    "react-native-view-shot": "^3.1.2",
     "yup": "^0.32.9"
   },
   "devDependencies": {

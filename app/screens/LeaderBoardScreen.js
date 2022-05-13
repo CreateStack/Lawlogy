@@ -15,11 +15,11 @@ const fetchData = (path, setLoading, setData) => {
   database()
     .ref(ref)
     .once('value')
-    .then((snapshot) => {
+    .then(snapshot => {
       setData(snapshot.val() || {});
       setLoading(false);
     })
-    .catch((e) => {
+    .catch(e => {
       console.log('Error while fetching: ', e);
       crashlytics().log('Error while fetching: ', e);
       setData({});
@@ -36,7 +36,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
     const rankStudents = (students = {}) => {
       const keys = Object.keys(students);
       const board = [];
-      keys.forEach((student) => {
+      keys.forEach(student => {
         let info = null;
         if (students[student].prelimsTestSeries?.[state]) {
           info = students[student].prelimsTestSeries[state][quiz];
@@ -69,7 +69,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
     return name;
   };
 
-  const getRank = (index) => {
+  const getRank = index => {
     let color = colors.gold;
     switch (index) {
       case 0:
@@ -101,7 +101,8 @@ const LeaderBoardScreen = ({route: {params}}) => {
           style={[
             styles.rankContainer,
             index % 2 === 0 ? {backgroundColor: colors.lightBlue} : {},
-          ]}>
+          ]}
+        >
           {getRank(index)}
           <Text style={styles.name}>{getName(item.name)}</Text>
           <Text style={{...styles.score, textAlign: 'center'}}>

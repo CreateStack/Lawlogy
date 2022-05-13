@@ -55,7 +55,7 @@ function RegisterScreen(props) {
 
   const updateUserInfo = (name, value) => {
     console.log('name: ', name, ' value: ', value);
-    setUserInfo((info) => {
+    setUserInfo(info => {
       info[name] = value;
       return info;
     });
@@ -77,7 +77,7 @@ function RegisterScreen(props) {
   }, [getOTP, otpTimer]);
 
   const startTimer = () => {
-    const timer = setInterval(() => setGetOTP((v) => v - 1), 1000);
+    const timer = setInterval(() => setGetOTP(v => v - 1), 1000);
     setOtpTimer(timer);
   };
 
@@ -95,7 +95,7 @@ function RegisterScreen(props) {
       .verifyPhoneNumber('+91' + phoneNumber, 10, false)
       .on(
         'state_changed',
-        (snapshot) => {
+        snapshot => {
           switch (snapshot.state) {
             case auth.PhoneAuthState.CODE_SENT:
               setLoading(false);
@@ -121,11 +121,11 @@ function RegisterScreen(props) {
               );
               auth()
                 .signInWithCredential(credential)
-                .then((data) => {
+                .then(data => {
                   database()
                     .ref('/student/' + phone)
                     .once('value')
-                    .then((snapshot) => {
+                    .then(snapshot => {
                       if (snapshot.val() !== null) {
                         setAutoVerifying(false);
                         Alert.alert(
@@ -159,7 +159,7 @@ function RegisterScreen(props) {
                             logIn(phone);
                             setLoading(false);
                           })
-                          .catch((e) => {
+                          .catch(e => {
                             setAutoVerifying(false);
                             setRegisterFailed(true);
                             setLoading(false);
@@ -169,7 +169,7 @@ function RegisterScreen(props) {
                           });
                       }
                     })
-                    .catch((e) => {
+                    .catch(e => {
                       setAutoVerifying(false);
                       setRegisterFailed(true);
                       setLoading(false);
@@ -178,7 +178,7 @@ function RegisterScreen(props) {
                       setErrorMsg(e);
                     });
                 })
-                .catch((e) => {
+                .catch(e => {
                   setAutoVerifying(false);
                   setRegisterFailed(true);
                   setLoading(false);
@@ -189,7 +189,7 @@ function RegisterScreen(props) {
               break;
           }
         },
-        (error) => {
+        error => {
           console.log('Error: ', error);
           crashlytics().log('Error in registration: ', error);
           setErrorMsg(error.message);
@@ -199,7 +199,7 @@ function RegisterScreen(props) {
       );
   }
 
-  const handleRegister = async (userInfo) => {
+  const handleRegister = async userInfo => {
     if (!userInfo.otp || userInfo.otp === '') {
       setRegisterFailed(true);
       setErrorMsg('Please enter a valid OTP');
@@ -216,7 +216,7 @@ function RegisterScreen(props) {
       database()
         .ref('/student/' + phone)
         .once('value')
-        .then((snapshot) => {
+        .then(snapshot => {
           if (snapshot.val() !== null) {
             Alert.alert(
               'Student exists',
@@ -245,7 +245,7 @@ function RegisterScreen(props) {
                 logIn(phone);
                 setLoading(false);
               })
-              .catch((e) => {
+              .catch(e => {
                 setRegisterFailed(true);
                 setLoading(false);
                 console.log('Error: ', e);
@@ -254,7 +254,7 @@ function RegisterScreen(props) {
               });
           }
         })
-        .catch((e) => {
+        .catch(e => {
           setRegisterFailed(true);
           setLoading(false);
           console.log('Error: ', e);
@@ -295,7 +295,8 @@ function RegisterScreen(props) {
               preparingFor: '',
             }}
             onSubmit={handleRegister}
-            validationSchema={validationSchema}>
+            validationSchema={validationSchema}
+          >
             <ErrorMessage visible={registerFailed} error={errorMsg} />
             <AppFormField
               autoCorrect={false}
@@ -332,7 +333,7 @@ function RegisterScreen(props) {
               onValueChange={updateUserInfo}
               placeholder="10 digit Mobile number"
               textContentType="telephoneNumber"
-              onChangeText={(v) => setPhone(v)}
+              onChangeText={v => setPhone(v)}
               value={phone}
             />
             <AppFormField
@@ -399,7 +400,8 @@ function RegisterScreen(props) {
             padding: 16,
             zIndex: 1,
             backgroundColor: colors.white,
-          }}>
+          }}
+        >
           <LottieView
             autoPlay
             loop
@@ -412,7 +414,8 @@ function RegisterScreen(props) {
               fontSize: 18,
               color: colors.black,
               textAlign: 'center',
-            }}>
+            }}
+          >
             Auto-Verifying OTP
           </Text>
         </View>

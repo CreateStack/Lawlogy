@@ -1,8 +1,7 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   FlatList,
   Image,
-  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,52 +9,64 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import _ from 'lodash';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Share from 'react-native-share';
+import ViewShot from 'react-native-view-shot';
 
 import colors from '../config/colors';
 import {ms, s} from '../utils/scalingUtils';
 
-const onShare = (question, subject) => {
-  Share.share(
-    {
-      title: 'Share this important question with your friends',
-      message:
-        "Checkout this question from '" +
-        subject +
-        "'\n\nQuestion: " +
-        question +
-        '\n\n\nFor more such questions, install Lawlogy (https://play.google.com/store/apps/details?id=com.lawlogy)',
-    },
-    {
-      dialogTitle: 'Share this important question with your friends',
-    },
-  );
-};
-
 const JustQuestionsScreen = ({route}) => {
   const {params} = route;
-  const render = ({item, index}) => {
-    if (!item) return null;
+  const share = (shareRef, subject) => {
+    if (shareRef?.current) {
+      shareRef.current
+        .capture()
+        .then(uri => {
+          Share.open({
+            title: 'Share this important question with your friends',
+            message:
+              "Checkout this question from '" +
+              params.name +
+              "'. For more such questions, install Lawlogy (https://play.google.com/store/apps/details?id=com.lawlogy)",
+            url: uri,
+          });
+        })
+        .catch(e => {
+          console.log('Error in capturing view: ', e);
+        });
+    }
+  };
+  const RenderItem = ({item, index}) => {
+    const shareRef = useRef();
     return (
-      <View style={styles.question}>
+      <ViewShot ref={shareRef} style={styles.question}>
         <Text style={styles.questionText}>{index + 1 + '. ' + item}</Text>
         <TouchableOpacity
           activeOpacity={0.6}
-          onPress={() => onShare(item, params.name)}
-          style={styles.share}>
-          <Image
-            source={require('../assets/share.png')}
-            style={styles.shareImage}
+          onPress={() => share(shareRef, item)}
+          style={styles.share}
+        >
+          <MaterialCommunityIcons
+            name={'share-variant'}
+            size={20}
+            color={colors.black}
           />
         </TouchableOpacity>
-      </View>
+      </ViewShot>
     );
+  };
+  const render = ({item, index}) => {
+    if (!item) return null;
+    return <RenderItem item={item} index={index} />;
   };
 
   return (
     <View style={styles.container}>
       <LinearGradient
         colors={[colors.primary, colors.blue]}
-        style={styles.gradient}>
+        style={styles.gradient}
+      >
         <View style={styles.title}>
           <Text style={styles.gradientTopic}>{params.name}</Text>
           <Text style={styles.gradientText}>Mains Questions</Text>
@@ -67,7 +78,7 @@ const JustQuestionsScreen = ({route}) => {
       </LinearGradient>
       <FlatList
         contentContainerStyle={styles.flatlistContent}
-        data={params.quizzes?.filter((quizzes) => quizzes)}
+        data={params.quizzes?.filter(quizzes => quizzes)}
         keyExtractor={(item, index) => index.toString()}
         renderItem={render}
         style={styles.flatlist}
@@ -118,7 +129,7 @@ const styles = StyleSheet.create({
     width: s(86),
   },
   question: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.lightBlue,
     borderRadius: 10,
     marginVertical: 12,
     paddingHorizontal: 8,

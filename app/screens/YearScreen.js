@@ -1,15 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {
-  FlatList,
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 
 import colors from '../config/colors';
+import {openURL} from '../utils/helpers';
 
 const OptionButton = ({
   item,
@@ -33,7 +27,7 @@ const OptionButton = ({
         ) {
           return;
         } else {
-          setNewMainsPaper((v) => {
+          setNewMainsPaper(v => {
             v['paper' + index] = mainsPapers[paper];
             return {...v};
           });
@@ -52,8 +46,9 @@ const OptionButton = ({
           width: '50%',
         }}
         onPress={() => {
-          Linking.openURL(params.quizzes[item].prelims);
-        }}>
+          openURL(params.quizzes[item].prelims, true);
+        }}
+      >
         <Text key={index} style={{...styles.text, color: colors.white}}>
           Preliminary
         </Text>
@@ -69,7 +64,8 @@ const OptionButton = ({
         onPress={() => {
           setShowMainsPapers(true);
           setMainsPapers(newMainsPaper);
-        }}>
+        }}
+      >
         <Text key={index} style={styles.text}>
           Mains
         </Text>
@@ -86,9 +82,10 @@ const OptionButton = ({
             setShowOptions(false);
           }, 5000);
         } else {
-          Linking.openURL(params.quizzes[item].prelims);
+          openURL(params.quizzes[item].prelims, true);
         }
-      }}>
+      }}
+    >
       <Text key={index} style={styles.text}>
         {item}
       </Text>
@@ -125,7 +122,8 @@ const YearScreen = ({route}) => {
       <Modal
         isVisible={showMainsPapers}
         onBackButtonPress={() => setShowMainsPapers(false)}
-        onBackdropPress={() => setShowMainsPapers(false)}>
+        onBackdropPress={() => setShowMainsPapers(false)}
+      >
         <View style={styles.mainsPapers}>
           {Object.keys(mainsPapers)
             .sort((a, b) => -1)
@@ -135,17 +133,19 @@ const YearScreen = ({route}) => {
                   key={index.toString()}
                   onPress={() => {
                     setShowMainsPapers(false);
-                    Linking.openURL(mainsPapers[paper]);
+                    openURL(mainsPapers[paper], true);
                   }}
                   style={[
                     styles.paper,
                     index % 2 !== 0 ? styles.evenPaper : {},
-                  ]}>
+                  ]}
+                >
                   <Text
                     style={[
                       styles.paperText,
                       index % 2 !== 0 ? styles.evenPaperText : {},
-                    ]}>
+                    ]}
+                  >
                     {'Paper ' + (index + 1)}
                   </Text>
                 </TouchableOpacity>

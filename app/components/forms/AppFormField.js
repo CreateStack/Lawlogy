@@ -33,7 +33,8 @@ const AppFormField = ({
               onValueChange(name, value);
             }}
             selectedValue={values[name]}
-            style={styles.container}>
+            style={styles.container}
+          >
             {dropDownList.map((item, index) => (
               <Picker.Item
                 label={item.label}
@@ -48,7 +49,7 @@ const AppFormField = ({
         <AppTextInput
           inputContainer={inputContainer}
           onBlur={() => setFieldTouched(name)}
-          onChangeText={(text) => {
+          onChangeText={text => {
             setFieldValue(name, text);
             onValueChange(name, text);
           }}

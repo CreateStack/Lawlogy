@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -18,16 +18,16 @@ import Banner from '../components/Banner';
 import Menu from '../components/Menu/Menu';
 
 const loadData = (path, setData, setLoading) => {
-  setLoading((v) => {
+  setLoading(v => {
     v.push(path);
     return [...v];
   });
   database()
     .ref(path)
     .once('value')
-    .then((snapshot) => {
+    .then(snapshot => {
       setData(snapshot.val());
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -35,10 +35,10 @@ const loadData = (path, setData, setLoading) => {
         return [...v];
       });
     })
-    .catch((e) => {
+    .catch(e => {
       console.log(`Error fetching ${path}: `, e);
       crashlytics().log(`Error fetching ${path}: `, e);
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -61,14 +61,14 @@ function MainScreen(props) {
   const [showMenu, setShowMenu] = useState(false);
   const [userInfo, setUserInfo] = useState({phone: user});
 
-  const loadFunc = () => {
+  const loadFunc = useCallback(() => {
     loadData(
       '/student/' + user,
-      (data) => {
-        setUserInfo((v) => {
+      data => {
+        setUserInfo(v => {
           v.name = data.name;
           v.premium = {};
-          Object.keys(data).forEach((key) => {
+          Object.keys(data).forEach(key => {
             if (
               key.toLowerCase() !== 'premium' &&
               key.toLowerCase().includes('premium')
@@ -88,10 +88,10 @@ function MainScreen(props) {
     loadData('/premium', setPremium, setLoading);
     loadData(
       '/banner',
-      (data) => setBanners(Object.values(data) || {}),
+      data => setBanners(Object.values(data) || {}),
       setLoading,
     );
-  };
+  }, [user]);
 
   useEffect(() => {
     loadFunc();
@@ -99,7 +99,7 @@ function MainScreen(props) {
       leftIcon: 'menu',
       onPressBack: () => setShowMenu(true),
     });
-  }, []);
+  }, [props.navigation, loadFunc]);
 
   const data = [
     {
@@ -201,13 +201,14 @@ function MainScreen(props) {
     },
   ];
 
-  const render = (item) => {
+  const render = item => {
     return (
       <TouchableOpacity
         onPress={item.onPress}
         style={styles.subContainer}
         activeOpacity={0.5}
-        disabled={!item.disabled}>
+        disabled={!item.disabled}
+      >
         <Image source={item.imageBackground} style={styles.imageBackground} />
         <Text style={styles.text}>{item.text}</Text>
         {item.extraInfo ? (
@@ -251,7 +252,7 @@ function MainScreen(props) {
     return banners?.length ? (
       <View style={styles.banner}>
         <Banner
-          data={banners.filter((banner) => banner)}
+          data={banners.filter(banner => banner)}
           height={150}
           timer={2000}
           handlePress={handleBannerOnPress}

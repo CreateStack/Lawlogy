@@ -6383,7 +6383,7 @@ open@^6.2.0:
   dependencies:
     is-wsl "^1.1.0"
 
-opencollective-postinstall@^2.0.1:
+opencollective-postinstall@^2.0.1, opencollective-postinstall@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz#7a0fff978f6dbfa4d006238fbac98ed4198c3259"
   integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
@@ -6924,6 +6924,14 @@ react-native-gradle-plugin@^0.0.5:
   dependencies:
     react-native-codegen "*"
 
+react-native-inappbrowser-reborn@^3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/react-native-inappbrowser-reborn/-/react-native-inappbrowser-reborn-3.6.3.tgz#12938733e5337a9f328973557da0cfd13085bfbd"
+  integrity sha512-fqF708GVZ/7zja0/GyJQfjDfKREOe1fxYq8RAKZo8/KK6SkFO9hBlYqC3PwLFPw29zzwBzR+6EpL3qo95igkLw==
+  dependencies:
+    invariant "^2.2.4"
+    opencollective-postinstall "^2.0.2"
+
 react-native-iphone-x-helper@^1.3.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
@@ -6982,6 +6990,11 @@ react-native-screens@^3.3.0:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.3.0.tgz#d4464a96620b85d09e46bd6865b5f48456c244f0"
   integrity sha512-ni11jC6I9cFVXdLIDwkgafDHw/STXUNzkR5Fx3w8Wikdzi8gfTEan2kiOm7aS42d2F/LXddZ6i74Z2em0L6LPQ==
 
+react-native-share@^7.4.1:
+  version "7.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-7.4.1.tgz#0fa79a8748e0f268f8398b3433119a0bdf98bf4b"
+  integrity sha512-NFYkq9ytOP2kAAa33ZVOfBQLrpcBqwsNHsuDgU9DUcFpAlu2hYsjBy0MgLyJk8+uTzCBa5UCIlFFjZDwqFOKuw==
+
 react-native-simple-radio-button@^2.7.4:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.7.4.tgz#86e2dbe8af9e6bf60eee088f60466f7a975e7758"
@@ -7000,6 +7013,16 @@ react-native-vector-icons@^9.0.0:
     lodash.template "^4.5.0"
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-version-info@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-version-info/-/react-native-version-info-1.1.1.tgz#1a79a48909c13c2ecc8314d54e477da00308abf5"
+  integrity sha512-huOj2WeEtmBbGa4+5ZiaKfi1ASN73Fbz81leYDWHhFKjsRdIis3vVgSJXXhHlC5wazsu1viujnLkGXVtu4Ns9g==
+
+react-native-view-shot@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.1.2.tgz#8c8e84c67a4bc8b603e697dbbd59dbc9b4f84825"
+  integrity sha512-9u9fPtp6a52UMoZ/UCPrCjKZk8tnkI9To0Eh6yYnLKFEGkRZ7Chm6DqwDJbYJHeZrheCCopaD5oEOnRqhF4L2Q==
 
 react-native@0.68.0:
   version "0.68.0"

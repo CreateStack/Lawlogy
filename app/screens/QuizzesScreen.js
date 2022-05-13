@@ -18,16 +18,16 @@ import {ms, s, vs} from '../utils/scalingUtils';
 
 const fetchData = (path, phone, setLoading, setData) => {
   const ref = ('/student/' + phone + '/' + path).trim();
-  setLoading((v) => {
+  setLoading(v => {
     v.push(path);
     return [...v];
   });
   database()
     .ref(ref)
     .once('value')
-    .then((snapshot) => {
+    .then(snapshot => {
       setData(snapshot.val() || {});
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -35,11 +35,11 @@ const fetchData = (path, phone, setLoading, setData) => {
         return [...v];
       });
     })
-    .catch((e) => {
+    .catch(e => {
       console.log('Error while fetching: ', e);
       crashlytics().log('Error while fetching: ', e);
       setData({});
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -76,7 +76,7 @@ function QuizzesScreen(props) {
 
   const fetch = useCallback(() => {
     fetchData(fetchPath, user, setLoading, setData);
-    fetchData(premiumPath, user, setLoading, (value) => {
+    fetchData(premiumPath, user, setLoading, value => {
       let premium = value.premium;
       if (typeof premium === 'string') {
         premium = premium.toLowerCase();
@@ -96,7 +96,7 @@ function QuizzesScreen(props) {
     fetch();
   }, [fetch]);
 
-  const getQuiz = (quiz) => {
+  const getQuiz = quiz => {
     if (testSeries) {
       quiz = quiz.questions;
       if (quiz?.length === undefined) {
@@ -119,7 +119,7 @@ function QuizzesScreen(props) {
 
   const RenderItem = ({item, index}) => {
     const questions = getQuiz(props.route.params.quizzes[item]);
-    const total = questions.filter((ques) => ques).length;
+    const total = questions.filter(ques => ques).length;
     const testCompletionData = _.get(
       data,
       testSeries ? item.trim() : item.toUpperCase().trim(),
@@ -175,7 +175,8 @@ function QuizzesScreen(props) {
                   backgroundColor: colors.secondary,
                 }
               : {}),
-          }}>
+          }}
+        >
           <Text style={styles.seriesTimeText}>
             {/* {props.route.params.quizzes[item].testTime + ' hours'} */}
             {locked ? 'Unlock 🔓' : (completed ? 'Re-' : '') + 'Attempt'}
@@ -198,7 +199,8 @@ function QuizzesScreen(props) {
               borderWidth: 0,
               marginLeft: 0,
             },
-          ]}>
+          ]}
+        >
           <Text key={index} style={styles.text}>
             {item.toUpperCase()}
           </Text>
@@ -208,14 +210,16 @@ function QuizzesScreen(props) {
             paddingHorizontal: 16,
             paddingBottom: testSeries ? 16 : 24,
             paddingTop: 24,
-          }}>
+          }}
+        >
           <View style={styles.quizOptionsView}>
             <Text
               style={{
                 color: colors.black,
                 fontSize: ms(14),
                 fontWeight: 'bold',
-              }}>
+              }}
+            >
               {'Score: ' + score + '/' + total}
             </Text>
             {completed && !locked ? (
@@ -226,18 +230,19 @@ function QuizzesScreen(props) {
                   borderColor: colors.danger,
                 }}
                 onPress={() => {
-                  props.navigation.navigate('Quiz', {
+                  props.navigation.navigate('QuizAnalysis', {
                     quiz: getQuiz(props.route.params.quizzes[item]),
                     quizName: item.toUpperCase(),
                     total: total,
                     name: props.route.params.name,
                     data: testCompletionData,
-                    title: 'Answers',
+                    title: 'Analysis',
                     view: true,
                   });
-                }}>
+                }}
+              >
                 <Text style={{color: colors.white, fontSize: ms(12)}}>
-                  View
+                  Analyse
                 </Text>
               </TouchableOpacity>
             ) : null}
@@ -248,7 +253,8 @@ function QuizzesScreen(props) {
                   color: colors.black,
                   fontSize: ms(14),
                   fontWeight: 'bold',
-                }}>
+                }}
+              >
                 {'⌛ ' +
                   parseFloat(props.route.params.quizzes[item].testTime || 0) *
                     60 +
@@ -269,7 +275,8 @@ function QuizzesScreen(props) {
                     quiz: item,
                   });
                 }}
-                style={styles.ledaerboard}>
+                style={styles.ledaerboard}
+              >
                 <Text style={styles.ledaerboardText}>Leaderboard</Text>
               </TouchableOpacity>
             )}

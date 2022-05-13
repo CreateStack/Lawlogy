@@ -18,6 +18,7 @@ import Question from '../components/Question';
 import colors from '../config/colors';
 import ActivityIndicator from '../components/ActivityIndicator';
 import {calculateScore} from '../utils/calculateScore';
+import ScoreCard from '../components/ScoreCard';
 
 function QuestionsScreen(props) {
   const {user} = useContext(AuthContext);
@@ -80,9 +81,9 @@ function QuestionsScreen(props) {
       completed: true,
       score: calculateScore(
         negativeMarking,
-        props.route.params.quiz.filter((ques) => ques),
+        props.route.params.quiz.filter(ques => ques),
         selections,
-      ),
+      ).score,
       attempts: parseInt(props.route.params.attempts || 0) + 1,
       ...selections,
     };
@@ -91,24 +92,14 @@ function QuestionsScreen(props) {
       .ref(ref)
       .set(updatation)
       .then(() => {})
-      .catch((e) => {
+      .catch(e => {
         Alert.alert('Error', 'There was error in setting score on cloud: ' + e);
       });
     setShowScore(true);
-    setTimeout(() => {
-      setShowScore(false);
-      const onGoBack = props.route.params.onGoBack;
-      onGoBack && onGoBack();
-      const popScreens = props.route.params.popScreens;
-      popScreens ? props.navigation.pop(popScreens) : props.navigation.goBack();
-    }, 5000);
   }, [
     user,
     name,
     path,
-    props.navigation,
-    props.route.params.onGoBack,
-    props.route.params.popScreens,
     quizName,
     selections,
     props.route.params.attempts,
@@ -116,6 +107,19 @@ function QuestionsScreen(props) {
     props.route.params.quiz,
   ]);
   let quiz = props.route.params.quiz;
+
+  const closeScore = useCallback(() => {
+    setShowScore(false);
+    const onGoBack = props.route.params.onGoBack;
+    onGoBack && onGoBack();
+    const popScreens = props.route.params.popScreens;
+    popScreens ? props.navigation.pop(popScreens) : props.navigation.goBack();
+  }, [
+    props.route.params.onGoBack,
+    props.route.params.popScreens,
+    props.navigation,
+  ]);
+
   if (!quiz)
     return (
       <View style={{padding: 16, marginTop: 40, alignItems: 'center'}}>
@@ -130,7 +134,8 @@ function QuestionsScreen(props) {
             fontWeight: 'bold',
             textAlign: 'center',
             lineHeight: 30,
-          }}>
+          }}
+        >
           Oops! The quiz is not yet ready 😢.{'\n'}Try another?
         </Text>
         <TouchableOpacity
@@ -141,12 +146,13 @@ function QuestionsScreen(props) {
             borderRadius: 10,
             marginTop: 20,
           }}
-          onPress={() => props.navigation.goBack()}>
+          onPress={() => props.navigation.goBack()}
+        >
           <Text style={{color: colors.white, fontSize: 20}}>Back</Text>
         </TouchableOpacity>
       </View>
     );
-  quiz = quiz.filter((ques) => ques);
+  quiz = quiz.filter(ques => ques);
   const renderItem = ({item, index}) => {
     return (
       <Question
@@ -173,7 +179,8 @@ function QuestionsScreen(props) {
           alignItems: 'center',
           justifyContent: 'space-between',
           flexDirection: 'row',
-        }}>
+        }}
+      >
         <TouchableOpacity
           style={{
             paddingHorizontal: 16,
@@ -182,8 +189,8 @@ function QuestionsScreen(props) {
             backgroundColor: colors.primary,
           }}
           onPress={() => {
-            let totalAttempt = Object.keys(selections || {}).filter(
-              (selection) => selection,
+            let totalAttempt = Object.values(selections || {}).filter(
+              selection => !!selection,
             ).length;
             if (totalAttempt !== props.route.params.total) {
               Alert.alert(
@@ -192,7 +199,8 @@ function QuestionsScreen(props) {
                 [{text: 'Submit', onPress: () => submit()}, {text: 'Cancel'}],
               );
             } else submit();
-          }}>
+          }}
+        >
           <Text style={{fontSize: 16, color: colors.white}}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -202,7 +210,8 @@ function QuestionsScreen(props) {
             borderRadius: 10,
             backgroundColor: colors.yellow,
           }}
-          onPress={leaveQuiz}>
+          onPress={leaveQuiz}
+        >
           <Text style={{fontSize: 16, color: colors.black}}>Leave Quiz</Text>
         </TouchableOpacity>
       </View>
@@ -227,46 +236,32 @@ function QuestionsScreen(props) {
         keyboardShouldPersistTaps="always"
       />
       {view ? null : <View style={styles.footer}>{footerItem()}</View>}
-      {showScore ? (
-        <>
-          <ActivityIndicator
-            opacity={0.7}
-            source={require('../assets/animations/confetti.json')}
-            visible={showScore}
-          />
-          <View
-            style={{
-              alignItems: 'center',
-              backgroundColor: colors.yellow,
-              justifyContent: 'center',
-              position: 'absolute',
-              zIndex: 5,
-              opacity: 1,
-              width: '100%',
-              top: 200,
-            }}>
-            <Text
-              style={{
-                fontSize: 32,
-                color: colors.primary,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                zIndex: 5,
-              }}>
-              Your score is:{' '}
-              {'\n' +
-                calculateScore(negativeMarking, quiz, selections) +
-                ' / ' +
-                props.route.params.total}
-            </Text>
-          </View>
-        </>
-      ) : null}
+      <ScoreCard
+        isVisible={showScore}
+        onClose={closeScore}
+        score={calculateScore(negativeMarking, quiz, selections)}
+        total={props.route.params.total}
+        totalAttempt={
+          Object.values(selections || {}).filter(selection => !!selection)
+            .length
+        }
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  closeScore: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
+  congratulations: {
+    color: colors.black,
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
   container: {
     alignItems: 'center',
     flex: 1,
@@ -294,6 +289,36 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 16,
     position: 'absolute',
     bottom: 16,
+  },
+  score: {
+    alignItems: 'center',
+    backgroundColor: colors.lightBlue,
+    borderRadius: 24,
+    justifyContent: 'center',
+    padding: 16,
+    overflow: 'hidden',
+  },
+  scoreContainer: {
+    alignItems: 'center',
+    backgroundColor: '#fff0',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  scoreNormal: {
+    color: colors.black,
+    fontWeight: 'bold',
+  },
+  scoreText: {
+    color: colors.green,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  trophy: {
+    height: 200,
+    marginBottom: 8,
+    width: 200,
+    zIndex: 1,
   },
 });
 

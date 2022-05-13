@@ -61,13 +61,13 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           .then(() => {
             handleCompletion();
           })
-          .catch((e) => {
+          .catch(e => {
             console.log('Failed to update orderNumber: ', e);
             crashlytics().log('Failed to update orderNumber: ', e);
             handleCompletion();
           });
       })
-      .catch((e) => {
+      .catch(e => {
         crashlytics().log('Failed to uplaod txn details: ', e);
         handleCompletion();
       });
@@ -76,7 +76,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     if (startRedirection && !interval) {
       setIntervalValue(
         setInterval(() => {
-          setProgress((v) => v + 1);
+          setProgress(v => v + 1);
         }, 1000),
       );
     }
@@ -92,7 +92,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     }
   }, [progress, interval, navigation, params.popScreens]);
 
-  const successCallback = (data) => {
+  const successCallback = data => {
     console.log('See success: ', data);
     setPayment('Success!!');
     setPaymentError('');
@@ -100,7 +100,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     setPaymentInfo(setLoading, data);
   };
 
-  const failureCallback = (data) => {
+  const failureCallback = data => {
     console.log('See failure: ', data);
     setPayment('Failure');
     setPaymentError(data.txMsg);
@@ -125,7 +125,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           },
         },
       )
-      .then((resp) => {
+      .then(resp => {
         console.log('resp: ', resp);
         crashlytics().log('token resp: ', resp);
         let data = {
@@ -139,7 +139,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           tokenData: resp.data?.cftoken || '',
         };
         console.log('map: ', data);
-        RNPgReactNativeSDK.startPaymentWEB(data, ENV, (result) => {
+        RNPgReactNativeSDK.startPaymentWEB(data, ENV, result => {
           result = JSON.parse(result);
           console.log('result: ', result);
           if (result.txStatus === 'SUCCESS') {
@@ -151,7 +151,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           }
         });
       })
-      .catch((e) => {
+      .catch(e => {
         crashlytics().log('Error in fetching token: ', e);
         console.log('Error in fetching token: ', e);
         failureCallback({txMsg: 'Error in fetching token'});
@@ -177,7 +177,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
         style={{
           flex: 1,
           backgroundColor: colors.lightBlue,
-        }}>
+        }}
+      >
         <View style={styles.container}>
           <MaterialCommunityIcons
             name={'scale-balance'}
@@ -213,7 +214,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
               position: 'absolute',
               bottom: vs(32),
               width: '100%',
-            }}>
+            }}
+          >
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.payment}>{'Payment status: '}</Text>
               <Text
@@ -223,7 +225,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     color:
                       payment === 'Success!!' ? colors.green : colors.redText,
                   },
-                ]}>
+                ]}
+              >
                 {payment}
               </Text>
             </View>
@@ -244,7 +247,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                       flex: 1,
                       flexWrap: 'wrap',
                     },
-                  ]}>
+                  ]}
+                >
                   {txnId}
                 </Text>
               </View>
@@ -253,7 +257,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
         </View>
         <TouchableOpacity
           onPress={initializePayment}
-          style={styles.purchaseButton}>
+          style={styles.purchaseButton}
+        >
           <Text style={styles.purchaseText}>PAY</Text>
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
             {parseFloat(premium.discount) ? (
@@ -264,7 +269,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     color: colors.yellow,
                     textDecorationLine: 'line-through',
                   },
-                ]}>
+                ]}
+              >
                 <MaterialCommunityIcons
                   name={'currency-inr'}
                   color={colors.yellow}
@@ -295,7 +301,8 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     fontSize: ms(16),
                     textDecorationLine: 'underline',
                   },
-                ]}>
+                ]}
+              >
                 {Math.round(
                   ((parseFloat(premium.discount || 0) * 100) /
                     parseFloat(premium.cost)) *

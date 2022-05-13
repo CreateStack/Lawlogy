@@ -25,11 +25,11 @@ const fetchData = (path, phone, setLoading, setData) => {
   database()
     .ref(ref)
     .once('value')
-    .then((snapshot) => {
+    .then(snapshot => {
       setData(snapshot.val() || {});
       setLoading(false);
     })
-    .catch((e) => {
+    .catch(e => {
       console.log('Error while fetching: ', e);
       crashlytics().log('Error while fetching in TestSeriesScreen: ', e);
       setData({});
@@ -76,7 +76,7 @@ function TopicScreen({navigation, route}) {
             </View>
             <View style={styles.testsInfo}>
               {Object.values(flyerInfo.info || {})
-                .filter((v) => v)
+                .filter(v => v)
                 .map((info, index) => {
                   return (
                     <Text key={index.toString()} style={styles.info}>
@@ -101,7 +101,7 @@ function TopicScreen({navigation, route}) {
             flyerInfo={prelimsFlyerInfo}
             key={index.toString() + ' prelims'}
             onPress={() => {
-              const setData = (data) => {
+              const setData = data => {
                 navigation.navigate('Quizzes', {
                   extraInfoData: data,
                   itemName: 'Tests',
