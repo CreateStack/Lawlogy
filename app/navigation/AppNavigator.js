@@ -71,7 +71,7 @@ const AppNavigator = () => (
     <Stack.Screen
       name="LeaderBoard"
       component={LeaderBoardScreen}
-      initialParams={{title: 'Prelims Leaderboard'}}
+      initialParams={{title: 'Leaderboard'}}
     />
   </Stack.Navigator>
 );

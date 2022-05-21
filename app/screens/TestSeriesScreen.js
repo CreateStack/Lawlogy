@@ -53,8 +53,16 @@ function TopicScreen({navigation, route}) {
     const mainsFlyerInfo = params.items[item].mainsFlyer || {};
 
     const Flyer = ({flyerInfo, onPress}) => {
+      const [width, setWidth] = useState(0);
       return (
-        <TouchableOpacity style={styles.topic} onPress={onPress}>
+        <TouchableOpacity
+          style={styles.topic}
+          onPress={onPress}
+          onLayout={({nativeEvent}) => {
+            const {width} = nativeEvent.layout;
+            setWidth(width);
+          }}
+        >
           <LinearGradient colors={['#CCCCFF', '#fff']} style={styles.gradient}>
             {flyerInfo.image ? (
               <Image
@@ -62,7 +70,7 @@ function TopicScreen({navigation, route}) {
                 style={styles.flyerImage}
               />
             ) : null}
-            <Text key={index} style={styles.flyerTitle}>
+            <Text key={index} style={{...styles.flyerTitle, width: width - 64}}>
               {flyerInfo.title}
             </Text>
             <View style={styles.testNumberContainer}>

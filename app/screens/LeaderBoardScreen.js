@@ -63,9 +63,12 @@ const LeaderBoardScreen = ({route: {params}}) => {
   const getName = (name = '') => {
     name = name.trim().split(' ');
     name =
-      _.capitalize(name[0]) +
+      name[0].replace(/\w+/g, _.capitalize) +
       ' ' +
-      _.capitalize(name.length > 1 ? name[name.length - 1] : '');
+      (name.length > 1 ? name[name.length - 1] : '').replace(
+        /\w+/g,
+        _.capitalize,
+      );
     return name;
   };
 

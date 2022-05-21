@@ -43,15 +43,15 @@ function TopicScreen({navigation, route}) {
               }),
             premium: params.premium,
             quizzes: params.items[item],
-            title: _.startCase(
-              _.toLower(params.passTitle ? item : params.itemName),
-            ),
+            title: (params.passTitle ? item : params.itemName)
+              .replace(/\w+/g, _.lowerCase)
+              .replace(/\w+/g, _.startCase),
           })
         }
       >
         {/* <Image source={params.image} style={styles.imageBackground} /> */}
         <Text key={index} style={styles.text}>
-          {_.startCase(_.toLower(item))}
+          {item.replace(/\w+/g, _.lowerCase).replace(/\w+/g, _.startCase)}
         </Text>
         {params.showExtraInfo && (
           <View style={styles.extraInfo}>

@@ -9,9 +9,11 @@ const daysToMiliSecs = 24 * 60 * 60 * 1000;
 const Subscriptions = ({premiums = {}}) => {
   const [subs, setSubs] = useState([]);
   const trim = (text = '') => {
-    return _.startCase(
-      text.replace(' ', '').replace('_', ' ').replace('Premium', ''),
-    );
+    return text
+      .replace(' ', '')
+      .replace('_', ' ')
+      .replace('Premium', '')
+      .replace(/\w+/g, _.startCase);
   };
   useEffect(() => {
     Object.keys(premiums).forEach(premium => {

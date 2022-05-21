@@ -154,7 +154,9 @@ function QuizzesScreen(props) {
                     }), */
                     quiz: getQuiz(props.route.params.quizzes[item]),
                     quizzes: props.route.params.quizzes[item],
-                    quizName: item.toUpperCase(),
+                    quizName: item
+                      .replace(/\w+/g, _.lowerCase)
+                      .replace(/\w+/g, _.startCase),
                     //rightIcon: 'podium',
                     //showRightIcon: testSeries ? true : false,
                     total: total,
@@ -230,9 +232,11 @@ function QuizzesScreen(props) {
                   borderColor: colors.danger,
                 }}
                 onPress={() => {
-                  props.navigation.navigate('QuizAnalysis', {
+                  props.navigation.navigate('Quiz', {
                     quiz: getQuiz(props.route.params.quizzes[item]),
-                    quizName: item.toUpperCase(),
+                    quizName: item
+                      .replace(/\w+/g, _.lowerCase)
+                      .replace(/\w+/g, _.startCase),
                     total: total,
                     name: props.route.params.name,
                     data: testCompletionData,
@@ -300,7 +304,9 @@ function QuizzesScreen(props) {
         <Text style={styles.headerText}>
           {testSeries
             ? props.route.params.heading
-            : _.startCase(_.toLower(props.route.params.name))}
+            : (props.route.params.name || '')
+                .replace(/\w+/g, _.lowerCase)
+                .replace(/\w+/g, _.startCase)}
         </Text>
       </View>
     );
