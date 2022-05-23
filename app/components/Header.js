@@ -52,8 +52,7 @@ function Header(props) {
             onPress={() =>
               data.onPressBack ? data.onPressBack() : data.navigation.goBack()
             }
-            style={styles.backButtonContainer}
-          >
+            style={styles.backButtonContainer}>
             <MaterialCommunityIcons
               name={data.leftIcon}
               size={s(22)}
@@ -68,8 +67,7 @@ function Header(props) {
       {data.showRightIcon && (
         <TouchableOpacity
           onPress={data.onPressRightIcon}
-          style={styles.rightIconContainer}
-        >
+          style={styles.rightIconContainer}>
           <MaterialCommunityIcons
             name={data.rightIcon}
             size={24}

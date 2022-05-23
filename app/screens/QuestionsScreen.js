@@ -16,7 +16,6 @@ import database from '@react-native-firebase/database';
 import AuthContext from '../auth/context';
 import Question from '../components/Question';
 import colors from '../config/colors';
-import ActivityIndicator from '../components/ActivityIndicator';
 import {calculateScore} from '../utils/calculateScore';
 import ScoreCard from '../components/ScoreCard';
 
@@ -24,7 +23,7 @@ function QuestionsScreen(props) {
   const {user} = useContext(AuthContext);
   const [showScore, setShowScore] = useState(false);
   const [selections, setSelections] = useState({});
-  const {data, negativeMarking = 0, view} = props.route.params;
+  const {data, negativeMarking = 0, subjectName, view} = props.route.params;
   useEffect(() => {
     props.navigation.setParams({
       onPressBack: leaveQuiz,
@@ -134,8 +133,7 @@ function QuestionsScreen(props) {
             fontWeight: 'bold',
             textAlign: 'center',
             lineHeight: 30,
-          }}
-        >
+          }}>
           Oops! The quiz is not yet ready 😢.{'\n'}Try another?
         </Text>
         <TouchableOpacity
@@ -146,8 +144,7 @@ function QuestionsScreen(props) {
             borderRadius: 10,
             marginTop: 20,
           }}
-          onPress={() => props.navigation.goBack()}
-        >
+          onPress={() => props.navigation.goBack()}>
           <Text style={{color: colors.white, fontSize: 20}}>Back</Text>
         </TouchableOpacity>
       </View>
@@ -168,7 +165,9 @@ function QuestionsScreen(props) {
   const headerItem = () => {
     return (
       <View style={styles.header}>
-        <Text style={styles.headerText}>{props.route.params.quizName}</Text>
+        <Text style={styles.headerText}>
+          {quizName.replace(/\w+/g, _.lowerCase).replace(/\w+/g, _.startCase)}
+        </Text>
       </View>
     );
   };
@@ -179,8 +178,7 @@ function QuestionsScreen(props) {
           alignItems: 'center',
           justifyContent: 'space-between',
           flexDirection: 'row',
-        }}
-      >
+        }}>
         <TouchableOpacity
           style={{
             paddingHorizontal: 16,
@@ -199,8 +197,7 @@ function QuestionsScreen(props) {
                 [{text: 'Submit', onPress: () => submit()}, {text: 'Cancel'}],
               );
             } else submit();
-          }}
-        >
+          }}>
           <Text style={{fontSize: 16, color: colors.white}}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -210,8 +207,7 @@ function QuestionsScreen(props) {
             borderRadius: 10,
             backgroundColor: colors.yellow,
           }}
-          onPress={leaveQuiz}
-        >
+          onPress={leaveQuiz}>
           <Text style={{fontSize: 16, color: colors.black}}>Leave Quiz</Text>
         </TouchableOpacity>
       </View>
@@ -239,7 +235,9 @@ function QuestionsScreen(props) {
       <ScoreCard
         isVisible={showScore}
         onClose={closeScore}
+        quizName={quizName}
         score={calculateScore(negativeMarking, quiz, selections)}
+        subjectName={subjectName}
         total={props.route.params.total}
         totalAttempt={
           Object.values(selections || {}).filter(selection => !!selection)

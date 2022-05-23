@@ -28,15 +28,13 @@ function Card({
     <View
       accessible={accessible}
       testID={'Hero_Banner_Card'}
-      style={styles.card}
-    >
+      style={styles.card}>
       <TouchableOpacity
         onPress={() => {
           if (handlePress) {
             handlePress();
           }
-        }}
-      >
+        }}>
         <ImageBackground
           testID={'image'}
           resizeMode={'cover'}
@@ -46,15 +44,13 @@ function Card({
             width,
             alignItems,
             justifyContent,
-          }}
-        >
+          }}>
           <Text
             style={{
               ...styles.text,
               color: textColor,
               fontSize: parseInt(textSize),
-            }}
-          >
+            }}>
             {text}
           </Text>
         </ImageBackground>
@@ -156,8 +152,7 @@ function Banner({
       accessible={accessible}
       style={{...styles.container, height, width: windowWidth}}
       height={height}
-      width={windowWidth}
-    >
+      width={windowWidth}>
       <FlatList
         testID={'flat_list'}
         getItemLayout={(item, index) => ({

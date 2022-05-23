@@ -27,8 +27,7 @@ const AppNavigator = () => (
           <Header {...props} />
         );
       },
-    }}
-  >
+    }}>
     <Stack.Screen
       name="Main"
       component={MainScreen}

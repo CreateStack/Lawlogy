@@ -12,8 +12,7 @@ const MainsTestSeriesScreen = ({route, navigation}) => {
       <Text style={styles.instructions}>{params.quizzes.rules}</Text>
       <TouchableOpacity
         onPress={() => openURL(params.quizzes.link, true)}
-        style={styles.button}
-      >
+        style={styles.button}>
         <Text style={styles.buttonText}>Start</Text>
       </TouchableOpacity>
     </View>

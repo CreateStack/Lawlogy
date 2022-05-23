@@ -47,8 +47,7 @@ function TopicScreen({navigation, route}) {
               .replace(/\w+/g, _.lowerCase)
               .replace(/\w+/g, _.startCase),
           })
-        }
-      >
+        }>
         {/* <Image source={params.image} style={styles.imageBackground} /> */}
         <Text key={index} style={styles.text}>
           {item.replace(/\w+/g, _.lowerCase).replace(/\w+/g, _.startCase)}

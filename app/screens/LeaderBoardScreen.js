@@ -1,63 +1,34 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import crashlytics from '@react-native-firebase/crashlytics';
 import _ from 'lodash';
 
-import database from '@react-native-firebase/database';
 import ActivityIndicator from '../components/ActivityIndicator';
 import colors from '../config/colors';
 import Separator from '../components/Separator';
-
-const fetchData = (path, setLoading, setData) => {
-  const ref = path.trim();
-  setLoading(true);
-  database()
-    .ref(ref)
-    .once('value')
-    .then(snapshot => {
-      setData(snapshot.val() || {});
-      setLoading(false);
-    })
-    .catch(e => {
-      console.log('Error while fetching: ', e);
-      crashlytics().log('Error while fetching: ', e);
-      setData({});
-      setLoading(false);
-    });
-};
+import {rankStudents} from '../utils/helpers';
+import AuthContext from '../auth/context';
 
 const LeaderBoardScreen = ({route: {params}}) => {
+  const {user} = useContext(AuthContext);
   const [data, setData] = useState({});
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const state = params.state.trim();
   const quiz = params.quiz.trim();
   useEffect(() => {
-    const rankStudents = (students = {}) => {
-      const keys = Object.keys(students);
-      const board = [];
-      keys.forEach(student => {
-        let info = null;
-        if (students[student].prelimsTestSeries?.[state]) {
-          info = students[student].prelimsTestSeries[state][quiz];
-        }
-        const score = info?.score;
-        const attempts = info?.attempts;
-        if (score !== undefined && score !== null) {
-          const final = {
-            name: students[student].name,
-            score: score,
-            attempts: attempts,
-          };
-          console.log('final: ', final);
-          board.push(final);
-        } else {
-          return;
-        }
-      });
-      setData(board.sort((a, b) => b.score - a.score));
-    };
-    fetchData('/student/', setLoading, rankStudents);
+    rankStudents(
+      quiz,
+      state,
+      setLoading,
+      (ranks, username) => {
+        console.log('username: ', username);
+        setData(ranks);
+        setUsername(username);
+      },
+      '/student/',
+      user,
+    );
   }, [quiz, state]);
 
   const getName = (name = '') => {
@@ -72,7 +43,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
     return name;
   };
 
-  const getRank = index => {
+  const getRank = (index, isUser) => {
     let color = colors.gold;
     switch (index) {
       case 0:
@@ -90,10 +61,22 @@ const LeaderBoardScreen = ({route: {params}}) => {
         name={'medal'}
         color={color}
         size={24}
-        style={{...styles.rank, textAlign: 'center'}}
+        style={{
+          ...styles.rank,
+          color,
+          textAlign: 'center',
+          ...(isUser ? {fontWeight: 'bold'} : {}),
+        }}
       />
     ) : (
-      <Text style={{...styles.rank, textAlign: 'center'}}>{index + 1}</Text>
+      <Text
+        style={{
+          ...styles.rank,
+          textAlign: 'center',
+          ...(isUser ? styles.bold : {}),
+        }}>
+        {index + 1}
+      </Text>
     );
   };
 
@@ -104,14 +87,26 @@ const LeaderBoardScreen = ({route: {params}}) => {
           style={[
             styles.rankContainer,
             index % 2 === 0 ? {backgroundColor: colors.lightBlue} : {},
-          ]}
-        >
-          {getRank(index)}
-          <Text style={styles.name}>{getName(item.name)}</Text>
-          <Text style={{...styles.score, textAlign: 'center'}}>
+          ]}>
+          {getRank(index, item.name === username)}
+          <Text
+            style={[styles.name, item.name === username ? styles.bold : {}]}>
+            {getName(item.name)}
+          </Text>
+          <Text
+            style={{
+              ...styles.score,
+              textAlign: 'center',
+              ...(item.name === username ? styles.bold : {}),
+            }}>
             {item.score}
           </Text>
-          <Text style={{...styles.attempts, textAlign: 'center'}}>
+          <Text
+            style={{
+              ...styles.attempts,
+              textAlign: 'center',
+              ...(item.name === username ? styles.bold : {}),
+            }}>
             {item.attempts}
           </Text>
         </View>
@@ -159,19 +154,23 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   attempts: {
+    color: colors.black,
     flex: 0.3,
     textAlign: 'center',
   },
   name: {
+    color: colors.black,
     flex: 0.4,
     textAlign: 'left',
   },
   rank: {
+    color: colors.black,
     flex: 0.15,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   score: {
+    color: colors.black,
     flex: 0.15,
     textAlign: 'center',
   },

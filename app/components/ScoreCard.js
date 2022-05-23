@@ -8,7 +8,15 @@ import Share from 'react-native-share';
 
 import colors from '../config/colors';
 
-const ScoreCard = ({isVisible, onClose, score, total, totalAttempt}) => {
+const ScoreCard = ({
+  isVisible,
+  onClose,
+  quizName,
+  score,
+  subjectName,
+  total,
+  totalAttempt,
+}) => {
   const viewShot = useRef();
   const share = () => {
     if (viewShot?.current) {
@@ -32,8 +40,7 @@ const ScoreCard = ({isVisible, onClose, score, total, totalAttempt}) => {
       onBackButtonPress={onClose}
       onBackdropPress={onClose}
       style={styles.scoreContainer}
-      useNativeDriver={true}
-    >
+      useNativeDriver={true}>
       <>
         <TouchableOpacity onPress={onClose} style={styles.closeScore}>
           <MaterialCommunityIcons
@@ -54,7 +61,11 @@ const ScoreCard = ({isVisible, onClose, score, total, totalAttempt}) => {
             <Text style={styles.scoreText}>
               {'Your score is ' + score.score + ' / ' + total}
             </Text>
-            <Text style={styles.scoreNormal}>Quiz completed successfully</Text>
+            <Text style={styles.scoreNormal}>{subjectName}</Text>
+            <Text style={styles.scoreNormal}>{quizName}</Text>
+            <Text style={{...styles.scoreNormal, marginBottom: 18}}>
+              Completed Successfully
+            </Text>
             <Text>
               <Text>You attempted </Text>
               <Text style={styles.questionAttempt}>
@@ -117,7 +128,7 @@ const styles = StyleSheet.create({
   scoreNormal: {
     color: colors.black,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 2,
   },
   scoreText: {
     color: colors.green,

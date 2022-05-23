@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import VersionInfo from 'react-native-version-info';
 
 import colors from '../../config/colors';
@@ -21,10 +22,14 @@ import useAuth from '../../auth/useAuth';
 import {openURL} from '../../utils/helpers';
 import Subscriptions from './Subscriptions';
 
-const SocialIcon = ({color, name, onPress}) => {
+const SocialIcon = ({color, name, onPress, evilIcon}) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.socialIcon}>
-      <MaterialCommunityIcons name={name} size={32} color={color} />
+      {evilIcon ? (
+        <EvilIcons name={name} size={40} color={color} />
+      ) : (
+        <MaterialCommunityIcons name={name} size={32} color={color} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -65,8 +70,7 @@ const Item = ({
             <Animated.View
               style={{
                 transform: [{rotate: spin}],
-              }}
-            >
+              }}>
               <MaterialCommunityIcons
                 name={'chevron-down'}
                 size={20}
@@ -115,15 +119,12 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
       style={{margin: 0}}
       swipeDirection="left"
       onSwipeComplete={onMenuClose}
-      useNativeDriver={true}
-    >
+      useNativeDriver={true}>
       <View
         colors={[colors.seaGreen, colors.orangeLighter]}
-        style={styles.menuContainer}
-      >
+        style={styles.menuContainer}>
         <View
-          style={{backgroundColor: colors.primary, padding: 16, width: '100%'}}
-        >
+          style={{backgroundColor: colors.primary, padding: 16, width: '100%'}}>
           <View style={styles.logoContainer}>
             <MaterialCommunityIcons
               name={'account-tie'}
@@ -143,7 +144,7 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
           <View style={styles.itemsContianer}>
             <Item
               expanded={subscriptionVisible}
-              icon={'cash-usd'}
+              icon={'cash-lock-open'}
               iconColor={colors.silver}
               text={'My Subscriptions'}
               onPress={() => setSubscriptionVisible(v => !v)}
@@ -235,13 +236,24 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
           />
           <SocialIcon
             color={'#229ED9'}
-            name={'telegram'}
+            name={'sc-telegram'}
             onPress={() => openURL('https://t.me/lawlogyclasses', true)}
+            evilIcon={true}
           />
           <SocialIcon
             color={'#4267B2'}
             name={'facebook'}
             onPress={() => openURL('https://m.facebook.com/lawlogy/', true)}
+          />
+          <SocialIcon
+            color={'#FF0000'}
+            name={'youtube'}
+            onPress={() =>
+              openURL(
+                'https://youtube.com/channel/UCPN2Bae5afFw5vA5C4wFcrg',
+                true,
+              )
+            }
           />
         </View>
         <View style={styles.version}>
@@ -300,6 +312,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   itemText: {
+    color: colors.black,
     fontSize: 16,
     marginLeft: 8,
   },
@@ -348,7 +361,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   socialIcon: {
-    marginHorizontal: 8,
+    marginHorizontal: 4,
   },
   userInfo: {
     marginTop: 4,

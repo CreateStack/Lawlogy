@@ -34,8 +34,7 @@ function Question({
           setValue(option.toLowerCase());
         }}
         keyboardShouldPersistTaps="always"
-        style={styles.radioContainer}
-      >
+        style={styles.radioContainer}>
         {view ? (
           value === option ? (
             option === question.correct.toLowerCase() ? (
@@ -117,16 +116,14 @@ function Question({
                 : colors.yellow,
             }
           : {}),
-      }}
-    >
+      }}>
       <Text style={styles.question}>
         {'Q.' + Number(index + 1) + ' ' + question.Question}
       </Text>
       <RadioForm
         animation={true}
         formHorizontal={false}
-        style={styles.radioform}
-      >
+        style={styles.radioform}>
         <Radio label={'A) ' + question.a} option={'a'} />
         <Radio label={'B) ' + question.b} option={'b'} />
         <Radio label={'C) ' + question.c} option={'c'} />
@@ -137,8 +134,7 @@ function Question({
           style={styles.clearSelection}
           onPress={() => {
             setValue('');
-          }}
-        >
+          }}>
           <Text style={styles.clearSelectionText}>Clear selection</Text>
         </TouchableOpacity>
       )}
@@ -168,12 +164,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   option: {
+    color: colors.black,
     fontSize: 16,
     textAlign: 'left',
     paddingLeft: 8,
     paddingVertical: 8,
   },
   question: {
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,

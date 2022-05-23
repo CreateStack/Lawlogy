@@ -11,7 +11,8 @@
     "build": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/ && cd android && ./gradlew assembleDebug && cd ../",
     "codepush": "appcenter codepush release-react -a createstack/Lawlogy",
     "build:release": "cd android && ./gradlew bundleRelease && cd ../",
-    "start:release": "npx react-native run-android --variant=release"
+    "start:release": "npx react-native run-android --variant=release",
+    "start:emulator": "emulator -avd \"pixel_4a\" -no-audio "
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.4",
@@ -30,6 +31,7 @@
     "axios": "^0.26.1",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
+    "lottie-ios": "^3.2.3",
     "lottie-react-native": "^5.1.0",
     "react": "17.0.2",
     "react-native": "0.68.0",

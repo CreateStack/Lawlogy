@@ -7,9 +7,10 @@ import AuthContext from './app/auth/context';
 import AuthNavigator from './app/navigation/AuthNavigator';
 import navigationTheme from './app/navigation/navigationTheme';
 import authStorage from './app/auth/storage';
-import {ImageBackground, Text, View} from 'react-native';
+import {ImageBackground, StatusBar, Text, View} from 'react-native';
 import OfflineNotice from './app/components/OfflineNotice';
 import AppNavigator from './app/navigation/AppNavigator';
+import colors from './app/config/colors';
 
 let CodePushOptions = {
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
@@ -66,8 +67,8 @@ const App = () => {
           flex: 1,
           alignItems: 'center',
           backgroundColor: '#fff',
-        }}
-      >
+        }}>
+        <StatusBar backgroundColor={colors.white} barStyle="light-content" />
         <ImageBackground
           source={require('./app/assets/logo.jpg')}
           style={{
@@ -79,12 +80,15 @@ const App = () => {
     );
   }
   return (
-    <AuthContext.Provider value={{user, setUser}}>
-      <OfflineNotice />
-      <NavigationContainer theme={navigationTheme}>
-        {user ? <AppNavigator /> : <AuthNavigator />}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <>
+      <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
+      <AuthContext.Provider value={{user, setUser}}>
+        <OfflineNotice />
+        <NavigationContainer theme={navigationTheme}>
+          {user ? <AppNavigator /> : <AuthNavigator />}
+        </NavigationContainer>
+      </AuthContext.Provider>
+    </>
   );
 };
 

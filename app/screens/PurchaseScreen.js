@@ -177,8 +177,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
         style={{
           flex: 1,
           backgroundColor: colors.lightBlue,
-        }}
-      >
+        }}>
         <View style={styles.container}>
           <MaterialCommunityIcons
             name={'scale-balance'}
@@ -214,8 +213,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
               position: 'absolute',
               bottom: vs(32),
               width: '100%',
-            }}
-          >
+            }}>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.payment}>{'Payment status: '}</Text>
               <Text
@@ -225,8 +223,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     color:
                       payment === 'Success!!' ? colors.green : colors.redText,
                   },
-                ]}
-              >
+                ]}>
                 {payment}
               </Text>
             </View>
@@ -247,8 +244,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                       flex: 1,
                       flexWrap: 'wrap',
                     },
-                  ]}
-                >
+                  ]}>
                   {txnId}
                 </Text>
               </View>
@@ -257,8 +253,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
         </View>
         <TouchableOpacity
           onPress={initializePayment}
-          style={styles.purchaseButton}
-        >
+          style={styles.purchaseButton}>
           <Text style={styles.purchaseText}>PAY</Text>
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
             {parseFloat(premium.discount) ? (
@@ -269,8 +264,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     color: colors.yellow,
                     textDecorationLine: 'line-through',
                   },
-                ]}
-              >
+                ]}>
                 <MaterialCommunityIcons
                   name={'currency-inr'}
                   color={colors.yellow}
@@ -301,8 +295,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
                     fontSize: ms(16),
                     textDecorationLine: 'underline',
                   },
-                ]}
-              >
+                ]}>
                 {Math.round(
                   ((parseFloat(premium.discount || 0) * 100) /
                     parseFloat(premium.cost)) *

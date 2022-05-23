@@ -68,8 +68,7 @@ const Subscriptions = ({premiums = {}}) => {
                 style={[
                   styles.subscriptions,
                   {color: sub.color, fontWeight: 'normal'},
-                ]}
-              >
+                ]}>
                 {sub.daysLeft}
               </Text>
             </Text>

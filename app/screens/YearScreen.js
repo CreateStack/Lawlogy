@@ -47,8 +47,7 @@ const OptionButton = ({
         }}
         onPress={() => {
           openURL(params.quizzes[item].prelims, true);
-        }}
-      >
+        }}>
         <Text key={index} style={{...styles.text, color: colors.white}}>
           Preliminary
         </Text>
@@ -64,8 +63,7 @@ const OptionButton = ({
         onPress={() => {
           setShowMainsPapers(true);
           setMainsPapers(newMainsPaper);
-        }}
-      >
+        }}>
         <Text key={index} style={styles.text}>
           Mains
         </Text>
@@ -84,8 +82,7 @@ const OptionButton = ({
         } else {
           openURL(params.quizzes[item].prelims, true);
         }
-      }}
-    >
+      }}>
       <Text key={index} style={styles.text}>
         {item}
       </Text>
@@ -122,8 +119,7 @@ const YearScreen = ({route}) => {
       <Modal
         isVisible={showMainsPapers}
         onBackButtonPress={() => setShowMainsPapers(false)}
-        onBackdropPress={() => setShowMainsPapers(false)}
-      >
+        onBackdropPress={() => setShowMainsPapers(false)}>
         <View style={styles.mainsPapers}>
           {Object.keys(mainsPapers)
             .sort((a, b) => -1)
@@ -138,14 +134,12 @@ const YearScreen = ({route}) => {
                   style={[
                     styles.paper,
                     index % 2 !== 0 ? styles.evenPaper : {},
-                  ]}
-                >
+                  ]}>
                   <Text
                     style={[
                       styles.paperText,
                       index % 2 !== 0 ? styles.evenPaperText : {},
-                    ]}
-                  >
+                    ]}>
                     {'Paper ' + (index + 1)}
                   </Text>
                 </TouchableOpacity>

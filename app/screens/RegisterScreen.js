@@ -295,8 +295,7 @@ function RegisterScreen(props) {
               preparingFor: '',
             }}
             onSubmit={handleRegister}
-            validationSchema={validationSchema}
-          >
+            validationSchema={validationSchema}>
             <ErrorMessage visible={registerFailed} error={errorMsg} />
             <AppFormField
               autoCorrect={false}
@@ -400,8 +399,7 @@ function RegisterScreen(props) {
             padding: 16,
             zIndex: 1,
             backgroundColor: colors.white,
-          }}
-        >
+          }}>
           <LottieView
             autoPlay
             loop
@@ -414,8 +412,7 @@ function RegisterScreen(props) {
               fontSize: 18,
               color: colors.black,
               textAlign: 'center',
-            }}
-          >
+            }}>
             Auto-Verifying OTP
           </Text>
         </View>

@@ -207,8 +207,7 @@ function MainScreen(props) {
         onPress={item.onPress}
         style={styles.subContainer}
         activeOpacity={0.5}
-        disabled={!item.disabled}
-      >
+        disabled={!item.disabled}>
         <Image source={item.imageBackground} style={styles.imageBackground} />
         <Text style={styles.text}>{item.text}</Text>
         {item.extraInfo ? (

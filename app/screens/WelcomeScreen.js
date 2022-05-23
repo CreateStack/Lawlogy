@@ -20,8 +20,7 @@ export default function WelcomeScreen({navigation}) {
     <ImageBackground
       source={backgroundImage}
       style={styles.contianer}
-      blurRadius={2}
-    >
+      blurRadius={2}>
       <View style={styles.logoContainer}>
         <Text style={styles.tagline}>
           "Motivation is what gets you started. Habit is what keeps you going"

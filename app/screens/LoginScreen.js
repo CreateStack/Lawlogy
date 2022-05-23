@@ -216,8 +216,7 @@ function LoginScreen(props) {
           height: Dimensions.get('window').height,
           position: 'absolute',
           flex: 1,
-        }}
-      >
+        }}>
         <ActivityIndicator visible={loading} />
         <Image source={require('../assets/logo.jpg')} style={styles.logo} />
         <Screen style={styles.container}>
@@ -266,8 +265,7 @@ function LoginScreen(props) {
             padding: 16,
             zIndex: 1,
             backgroundColor: colors.white,
-          }}
-        >
+          }}>
           <LottieView
             autoPlay
             loop
@@ -280,8 +278,7 @@ function LoginScreen(props) {
               fontSize: 18,
               color: colors.black,
               textAlign: 'center',
-            }}
-          >
+            }}>
             Auto-Verifying OTP
           </Text>
         </View>

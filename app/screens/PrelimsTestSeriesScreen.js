@@ -39,6 +39,7 @@ const PrelimsTestSeriesScreen = ({route, navigation}) => {
             popScreens: 3,
             quiz: quiz,
             quizName: params.name,
+            subjectName: params.subjectName,
             showSessionTimer: true,
             testSeries: true,
             time: testTime,
@@ -46,8 +47,7 @@ const PrelimsTestSeriesScreen = ({route, navigation}) => {
             total: quiz.length,
           })
         }
-        style={styles.button}
-      >
+        style={styles.button}>
         <Text style={styles.buttonText}>Start</Text>
       </TouchableOpacity>
     </View>

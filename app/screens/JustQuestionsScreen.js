@@ -45,8 +45,7 @@ const JustQuestionsScreen = ({route}) => {
         <TouchableOpacity
           activeOpacity={0.6}
           onPress={() => share(shareRef, item)}
-          style={styles.share}
-        >
+          style={styles.share}>
           <MaterialCommunityIcons
             name={'share-variant'}
             size={20}
@@ -65,8 +64,7 @@ const JustQuestionsScreen = ({route}) => {
     <View style={styles.container}>
       <LinearGradient
         colors={[colors.primary, colors.blue]}
-        style={styles.gradient}
-      >
+        style={styles.gradient}>
         <View style={styles.title}>
           <Text style={styles.gradientTopic}>{params.name}</Text>
           <Text style={styles.gradientText}>Mains Questions</Text>

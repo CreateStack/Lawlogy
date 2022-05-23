@@ -61,8 +61,7 @@ function TopicScreen({navigation, route}) {
           onLayout={({nativeEvent}) => {
             const {width} = nativeEvent.layout;
             setWidth(width);
-          }}
-        >
+          }}>
           <LinearGradient colors={['#CCCCFF', '#fff']} style={styles.gradient}>
             {flyerInfo.image ? (
               <Image

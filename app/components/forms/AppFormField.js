@@ -33,8 +33,7 @@ const AppFormField = ({
               onValueChange(name, value);
             }}
             selectedValue={values[name]}
-            style={styles.container}
-          >
+            style={styles.container}>
             {dropDownList.map((item, index) => (
               <Picker.Item
                 label={item.label}

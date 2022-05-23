@@ -154,13 +154,16 @@ function QuizzesScreen(props) {
                     }), */
                     quiz: getQuiz(props.route.params.quizzes[item]),
                     quizzes: props.route.params.quizzes[item],
-                    quizName: item
-                      .replace(/\w+/g, _.lowerCase)
-                      .replace(/\w+/g, _.startCase),
+                    quizName: item.toUpperCase(),
                     //rightIcon: 'podium',
                     //showRightIcon: testSeries ? true : false,
-                    total: total,
+                    subjectName: testSeries
+                      ? props.route.params.heading
+                      : (props.route.params.name || '')
+                          .replace(/\w+/g, _.lowerCase)
+                          .replace(/\w+/g, _.startCase),
                     state: props.route.params.name,
+                    total: total,
                     onGoBack: () => {
                       console.log('fetching: ', fetchPath);
                       fetch();
@@ -177,8 +180,7 @@ function QuizzesScreen(props) {
                   backgroundColor: colors.secondary,
                 }
               : {}),
-          }}
-        >
+          }}>
           <Text style={styles.seriesTimeText}>
             {/* {props.route.params.quizzes[item].testTime + ' hours'} */}
             {locked ? 'Unlock 🔓' : (completed ? 'Re-' : '') + 'Attempt'}
@@ -201,8 +203,7 @@ function QuizzesScreen(props) {
               borderWidth: 0,
               marginLeft: 0,
             },
-          ]}
-        >
+          ]}>
           <Text key={index} style={styles.text}>
             {item.toUpperCase()}
           </Text>
@@ -212,16 +213,14 @@ function QuizzesScreen(props) {
             paddingHorizontal: 16,
             paddingBottom: testSeries ? 16 : 24,
             paddingTop: 24,
-          }}
-        >
+          }}>
           <View style={styles.quizOptionsView}>
             <Text
               style={{
                 color: colors.black,
                 fontSize: ms(14),
                 fontWeight: 'bold',
-              }}
-            >
+              }}>
               {'Score: ' + score + '/' + total}
             </Text>
             {completed && !locked ? (
@@ -232,19 +231,28 @@ function QuizzesScreen(props) {
                   borderColor: colors.danger,
                 }}
                 onPress={() => {
-                  props.navigation.navigate('Quiz', {
+                  props.navigation.navigate('QuizAnalysis', {
+                    negativeMarking: Math.abs(
+                      parseFloat(
+                        props.route.params.quizzes[item]?.negativeMarking,
+                      ) || 0,
+                    ),
                     quiz: getQuiz(props.route.params.quizzes[item]),
-                    quizName: item
-                      .replace(/\w+/g, _.lowerCase)
-                      .replace(/\w+/g, _.startCase),
+                    quizName: item,
+                    topicName: testSeries
+                      ? props.route.params.heading
+                      : (props.route.params.name || '')
+                          .replace(/\w+/g, _.lowerCase)
+                          .replace(/\w+/g, _.startCase),
                     total: total,
                     name: props.route.params.name,
                     data: testCompletionData,
+                    state: props.route.params.name,
+                    testTime: props.route.params.quizzes[item].testTime,
                     title: 'Analysis',
                     view: true,
                   });
-                }}
-              >
+                }}>
                 <Text style={{color: colors.white, fontSize: ms(12)}}>
                   Analyse
                 </Text>
@@ -257,8 +265,7 @@ function QuizzesScreen(props) {
                   color: colors.black,
                   fontSize: ms(14),
                   fontWeight: 'bold',
-                }}
-              >
+                }}>
                 {'⌛ ' +
                   parseFloat(props.route.params.quizzes[item].testTime || 0) *
                     60 +
@@ -279,8 +286,7 @@ function QuizzesScreen(props) {
                     quiz: item,
                   });
                 }}
-                style={styles.ledaerboard}
-              >
+                style={styles.ledaerboard}>
                 <Text style={styles.ledaerboardText}>Leaderboard</Text>
               </TouchableOpacity>
             )}
