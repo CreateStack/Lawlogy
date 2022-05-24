@@ -55,7 +55,6 @@ function MainScreen(props) {
   const [quizzes, setQuizzes] = useState();
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [testSeries, setTestSeries] = useState();
-  const [premium, setPremium] = useState();
   const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
@@ -85,7 +84,6 @@ function MainScreen(props) {
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
     loadData('/testSeries', setTestSeries, setLoading);
-    loadData('/premium', setPremium, setLoading);
     loadData(
       '/banner',
       data => setBanners(Object.values(data) || {}),
@@ -103,15 +101,19 @@ function MainScreen(props) {
 
   const data = [
     {
-      onPress: () =>
-        props.navigation.navigate('Topics', {
-          itemName: 'Quizzes',
-          items: quizzes,
-          image: require('../assets/quizzes.jpg'),
-          navigateToScreen: 'Quizzes',
-          showExtraInfo: true,
-          premium: premium.quizes,
-        }),
+      onPress: () => {
+        const navigate = data => {
+          props.navigation.navigate('Topics', {
+            itemName: 'Quizzes',
+            items: quizzes,
+            image: require('../assets/quizzes.jpg'),
+            navigateToScreen: 'Quizzes',
+            showExtraInfo: true,
+            premium: data,
+          });
+        };
+        loadData('/premium/quizes', navigate, setLoading);
+      },
       disabled: quizzes,
       imageBackground: require('../assets/quizzes.jpg'),
       blurRadius: 2,
@@ -127,7 +129,6 @@ function MainScreen(props) {
           itemName: 'Year',
           items: testSeries,
           title: 'Series',
-          premium: premium.testSeries,
         }),
       disabled: testSeries,
       imageBackground: require('../assets/testSeries.jpg'),
@@ -153,6 +154,26 @@ function MainScreen(props) {
       extraInfo: questions
         ? Object.keys(questions).length +
           (Object.keys(questions).length > 1 ? ' Topics' : ' Topic')
+        : 'Coming soon',
+    },
+    {
+      onPress: () =>
+        props.navigation.navigate('Topics', {
+          itemName: 'Year',
+          items: previousYearPapers,
+          image: require('../assets/extraQuizzes.jpg'),
+          navigateToScreen: 'Years',
+          passTitle: true,
+          showExtraInfo: true,
+          title: 'States',
+        }),
+      disabled: previousYearPapers,
+      imageBackground: require('../assets/extraQuizzes.jpg'),
+      blurRadius: 0.5,
+      text: 'Extra Quizzes',
+      extraInfo: previousYearPapers
+        ? Object.keys(previousYearPapers).length +
+          (Object.keys(previousYearPapers).length > 1 ? ' Items' : ' Item')
         : 'Coming soon',
     },
     {
@@ -253,7 +274,7 @@ function MainScreen(props) {
         <Banner
           data={banners.filter(banner => banner)}
           height={150}
-          timer={2000}
+          timer={4000}
           handlePress={handleBannerOnPress}
         />
       </View>

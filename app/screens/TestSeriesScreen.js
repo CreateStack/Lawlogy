@@ -19,20 +19,37 @@ import ActivityIndicator from '../components/ActivityIndicator';
 import {vs} from '../utils/scalingUtils';
 import Separator from '../components/Separator';
 
-const fetchData = (path, phone, setLoading, setData) => {
+const fetchData = (path, phone, setLoading, setData, series) => {
   const ref = ('/student/' + phone + '/' + path).trim();
+  let data = {};
   setLoading(true);
   database()
     .ref(ref)
     .once('value')
     .then(snapshot => {
-      setData(snapshot.val() || {});
+      data.data = snapshot.val() || {};
+      database()
+        .ref('/premium/' + series)
+        .once('value')
+        .then(snapshot => {
+          data.premium = snapshot.val() || {};
+          setData(data);
+        })
+        .catch(e => {
+          console.log('Error while fetching premium: ', e);
+          crashlytics().log(
+            'Error while fetching premium in TestSeriesScreen: ',
+            e,
+          );
+          setData(data);
+          setLoading(false);
+        });
       setLoading(false);
     })
     .catch(e => {
       console.log('Error while fetching: ', e);
       crashlytics().log('Error while fetching in TestSeriesScreen: ', e);
-      setData({});
+      setData(data);
       setLoading(false);
     });
 };
@@ -110,19 +127,25 @@ function TopicScreen({navigation, route}) {
             onPress={() => {
               const setData = data => {
                 navigation.navigate('Quizzes', {
-                  extraInfoData: data,
+                  extraInfoData: data.data,
                   itemName: 'Tests',
                   heading: prelimsFlyerInfo.title,
                   name: item,
                   navigateToScreen: 'PrelimsTestSeries',
-                  premium: params.premium,
+                  premium: data.premium,
                   quizzes: params.items[item].prelims,
                   showExtraInfo: true,
                   testSeries: true,
                   title: 'Tests',
                 });
               };
-              fetchData('prelimsTestSeries/' + item, user, setLoading, setData);
+              fetchData(
+                'prelimsTestSeries/' + item,
+                user,
+                setLoading,
+                setData,
+                item,
+              );
             }}
           />
         ) : null}

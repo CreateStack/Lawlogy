@@ -19,7 +19,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
   const testSeries = params.testSeries;
   useEffect(() => {
     rankStudents(
-      quiz,
+      testSeries ? quiz : quiz.toUpperCase(),
       state,
       setLoading,
       (ranks, username) => {
