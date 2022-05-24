@@ -11,7 +11,7 @@ import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
 
 import colors from '../config/colors';
-import AnalysisLabelWithIcon from './AnalysisLabelWithIcon';
+import AnalysisLabelWithIcon from '../components/AnalysisLabelWithIcon';
 import Separator from '../components/Separator';
 import {rankStudents} from '../utils/helpers';
 import ActivityIndicator from '../components/ActivityIndicator';
@@ -56,8 +56,9 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
     quiz,
     quizName,
     state,
-    topicName,
+    testSeries,
     testTime,
+    topicName,
     total,
   } = params;
   const viewShot = useRef();
@@ -97,6 +98,7 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
       },
       '/student/',
       user,
+      testSeries ? 'prelimsTestSeries' : 'quizzes',
     );
   }, [quizName, state]);
   return (
@@ -136,7 +138,9 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
               image1={{
                 uri: 'https://firebasestorage.googleapis.com/v0/b/lawlogy-0908.appspot.com/o/IMG_20220523_224005_682.jpg?alt=media&token=358002ee-08b7-493b-8939-b07ab6eebd56',
               }}
-              mainText1={parseFloat(testTime || 0) * 60 + ' minutes'}
+              mainText1={
+                testTime ? parseFloat(testTime) * 60 + ' minutes' : 'N/A'
+              }
               subText1={'Total Time'}
               image2={{
                 uri: 'https://firebasestorage.googleapis.com/v0/b/lawlogy-0908.appspot.com/o/istockphoto-862557392-170667a.jpg?alt=media&token=7fb1fa02-f2c8-4eff-965d-c43a2646fdae',
@@ -164,7 +168,7 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
                     ? Math.round(
                         ((Number(accuracyStats.score) * 100) / highestMarks) *
                           100,
-                      ) / 100
+                      ) / 100.0
                     : 'N/A'
                 }
                 subText2={'Percentile'}
@@ -179,7 +183,13 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
                   uri: 'https://firebasestorage.googleapis.com/v0/b/lawlogy-0908.appspot.com/o/images%20(1).jpeg?alt=media&token=a287aa4b-745c-4806-9db8-e318bb55a761',
                 }}
                 mainText2={
-                  total > 0 ? (Number(rank.score) * 100) / total + ' %' : 'N/A'
+                  total > 0
+                    ? Math.round(
+                        ((Number(accuracyStats.score) * 100) / total) * 100,
+                      ) /
+                        100.0 +
+                      ' %'
+                    : 'N/A'
                 }
                 subText2={'Percentage'}
               />
@@ -208,8 +218,12 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
                 }}
                 mainText2={
                   accuracyStats.count + accuracyStats.incorrect > 0
-                    ? (accuracyStats.count * 100) /
-                        (accuracyStats.count + accuracyStats.incorrect) +
+                    ? Math.round(
+                        ((accuracyStats.count * 100) /
+                          (accuracyStats.count + accuracyStats.incorrect)) *
+                          100,
+                      ) /
+                        100.0 +
                       ' %'
                     : 'N/A'
                 }
@@ -239,6 +253,7 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
               navigation.navigate('LeaderBoard', {
                 state,
                 quiz: quizName,
+                testSeries,
               });
             }}
             style={styles.solution}>

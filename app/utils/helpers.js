@@ -71,7 +71,15 @@ const fetchData = (path, setLoading, setData) => {
     });
 };
 
-const rankStudents = (quiz, state, setLoading, setData, path, user) => {
+const rankStudents = (
+  quiz,
+  state,
+  setLoading,
+  setData,
+  path,
+  user,
+  testType,
+) => {
   const rankStudents = (students = {}) => {
     const keys = Object.keys(students);
     const board = [];
@@ -79,8 +87,8 @@ const rankStudents = (quiz, state, setLoading, setData, path, user) => {
     keys.forEach(student => {
       let info = null;
       if (student === user) username = students[student].name;
-      if (students[student].prelimsTestSeries?.[state]) {
-        info = students[student].prelimsTestSeries[state][quiz];
+      if (students[student][testType]?.[state]) {
+        info = students[student][testType][state][quiz];
       }
       const score = info?.score;
       const attempts = info?.attempts;

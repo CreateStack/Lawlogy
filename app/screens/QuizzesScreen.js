@@ -248,6 +248,7 @@ function QuizzesScreen(props) {
                     name: props.route.params.name,
                     data: testCompletionData,
                     state: props.route.params.name,
+                    testSeries,
                     testTime: props.route.params.quizzes[item].testTime,
                     title: 'Analysis',
                     view: true,
@@ -284,6 +285,7 @@ function QuizzesScreen(props) {
                   props.navigation.navigate('LeaderBoard', {
                     state: props.route.params.name,
                     quiz: item,
+                    testSeries,
                   });
                 }}
                 style={styles.ledaerboard}>

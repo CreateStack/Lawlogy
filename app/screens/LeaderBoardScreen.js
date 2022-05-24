@@ -16,18 +16,19 @@ const LeaderBoardScreen = ({route: {params}}) => {
   const [loading, setLoading] = useState(false);
   const state = params.state.trim();
   const quiz = params.quiz.trim();
+  const testSeries = params.testSeries;
   useEffect(() => {
     rankStudents(
       quiz,
       state,
       setLoading,
       (ranks, username) => {
-        console.log('username: ', username);
         setData(ranks);
         setUsername(username);
       },
       '/student/',
       user,
+      testSeries ? 'prelimsTestSeries' : 'quizzes',
     );
   }, [quiz, state]);
 
