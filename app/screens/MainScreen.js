@@ -274,7 +274,7 @@ function MainScreen(props) {
         <Banner
           data={banners.filter(banner => banner)}
           height={150}
-          timer={4000}
+          timer={3000}
           handlePress={handleBannerOnPress}
         />
       </View>

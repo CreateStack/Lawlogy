@@ -60,12 +60,8 @@ function QuizzesScreen(props) {
   let quizzes = Object.keys(props.route.params.quizzes);
   if (quizzes.length) {
     quizzes = quizzes.sort((a, b) => {
-      a =
-        parseInt(testSeries ? a.split('-')[1] : a.replace(/^\D+/g, '')) ||
-        Number.POSITIVE_INFINITY;
-      b =
-        parseInt(testSeries ? b.split('-')[1] : b.replace(/^\D+/g, '')) ||
-        Number.POSITIVE_INFINITY;
+      a = parseInt(a.replace(/^\D+/g, '')) || Number.POSITIVE_INFINITY;
+      b = parseInt(b.replace(/^\D+/g, '')) || Number.POSITIVE_INFINITY;
       return a - b;
     });
   }
@@ -267,10 +263,12 @@ function QuizzesScreen(props) {
                   fontSize: ms(14),
                   fontWeight: 'bold',
                 }}>
-                {'⌛ ' +
-                  parseFloat(props.route.params.quizzes[item].testTime || 0) *
-                    60 +
-                  ' minutes'}
+                {Number(props.route.params.quizzes[item].testTime)
+                  ? '⌛ ' +
+                    parseFloat(props.route.params.quizzes[item].testTime || 0) *
+                      60 +
+                    ' minutes'
+                  : 'Time: N/A'}
               </Text>
             ) : (
               <AttemptButton />

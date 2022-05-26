@@ -108,7 +108,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
               textAlign: 'center',
               ...(item.name === username ? styles.bold : {}),
             }}>
-            {item.attempts}
+            {item.attempts || 1}
           </Text>
         </View>
         <Separator dashColor={colors.greyLight} dashThickness={2} />

@@ -50,7 +50,7 @@ function TopicScreen({navigation, route}) {
         }>
         {/* <Image source={params.image} style={styles.imageBackground} /> */}
         <Text key={index} style={styles.text}>
-          {item.replace(/\w+/g, _.lowerCase).replace(/\w+/g, _.startCase)}
+          {item}
         </Text>
         {params.showExtraInfo && (
           <View style={styles.extraInfo}>

@@ -81,10 +81,10 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
   const [allRanks, setAllRanks] = useState([]);
   const [highestMarks, setHighestMarks] = useState(0);
   const {user} = useContext(AuthContext);
-  const accuracyStats = calculateScore(0, quiz, data);
+  const accuracyStats = calculateScore(negativeMarking, quiz, data);
   useEffect(() => {
     rankStudents(
-      quizName.trim(),
+      testSeries ? quizName.trim() : quizName.trim().toUpperCase(),
       state.trim(),
       setLoading,
       (ranks, username) => {
@@ -139,7 +139,9 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
                 uri: 'https://firebasestorage.googleapis.com/v0/b/lawlogy-0908.appspot.com/o/IMG_20220523_224005_682.jpg?alt=media&token=358002ee-08b7-493b-8939-b07ab6eebd56',
               }}
               mainText1={
-                testTime ? parseFloat(testTime) * 60 + ' minutes' : 'N/A'
+                Number(testTime)
+                  ? parseFloat(testTime) * 60 + ' minutes'
+                  : 'N/A'
               }
               subText1={'Total Time'}
               image2={{
@@ -165,7 +167,7 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
                 }}
                 mainText2={
                   highestMarks > 0
-                    ? Math.round(
+                    ? Math.floor(
                         ((Number(accuracyStats.score) * 100) / highestMarks) *
                           100,
                       ) / 100.0
