@@ -124,11 +124,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     margin: 0,
+    padding: 16,
   },
   scoreNormal: {
     color: colors.black,
     fontWeight: 'bold',
     marginBottom: 2,
+    textAlign: 'center',
   },
   scoreText: {
     color: colors.green,

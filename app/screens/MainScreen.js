@@ -55,6 +55,7 @@ function MainScreen(props) {
   const [quizzes, setQuizzes] = useState();
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [testSeries, setTestSeries] = useState();
+  const [extraQuizzes, setExtraQuizzes] = useState();
   const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
@@ -84,6 +85,7 @@ function MainScreen(props) {
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
     loadData('/testSeries', setTestSeries, setLoading);
+    loadData('/extraQuizzes', setExtraQuizzes, setLoading);
     loadData(
       '/banner',
       data => setBanners(Object.values(data) || {}),
@@ -117,7 +119,7 @@ function MainScreen(props) {
       disabled: quizzes,
       imageBackground: require('../assets/quizzes.jpg'),
       blurRadius: 2,
-      text: 'Quizzes',
+      text: "Subject-wise MCQ's",
       extraInfo: quizzes
         ? Object.keys(quizzes).length +
           (Object.keys(quizzes).length > 1 ? ' Topics' : ' Topic')
@@ -158,22 +160,18 @@ function MainScreen(props) {
     },
     {
       onPress: () =>
-        props.navigation.navigate('Topics', {
+        props.navigation.navigate('TestSeries', {
           itemName: 'Year',
-          items: previousYearPapers,
-          image: require('../assets/extraQuizzes.jpg'),
-          navigateToScreen: 'Years',
-          passTitle: true,
-          showExtraInfo: true,
-          title: 'States',
+          items: extraQuizzes,
+          title: 'Topics',
+          extraQuizzes: true,
         }),
-      disabled: previousYearPapers,
+      disabled: extraQuizzes,
       imageBackground: require('../assets/extraQuizzes.jpg'),
       blurRadius: 0.5,
       text: 'Extra Quizzes',
-      extraInfo: previousYearPapers
-        ? Object.keys(previousYearPapers).length +
-          (Object.keys(previousYearPapers).length > 1 ? ' Items' : ' Item')
+      extraInfo: extraQuizzes
+        ? Object.keys(extraQuizzes).length + ' Topics'
         : 'Coming soon',
     },
     {

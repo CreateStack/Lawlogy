@@ -111,11 +111,7 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
             contentContainerStyle={styles.contentStyle}>
             <View style={styles.topicInfo}>
               <Text style={styles.topicName}>{topicName}</Text>
-              <Text style={styles.quizName}>
-                {quizName
-                  .replace(/\w+/g, _.lowerCase)
-                  .replace(/\w+/g, _.startCase)}
-              </Text>
+              <Text style={styles.quizName}>{quizName}</Text>
             </View>
             <Separator
               dashColor={colors.greyLight}

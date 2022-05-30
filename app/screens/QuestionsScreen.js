@@ -165,9 +165,7 @@ function QuestionsScreen(props) {
   const headerItem = () => {
     return (
       <View style={styles.header}>
-        <Text style={styles.headerText}>
-          {quizName.replace(/\w+/g, _.lowerCase).replace(/\w+/g, _.startCase)}
-        </Text>
+        <Text style={styles.headerText}>{quizName}</Text>
       </View>
     );
   };

@@ -54,10 +54,12 @@ const fetchData = (path, phone, setLoading, setData, series) => {
     });
 };
 
-function TopicScreen({navigation, route}) {
+function TopicScreen({navigation, route: {params}}) {
   const {user} = useContext(AuthContext);
-  const {params} = route;
   const [loading, setLoading] = useState(false);
+  const gradientColors = params.extraQuizzes
+    ? ['#FDFCFB', '#E2D1C3']
+    : ['#CCCCFF', '#fff'];
   let items = Object.keys(params.items);
   if (items.length) {
     items = items.sort((a, b) => {
@@ -72,21 +74,21 @@ function TopicScreen({navigation, route}) {
     const Flyer = ({flyerInfo, onPress}) => {
       const [width, setWidth] = useState(0);
       return (
-        <TouchableOpacity
+        <View
           style={styles.topic}
           onPress={onPress}
           onLayout={({nativeEvent}) => {
             const {width} = nativeEvent.layout;
             setWidth(width);
           }}>
-          <LinearGradient colors={['#CCCCFF', '#fff']} style={styles.gradient}>
+          <LinearGradient colors={gradientColors} style={styles.gradient}>
             {flyerInfo.image ? (
               <Image
                 source={{uri: flyerInfo.image}}
                 style={styles.flyerImage}
               />
             ) : null}
-            <Text key={index} style={{...styles.flyerTitle, width: width - 64}}>
+            <Text key={index} style={{...styles.flyerTitle, width: width - 88}}>
               {flyerInfo.title}
             </Text>
             <View style={styles.testNumberContainer}>
@@ -114,7 +116,7 @@ function TopicScreen({navigation, route}) {
               <Text style={styles.viewText}>View</Text>
             </TouchableOpacity>
           </LinearGradient>
-        </TouchableOpacity>
+        </View>
       );
     };
 

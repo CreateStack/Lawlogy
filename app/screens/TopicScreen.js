@@ -43,9 +43,7 @@ function TopicScreen({navigation, route}) {
               }),
             premium: params.premium,
             quizzes: params.items[item],
-            title: (params.passTitle ? item : params.itemName)
-              .replace(/\w+/g, _.lowerCase)
-              .replace(/\w+/g, _.startCase),
+            title: params.passTitle ? item : params.itemName,
           })
         }>
         {/* <Image source={params.image} style={styles.imageBackground} /> */}

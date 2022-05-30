@@ -277,7 +277,7 @@ function QuizzesScreen(props) {
         </View>
         {testSeries && (
           <View style={styles.footer}>
-            {!locked && (
+            {/*  {!locked && (
               <TouchableOpacity
                 onPress={() => {
                   props.navigation.navigate('LeaderBoard', {
@@ -289,7 +289,7 @@ function QuizzesScreen(props) {
                 style={styles.ledaerboard}>
                 <Text style={styles.ledaerboardText}>Leaderboard</Text>
               </TouchableOpacity>
-            )}
+            )} */}
             <AttemptButton />
           </View>
         )}
