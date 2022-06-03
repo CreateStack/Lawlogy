@@ -217,7 +217,10 @@ function QuizzesScreen(props) {
                 fontSize: ms(14),
                 fontWeight: 'bold',
               }}>
-              {'Score: ' + score + '/' + total}
+              {'Score: ' +
+                Math.round(parseFloat(score) * 100) / 100 +
+                '/' +
+                total}
             </Text>
             {completed && !locked ? (
               <TouchableOpacity

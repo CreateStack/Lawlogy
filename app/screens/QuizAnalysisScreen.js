@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -101,13 +102,18 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
       testSeries ? 'prelimsTestSeries' : 'quizzes',
     );
   }, [quizName, state]);
+  const [footerHeight, setFooterHeight] = useState(0);
   return (
     <>
       <ActivityIndicator visible={loading} />
       <View style={styles.mainContainer}>
-        <ViewShot ref={viewShot} style={styles.viewShow}>
+        <ViewShot
+          ref={viewShot}
+          style={{
+            height: Dimensions.get('window').height - footerHeight - 72,
+          }}>
           <ScrollView
-            style={styles.container}
+            style={{...styles.container}}
             contentContainerStyle={styles.contentStyle}>
             <View style={styles.topicInfo}>
               <Text style={styles.topicName}>{topicName}</Text>
@@ -175,7 +181,9 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
                 image1={{
                   uri: 'https://firebasestorage.googleapis.com/v0/b/lawlogy-0908.appspot.com/o/IMG_20220523_220941_256.jpg?alt=media&token=85560a29-4f38-4907-950a-b4b40d7c63b3',
                 }}
-                mainText1={accuracyStats.score}
+                mainText1={
+                  Math.round(parseFloat(accuracyStats.score * 100.0)) / 100.0
+                }
                 subText1={'Score'}
                 image2={{
                   uri: 'https://firebasestorage.googleapis.com/v0/b/lawlogy-0908.appspot.com/o/images%20(1).jpeg?alt=media&token=a287aa4b-745c-4806-9db8-e318bb55a761',
@@ -230,7 +238,13 @@ const QuizAnalysisScreen = ({navigation, route: {params}}) => {
             </View>
           </ScrollView>
         </ViewShot>
-        <View style={styles.footer}>
+        <View
+          onLayout={({
+            nativeEvent: {
+              layout: {height},
+            },
+          }) => setFooterHeight(height)}
+          style={styles.footer}>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Quiz', {

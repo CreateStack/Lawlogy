@@ -100,7 +100,7 @@ const LeaderBoardScreen = ({route: {params}}) => {
               textAlign: 'center',
               ...(item.name === username ? styles.bold : {}),
             }}>
-            {item.score}
+            {Math.round(item.score * 100) / 100}
           </Text>
           <Text
             style={{

@@ -59,7 +59,10 @@ const ScoreCard = ({
             />
             <Text style={styles.congratulations}>Congratulations!</Text>
             <Text style={styles.scoreText}>
-              {'Your score is ' + score.score + ' / ' + total}
+              {'Your score is ' +
+                Math.round(score.score * 100) / 100 +
+                ' / ' +
+                total}
             </Text>
             <Text style={styles.scoreNormal}>{subjectName}</Text>
             <Text style={styles.scoreNormal}>{quizName}</Text>

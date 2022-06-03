@@ -249,17 +249,20 @@ function MainScreen(props) {
       case 'Questions':
         data[2].onPress();
         break;
-      case 'Years':
+      case 'ExtraQuizzes':
         data[3].onPress();
         break;
-      case 'Study Material':
+      case 'Years':
         data[4].onPress();
         break;
-      case 'Our Courses':
+      case 'StudyMaterial':
         data[5].onPress();
         break;
-      case 'Live Classes':
+      case 'OurCourses':
         data[6].onPress();
+        break;
+      case 'LiveClasses':
+        data[7].onPress();
         break;
       default:
         break;
