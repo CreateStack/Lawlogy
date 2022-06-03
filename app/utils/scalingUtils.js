@@ -5,8 +5,8 @@ const {width, height} = Dimensions.get('window');
 const guidelineBaseWidth = 350;
 const guidelineBaseHeight = 680;
 
-const s = (size) => (width / guidelineBaseWidth) * size; //horizontal
-const vs = (size) => (height / guidelineBaseHeight) * size; //vertical
+const s = size => (width / guidelineBaseWidth) * size; //horizontal
+const vs = size => (height / guidelineBaseHeight) * size; //vertical
 const ms = (size, factor = 0.5) => size + (s(size) - size) * factor; //font/line height (medium scale)
 
 export {s, vs, ms};

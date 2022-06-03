@@ -18,16 +18,16 @@ import {ms, s, vs} from '../utils/scalingUtils';
 
 const fetchData = (path, phone, setLoading, setData) => {
   const ref = ('/student/' + phone + '/' + path).trim();
-  setLoading((v) => {
+  setLoading(v => {
     v.push(path);
     return [...v];
   });
   database()
     .ref(ref)
     .once('value')
-    .then((snapshot) => {
+    .then(snapshot => {
       setData(snapshot.val() || {});
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -35,11 +35,11 @@ const fetchData = (path, phone, setLoading, setData) => {
         return [...v];
       });
     })
-    .catch((e) => {
+    .catch(e => {
       console.log('Error while fetching: ', e);
       crashlytics().log('Error while fetching: ', e);
       setData({});
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -60,12 +60,8 @@ function QuizzesScreen(props) {
   let quizzes = Object.keys(props.route.params.quizzes);
   if (quizzes.length) {
     quizzes = quizzes.sort((a, b) => {
-      a =
-        parseInt(testSeries ? a.split('-')[1] : a.replace(/^\D+/g, '')) ||
-        Number.POSITIVE_INFINITY;
-      b =
-        parseInt(testSeries ? b.split('-')[1] : b.replace(/^\D+/g, '')) ||
-        Number.POSITIVE_INFINITY;
+      a = parseInt(a.replace(/^\D+/g, '')) || Number.POSITIVE_INFINITY;
+      b = parseInt(b.replace(/^\D+/g, '')) || Number.POSITIVE_INFINITY;
       return a - b;
     });
   }
@@ -76,7 +72,7 @@ function QuizzesScreen(props) {
 
   const fetch = useCallback(() => {
     fetchData(fetchPath, user, setLoading, setData);
-    fetchData(premiumPath, user, setLoading, (value) => {
+    fetchData(premiumPath, user, setLoading, value => {
       let premium = value.premium;
       if (typeof premium === 'string') {
         premium = premium.toLowerCase();
@@ -96,7 +92,7 @@ function QuizzesScreen(props) {
     fetch();
   }, [fetch]);
 
-  const getQuiz = (quiz) => {
+  const getQuiz = quiz => {
     if (testSeries) {
       quiz = quiz.questions;
       if (quiz?.length === undefined) {
@@ -119,7 +115,7 @@ function QuizzesScreen(props) {
 
   const RenderItem = ({item, index}) => {
     const questions = getQuiz(props.route.params.quizzes[item]);
-    const total = questions.filter((ques) => ques).length;
+    const total = questions.filter(ques => ques).length;
     const testCompletionData = _.get(
       data,
       testSeries ? item.trim() : item.toUpperCase().trim(),
@@ -157,8 +153,13 @@ function QuizzesScreen(props) {
                     quizName: item.toUpperCase(),
                     //rightIcon: 'podium',
                     //showRightIcon: testSeries ? true : false,
-                    total: total,
+                    subjectName: testSeries
+                      ? props.route.params.heading
+                      : (props.route.params.name || '')
+                          .replace(/\w+/g, _.lowerCase)
+                          .replace(/\w+/g, _.startCase),
                     state: props.route.params.name,
+                    total: total,
                     onGoBack: () => {
                       console.log('fetching: ', fetchPath);
                       fetch();
@@ -216,7 +217,10 @@ function QuizzesScreen(props) {
                 fontSize: ms(14),
                 fontWeight: 'bold',
               }}>
-              {'Score: ' + score + '/' + total}
+              {'Score: ' +
+                Math.round(parseFloat(score) * 100) / 100 +
+                '/' +
+                total}
             </Text>
             {completed && !locked ? (
               <TouchableOpacity
@@ -226,18 +230,31 @@ function QuizzesScreen(props) {
                   borderColor: colors.danger,
                 }}
                 onPress={() => {
-                  props.navigation.navigate('Quiz', {
+                  props.navigation.navigate('QuizAnalysis', {
+                    negativeMarking: Math.abs(
+                      parseFloat(
+                        props.route.params.quizzes[item]?.negativeMarking,
+                      ) || 0,
+                    ),
                     quiz: getQuiz(props.route.params.quizzes[item]),
-                    quizName: item.toUpperCase(),
+                    quizName: item,
+                    topicName: testSeries
+                      ? props.route.params.heading
+                      : (props.route.params.name || '')
+                          .replace(/\w+/g, _.lowerCase)
+                          .replace(/\w+/g, _.startCase),
                     total: total,
                     name: props.route.params.name,
                     data: testCompletionData,
-                    title: 'Answers',
+                    state: props.route.params.name,
+                    testSeries,
+                    testTime: props.route.params.quizzes[item].testTime,
+                    title: 'Analysis',
                     view: true,
                   });
                 }}>
                 <Text style={{color: colors.white, fontSize: ms(12)}}>
-                  View
+                  Analyse
                 </Text>
               </TouchableOpacity>
             ) : null}
@@ -249,10 +266,12 @@ function QuizzesScreen(props) {
                   fontSize: ms(14),
                   fontWeight: 'bold',
                 }}>
-                {'⌛ ' +
-                  parseFloat(props.route.params.quizzes[item].testTime || 0) *
-                    60 +
-                  ' minutes'}
+                {Number(props.route.params.quizzes[item].testTime)
+                  ? '⌛ ' +
+                    parseFloat(props.route.params.quizzes[item].testTime || 0) *
+                      60 +
+                    ' minutes'
+                  : 'Time: N/A'}
               </Text>
             ) : (
               <AttemptButton />
@@ -261,18 +280,19 @@ function QuizzesScreen(props) {
         </View>
         {testSeries && (
           <View style={styles.footer}>
-            {!locked && (
+            {/*  {!locked && (
               <TouchableOpacity
                 onPress={() => {
                   props.navigation.navigate('LeaderBoard', {
                     state: props.route.params.name,
                     quiz: item,
+                    testSeries,
                   });
                 }}
                 style={styles.ledaerboard}>
                 <Text style={styles.ledaerboardText}>Leaderboard</Text>
               </TouchableOpacity>
-            )}
+            )} */}
             <AttemptButton />
           </View>
         )}
@@ -293,7 +313,9 @@ function QuizzesScreen(props) {
         <Text style={styles.headerText}>
           {testSeries
             ? props.route.params.heading
-            : _.startCase(_.toLower(props.route.params.name))}
+            : (props.route.params.name || '')
+                .replace(/\w+/g, _.lowerCase)
+                .replace(/\w+/g, _.startCase)}
         </Text>
       </View>
     );

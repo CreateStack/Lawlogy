@@ -34,7 +34,7 @@ function PhoneSignIn() {
 
   return (
     <>
-      <TextInput value={code} onChangeText={(text) => setCode(text)} />
+      <TextInput value={code} onChangeText={text => setCode(text)} />
       <Button title="Confirm Code" onPress={() => confirmCode()} />
     </>
   );

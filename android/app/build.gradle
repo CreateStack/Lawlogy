@@ -140,8 +140,8 @@ android {
         applicationId "com.lawlogy"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.2"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         multiDexEnabled true
 
@@ -278,6 +278,7 @@ dependencies {
     implementation project(':react-native-linear-gradient')
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation 'com.google.android.material:material:1.4.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
@@ -299,6 +300,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation 'com.google.android.play:core:1.7.3'
 }
 
 if (isNewArchitectureEnabled()) {

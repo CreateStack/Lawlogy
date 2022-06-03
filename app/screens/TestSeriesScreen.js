@@ -19,28 +19,47 @@ import ActivityIndicator from '../components/ActivityIndicator';
 import {vs} from '../utils/scalingUtils';
 import Separator from '../components/Separator';
 
-const fetchData = (path, phone, setLoading, setData) => {
+const fetchData = (path, phone, setLoading, setData, series) => {
   const ref = ('/student/' + phone + '/' + path).trim();
+  let data = {};
   setLoading(true);
   database()
     .ref(ref)
     .once('value')
-    .then((snapshot) => {
-      setData(snapshot.val() || {});
+    .then(snapshot => {
+      data.data = snapshot.val() || {};
+      database()
+        .ref('/premium/' + series)
+        .once('value')
+        .then(snapshot => {
+          data.premium = snapshot.val() || {};
+          setData(data);
+        })
+        .catch(e => {
+          console.log('Error while fetching premium: ', e);
+          crashlytics().log(
+            'Error while fetching premium in TestSeriesScreen: ',
+            e,
+          );
+          setData(data);
+          setLoading(false);
+        });
       setLoading(false);
     })
-    .catch((e) => {
+    .catch(e => {
       console.log('Error while fetching: ', e);
       crashlytics().log('Error while fetching in TestSeriesScreen: ', e);
-      setData({});
+      setData(data);
       setLoading(false);
     });
 };
 
-function TopicScreen({navigation, route}) {
+function TopicScreen({navigation, route: {params}}) {
   const {user} = useContext(AuthContext);
-  const {params} = route;
   const [loading, setLoading] = useState(false);
+  const gradientColors = params.extraQuizzes
+    ? ['#FDFCFB', '#E2D1C3']
+    : ['#CCCCFF', '#fff'];
   let items = Object.keys(params.items);
   if (items.length) {
     items = items.sort((a, b) => {
@@ -53,16 +72,23 @@ function TopicScreen({navigation, route}) {
     const mainsFlyerInfo = params.items[item].mainsFlyer || {};
 
     const Flyer = ({flyerInfo, onPress}) => {
+      const [width, setWidth] = useState(0);
       return (
-        <TouchableOpacity style={styles.topic} onPress={onPress}>
-          <LinearGradient colors={['#CCCCFF', '#fff']} style={styles.gradient}>
+        <View
+          style={styles.topic}
+          onPress={onPress}
+          onLayout={({nativeEvent}) => {
+            const {width} = nativeEvent.layout;
+            setWidth(width);
+          }}>
+          <LinearGradient colors={gradientColors} style={styles.gradient}>
             {flyerInfo.image ? (
               <Image
                 source={{uri: flyerInfo.image}}
                 style={styles.flyerImage}
               />
             ) : null}
-            <Text key={index} style={styles.flyerTitle}>
+            <Text key={index} style={{...styles.flyerTitle, width: width - 88}}>
               {flyerInfo.title}
             </Text>
             <View style={styles.testNumberContainer}>
@@ -76,7 +102,7 @@ function TopicScreen({navigation, route}) {
             </View>
             <View style={styles.testsInfo}>
               {Object.values(flyerInfo.info || {})
-                .filter((v) => v)
+                .filter(v => v)
                 .map((info, index) => {
                   return (
                     <Text key={index.toString()} style={styles.info}>
@@ -90,7 +116,7 @@ function TopicScreen({navigation, route}) {
               <Text style={styles.viewText}>View</Text>
             </TouchableOpacity>
           </LinearGradient>
-        </TouchableOpacity>
+        </View>
       );
     };
 
@@ -101,21 +127,27 @@ function TopicScreen({navigation, route}) {
             flyerInfo={prelimsFlyerInfo}
             key={index.toString() + ' prelims'}
             onPress={() => {
-              const setData = (data) => {
+              const setData = data => {
                 navigation.navigate('Quizzes', {
-                  extraInfoData: data,
+                  extraInfoData: data.data,
                   itemName: 'Tests',
                   heading: prelimsFlyerInfo.title,
                   name: item,
                   navigateToScreen: 'PrelimsTestSeries',
-                  premium: params.premium,
+                  premium: data.premium,
                   quizzes: params.items[item].prelims,
                   showExtraInfo: true,
                   testSeries: true,
                   title: 'Tests',
                 });
               };
-              fetchData('prelimsTestSeries/' + item, user, setLoading, setData);
+              fetchData(
+                'prelimsTestSeries/' + item,
+                user,
+                setLoading,
+                setData,
+                item,
+              );
             }}
           />
         ) : null}

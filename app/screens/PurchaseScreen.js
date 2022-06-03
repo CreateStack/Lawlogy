@@ -61,13 +61,13 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           .then(() => {
             handleCompletion();
           })
-          .catch((e) => {
+          .catch(e => {
             console.log('Failed to update orderNumber: ', e);
             crashlytics().log('Failed to update orderNumber: ', e);
             handleCompletion();
           });
       })
-      .catch((e) => {
+      .catch(e => {
         crashlytics().log('Failed to uplaod txn details: ', e);
         handleCompletion();
       });
@@ -76,7 +76,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     if (startRedirection && !interval) {
       setIntervalValue(
         setInterval(() => {
-          setProgress((v) => v + 1);
+          setProgress(v => v + 1);
         }, 1000),
       );
     }
@@ -92,7 +92,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     }
   }, [progress, interval, navigation, params.popScreens]);
 
-  const successCallback = (data) => {
+  const successCallback = data => {
     console.log('See success: ', data);
     setPayment('Success!!');
     setPaymentError('');
@@ -100,7 +100,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
     setPaymentInfo(setLoading, data);
   };
 
-  const failureCallback = (data) => {
+  const failureCallback = data => {
     console.log('See failure: ', data);
     setPayment('Failure');
     setPaymentError(data.txMsg);
@@ -125,7 +125,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           },
         },
       )
-      .then((resp) => {
+      .then(resp => {
         console.log('resp: ', resp);
         crashlytics().log('token resp: ', resp);
         let data = {
@@ -139,7 +139,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           tokenData: resp.data?.cftoken || '',
         };
         console.log('map: ', data);
-        RNPgReactNativeSDK.startPaymentWEB(data, ENV, (result) => {
+        RNPgReactNativeSDK.startPaymentWEB(data, ENV, result => {
           result = JSON.parse(result);
           console.log('result: ', result);
           if (result.txStatus === 'SUCCESS') {
@@ -151,7 +151,7 @@ const PurchaseScreen = ({navigation, route: {params}}) => {
           }
         });
       })
-      .catch((e) => {
+      .catch(e => {
         crashlytics().log('Error in fetching token: ', e);
         console.log('Error in fetching token: ', e);
         failureCallback({txMsg: 'Error in fetching token'});

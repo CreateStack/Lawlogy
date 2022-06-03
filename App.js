@@ -1,5 +1,12 @@
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  ImageBackground,
+  NativeModules,
+  StatusBar,
+  Text,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
 import CodePush from 'react-native-code-push';
 import crashlytics from '@react-native-firebase/crashlytics';
 
@@ -7,9 +14,10 @@ import AuthContext from './app/auth/context';
 import AuthNavigator from './app/navigation/AuthNavigator';
 import navigationTheme from './app/navigation/navigationTheme';
 import authStorage from './app/auth/storage';
-import {ImageBackground, Text, View} from 'react-native';
 import OfflineNotice from './app/components/OfflineNotice';
 import AppNavigator from './app/navigation/AppNavigator';
+import colors from './app/config/colors';
+const {InAppUpdate} = NativeModules;
 
 let CodePushOptions = {
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
@@ -31,6 +39,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    InAppUpdate.checkUpdate();
     setIsReady(false);
     authStorage
       .getToken()
@@ -66,8 +75,8 @@ const App = () => {
           flex: 1,
           alignItems: 'center',
           backgroundColor: '#fff',
-        }}
-      >
+        }}>
+        <StatusBar backgroundColor={colors.white} barStyle="light-content" />
         <ImageBackground
           source={require('./app/assets/logo.jpg')}
           style={{
@@ -79,12 +88,15 @@ const App = () => {
     );
   }
   return (
-    <AuthContext.Provider value={{user, setUser}}>
-      <OfflineNotice />
-      <NavigationContainer theme={navigationTheme}>
-        {user ? <AppNavigator /> : <AuthNavigator />}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <>
+      <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
+      <AuthContext.Provider value={{user, setUser}}>
+        <OfflineNotice />
+        <NavigationContainer theme={navigationTheme}>
+          {user ? <AppNavigator /> : <AuthNavigator />}
+        </NavigationContainer>
+      </AuthContext.Provider>
+    </>
   );
 };
 

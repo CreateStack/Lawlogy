@@ -30,9 +30,9 @@ function SessionTimer({
       const now = new Date().getTime();
       const diff = Math.floor((now - lastCheck) / 1000);
       if (diff >= 2) {
-        setTimeLeft((preTimeLeft) => preTimeLeft - diff);
+        setTimeLeft(preTimeLeft => preTimeLeft - diff);
       } else {
-        setTimeLeft((preTimeLeft) => preTimeLeft - 1);
+        setTimeLeft(preTimeLeft => preTimeLeft - 1);
       }
       let {hours, minutes, seconds} = convertTimerToString(
         timeLeft,

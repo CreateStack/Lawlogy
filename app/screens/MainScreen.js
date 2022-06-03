@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -18,16 +18,16 @@ import Banner from '../components/Banner';
 import Menu from '../components/Menu/Menu';
 
 const loadData = (path, setData, setLoading) => {
-  setLoading((v) => {
+  setLoading(v => {
     v.push(path);
     return [...v];
   });
   database()
     .ref(path)
     .once('value')
-    .then((snapshot) => {
+    .then(snapshot => {
       setData(snapshot.val());
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -35,10 +35,10 @@ const loadData = (path, setData, setLoading) => {
         return [...v];
       });
     })
-    .catch((e) => {
+    .catch(e => {
       console.log(`Error fetching ${path}: `, e);
       crashlytics().log(`Error fetching ${path}: `, e);
-      setLoading((v) => {
+      setLoading(v => {
         let index = v.indexOf(path);
         if (index > -1) {
           v.splice(index, 1);
@@ -55,20 +55,20 @@ function MainScreen(props) {
   const [quizzes, setQuizzes] = useState();
   const [previousYearPapers, setPreviousYearPapers] = useState();
   const [testSeries, setTestSeries] = useState();
-  const [premium, setPremium] = useState();
+  const [extraQuizzes, setExtraQuizzes] = useState();
   const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [userInfo, setUserInfo] = useState({phone: user});
 
-  const loadFunc = () => {
+  const loadFunc = useCallback(() => {
     loadData(
       '/student/' + user,
-      (data) => {
-        setUserInfo((v) => {
+      data => {
+        setUserInfo(v => {
           v.name = data.name;
           v.premium = {};
-          Object.keys(data).forEach((key) => {
+          Object.keys(data).forEach(key => {
             if (
               key.toLowerCase() !== 'premium' &&
               key.toLowerCase().includes('premium')
@@ -85,13 +85,13 @@ function MainScreen(props) {
     loadData('/quizes', setQuizzes, setLoading);
     loadData('/previousYearQuestions', setPreviousYearPapers, setLoading);
     loadData('/testSeries', setTestSeries, setLoading);
-    loadData('/premium', setPremium, setLoading);
+    loadData('/extraQuizzes', setExtraQuizzes, setLoading);
     loadData(
       '/banner',
-      (data) => setBanners(Object.values(data) || {}),
+      data => setBanners(Object.values(data) || {}),
       setLoading,
     );
-  };
+  }, [user]);
 
   useEffect(() => {
     loadFunc();
@@ -99,23 +99,27 @@ function MainScreen(props) {
       leftIcon: 'menu',
       onPressBack: () => setShowMenu(true),
     });
-  }, []);
+  }, [props.navigation, loadFunc]);
 
   const data = [
     {
-      onPress: () =>
-        props.navigation.navigate('Topics', {
-          itemName: 'Quizzes',
-          items: quizzes,
-          image: require('../assets/quizzes.jpg'),
-          navigateToScreen: 'Quizzes',
-          showExtraInfo: true,
-          premium: premium.quizes,
-        }),
+      onPress: () => {
+        const navigate = data => {
+          props.navigation.navigate('Topics', {
+            itemName: 'Quizzes',
+            items: quizzes,
+            image: require('../assets/quizzes.jpg'),
+            navigateToScreen: 'Quizzes',
+            showExtraInfo: true,
+            premium: data,
+          });
+        };
+        loadData('/premium/quizes', navigate, setLoading);
+      },
       disabled: quizzes,
       imageBackground: require('../assets/quizzes.jpg'),
       blurRadius: 2,
-      text: 'Quizzes',
+      text: "Subject-wise MCQ's",
       extraInfo: quizzes
         ? Object.keys(quizzes).length +
           (Object.keys(quizzes).length > 1 ? ' Topics' : ' Topic')
@@ -127,7 +131,6 @@ function MainScreen(props) {
           itemName: 'Year',
           items: testSeries,
           title: 'Series',
-          premium: premium.testSeries,
         }),
       disabled: testSeries,
       imageBackground: require('../assets/testSeries.jpg'),
@@ -153,6 +156,22 @@ function MainScreen(props) {
       extraInfo: questions
         ? Object.keys(questions).length +
           (Object.keys(questions).length > 1 ? ' Topics' : ' Topic')
+        : 'Coming soon',
+    },
+    {
+      onPress: () =>
+        props.navigation.navigate('TestSeries', {
+          itemName: 'Year',
+          items: extraQuizzes,
+          title: 'Topics',
+          extraQuizzes: true,
+        }),
+      disabled: extraQuizzes,
+      imageBackground: require('../assets/extraQuizzes.jpg'),
+      blurRadius: 0.5,
+      text: 'Extra Quizzes',
+      extraInfo: extraQuizzes
+        ? Object.keys(extraQuizzes).length + ' Topics'
         : 'Coming soon',
     },
     {
@@ -201,7 +220,7 @@ function MainScreen(props) {
     },
   ];
 
-  const render = (item) => {
+  const render = item => {
     return (
       <TouchableOpacity
         onPress={item.onPress}
@@ -230,17 +249,20 @@ function MainScreen(props) {
       case 'Questions':
         data[2].onPress();
         break;
-      case 'Years':
+      case 'ExtraQuizzes':
         data[3].onPress();
         break;
-      case 'Study Material':
+      case 'Years':
         data[4].onPress();
         break;
-      case 'Our Courses':
+      case 'StudyMaterial':
         data[5].onPress();
         break;
-      case 'Live Classes':
+      case 'OurCourses':
         data[6].onPress();
+        break;
+      case 'LiveClasses':
+        data[7].onPress();
         break;
       default:
         break;
@@ -251,9 +273,9 @@ function MainScreen(props) {
     return banners?.length ? (
       <View style={styles.banner}>
         <Banner
-          data={banners.filter((banner) => banner)}
+          data={banners.filter(banner => banner)}
           height={150}
-          timer={2000}
+          timer={3000}
           handlePress={handleBannerOnPress}
         />
       </View>

@@ -19,7 +19,7 @@ function Question({
   const [value, setValue] = useState(view ? prefill : selection);
 
   useEffect(() => {
-    setSelections((v) => {
+    setSelections(v => {
       v[index] = value;
       return {...v};
     });
@@ -164,12 +164,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   option: {
+    color: colors.black,
     fontSize: 16,
     textAlign: 'left',
     paddingLeft: 8,
     paddingVertical: 8,
   },
   question: {
+    color: colors.black,
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,

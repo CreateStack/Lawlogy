@@ -26,7 +26,7 @@ function Header(props) {
       time,
       timeToChangeStyle,
     } = params;
-    setData((v) => ({
+    setData(v => ({
       ...v,
       disableLeftButton,
       onFinish,
@@ -95,7 +95,7 @@ const HeaderTitle = ({
     <View style={styles.headerText}>
       <Text style={styles.titleText}> {onlyTitle}</Text>
       <View style={{marginLeft: 8}}>
-        {showSessionTimer && (
+        {showSessionTimer && time !== 0 && (
           <SessionTimer
             time={time}
             styleTime={styleTime}

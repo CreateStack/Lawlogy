@@ -1,6 +1,8 @@
 import React from 'react';
-import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+
 import colors from '../config/colors';
+import {openURL} from '../utils/helpers';
 
 const MainsTestSeriesScreen = ({route, navigation}) => {
   const {params} = route;
@@ -9,7 +11,7 @@ const MainsTestSeriesScreen = ({route, navigation}) => {
       <Text style={styles.instructionsHeading}>Test Instructions</Text>
       <Text style={styles.instructions}>{params.quizzes.rules}</Text>
       <TouchableOpacity
-        onPress={() => Linking.openURL(params.quizzes.link)}
+        onPress={() => openURL(params.quizzes.link, true)}
         style={styles.button}>
         <Text style={styles.buttonText}>Start</Text>
       </TouchableOpacity>

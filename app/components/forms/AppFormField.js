@@ -48,7 +48,7 @@ const AppFormField = ({
         <AppTextInput
           inputContainer={inputContainer}
           onBlur={() => setFieldTouched(name)}
-          onChangeText={(text) => {
+          onChangeText={text => {
             setFieldValue(name, text);
             onValueChange(name, text);
           }}

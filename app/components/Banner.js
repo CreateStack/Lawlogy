@@ -93,7 +93,7 @@ function Banner({
   useEffect(() => {
     let bannerTimer;
     const nextSlide = () => {
-      setSelectedBanner((prevState) => {
+      setSelectedBanner(prevState => {
         return prevState === data.length - 1 ? 0 : prevState + 1;
       });
     };
@@ -125,7 +125,7 @@ function Banner({
 
   const renderItem = useCallback(
     ({item}, index) => {
-      const onHandlePress = (bannerData) => {
+      const onHandlePress = bannerData => {
         if (handlePress) {
           handlePress(bannerData);
         }

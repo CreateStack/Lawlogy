@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import VersionInfo from 'react-native-version-info';
 
 import colors from '../../config/colors';
 import {s} from '../../utils/scalingUtils';
@@ -20,10 +22,14 @@ import useAuth from '../../auth/useAuth';
 import {openURL} from '../../utils/helpers';
 import Subscriptions from './Subscriptions';
 
-const SocialIcon = ({color, name, onPress}) => {
+const SocialIcon = ({color, name, onPress, evilIcon}) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.socialIcon}>
-      <MaterialCommunityIcons name={name} size={32} color={color} />
+      {evilIcon ? (
+        <EvilIcons name={name} size={40} color={color} />
+      ) : (
+        <MaterialCommunityIcons name={name} size={32} color={color} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -138,10 +144,10 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
           <View style={styles.itemsContianer}>
             <Item
               expanded={subscriptionVisible}
-              icon={'cash-usd'}
+              icon={'cash-lock-open'}
               iconColor={colors.silver}
               text={'My Subscriptions'}
-              onPress={() => setSubscriptionVisible((v) => !v)}
+              onPress={() => setSubscriptionVisible(v => !v)}
               showDropDownIcon={true}
             />
             {subscriptionVisible && (
@@ -151,9 +157,7 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
               icon={'star'}
               iconColor={colors.silver}
               text={'Rate Us'}
-              onPress={() => {
-                openURL('market://details?id=com.lawlogy');
-              }}
+              onPress={() => openURL('market://details?id=com.lawlogy')}
             />
             <Item
               icon={'share-variant'}
@@ -192,7 +196,7 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
               icon={'account-box'}
               iconColor={colors.silver}
               text={'Contact Us'}
-              onPress={() => setContactVisible((v) => !v)}
+              onPress={() => setContactVisible(v => !v)}
               showDropDownIcon
             />
             {contactVisible && (
@@ -221,28 +225,39 @@ const Menu = ({isVisible, setVisible, userInfo}) => {
           <SocialIcon
             color={colors.darkPink}
             name={'instagram'}
-            onPress={() => openURL('https://www.instagram.com/lawlogy/')}
+            onPress={() => openURL('https://www.instagram.com/lawlogy/', true)}
           />
           <SocialIcon
             color={'#25D366'}
             name={'whatsapp'}
             onPress={() =>
-              openURL('https://chat.whatsapp.com/FoOp1UTf6IAHFraWD2JE43')
+              openURL('https://chat.whatsapp.com/FoOp1UTf6IAHFraWD2JE43', true)
             }
           />
           <SocialIcon
             color={'#229ED9'}
-            name={'telegram'}
-            onPress={() => openURL('https://t.me/lawlogyclasses')}
+            name={'sc-telegram'}
+            onPress={() => openURL('https://t.me/lawlogyclasses', true)}
+            evilIcon={true}
           />
           <SocialIcon
             color={'#4267B2'}
             name={'facebook'}
-            onPress={() => openURL('https://m.facebook.com/lawlogy/')}
+            onPress={() => openURL('https://m.facebook.com/lawlogy/', true)}
+          />
+          <SocialIcon
+            color={'#FF0000'}
+            name={'youtube'}
+            onPress={() =>
+              openURL(
+                'https://youtube.com/channel/UCPN2Bae5afFw5vA5C4wFcrg',
+                true,
+              )
+            }
           />
         </View>
         <View style={styles.version}>
-          <Text style={styles.versionText}>v1.1</Text>
+          <Text style={styles.versionText}>{'v' + VersionInfo.appVersion}</Text>
         </View>
       </View>
     </Modal>
@@ -297,6 +312,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   itemText: {
+    color: colors.black,
     fontSize: 16,
     marginLeft: 8,
   },
@@ -310,7 +326,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.white,
-    justifyContent: 'center',
     borderRadius: 20,
     width: 40,
     height: 40,
@@ -346,7 +361,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   socialIcon: {
-    marginHorizontal: 8,
+    marginHorizontal: 4,
   },
   userInfo: {
     marginTop: 4,

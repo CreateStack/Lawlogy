@@ -45,7 +45,7 @@ function LoginScreen(props) {
   }, [getOTP, otpTimer]);
 
   const startTimer = () => {
-    const timer = setInterval(() => setGetOTP((v) => v - 1), 1000);
+    const timer = setInterval(() => setGetOTP(v => v - 1), 1000);
     setOtpTimer(timer);
   };
 
@@ -63,7 +63,7 @@ function LoginScreen(props) {
       .verifyPhoneNumber('+91' + phoneNumber, 10, false)
       .on(
         'state_changed',
-        (snapshot) => {
+        snapshot => {
           switch (snapshot.state) {
             case auth.PhoneAuthState.CODE_SENT:
               setLoading(false);
@@ -89,11 +89,11 @@ function LoginScreen(props) {
               );
               auth()
                 .signInWithCredential(credential)
-                .then((data) => {
+                .then(data => {
                   database()
                     .ref('/student/' + phone)
                     .once('value')
-                    .then((snapshot) => {
+                    .then(snapshot => {
                       if (snapshot.val() === null) {
                         Alert.alert(
                           "Student doesn't exists",
@@ -117,7 +117,7 @@ function LoginScreen(props) {
                         setRegisterFailed(false);
                       }
                     })
-                    .catch((e) => {
+                    .catch(e => {
                       setErrorMsg(e);
                       console.log('error logging in: ', e);
                       crashlytics().log('error logging in: ', e);
@@ -126,7 +126,7 @@ function LoginScreen(props) {
                       setRegisterFailed(true);
                     });
                 })
-                .catch((e) => {
+                .catch(e => {
                   setErrorMsg('Login failed: ', e);
                   console.log('error logging in: ', e);
                   crashlytics().log('error logging in: ', e);
@@ -145,7 +145,7 @@ function LoginScreen(props) {
               break;
           }
         },
-        (error) => {
+        error => {
           console.log('Error: ', error);
           crashlytics().log('Error: ', error);
           setLoading(false);
@@ -153,7 +153,7 @@ function LoginScreen(props) {
       );
   }
 
-  const handleLogin = async (userInfo) => {
+  const handleLogin = async userInfo => {
     if (!userInfo.otp || userInfo.otp === '') {
       setRegisterFailed(true);
       setErrorMsg('Please enter a valid OTP');
@@ -171,7 +171,7 @@ function LoginScreen(props) {
       database()
         .ref('/student/' + phone)
         .once('value')
-        .then((snapshot) => {
+        .then(snapshot => {
           if (snapshot.val() === null) {
             Alert.alert(
               "Student doesn't exists",
@@ -190,7 +190,7 @@ function LoginScreen(props) {
             setLoading(false);
           }
         })
-        .catch((e) => {
+        .catch(e => {
           setLoading(false);
           console.log('Error: ', e);
           crashlytics().log('Error in logging in: ', e);
@@ -230,7 +230,7 @@ function LoginScreen(props) {
               name="number"
               placeholder="10 digit Mobile number"
               textContentType="telephoneNumber"
-              onChangeText={(v) => setPhone(v)}
+              onChangeText={v => setPhone(v)}
               value={phone}
             />
             {confirm ? (
