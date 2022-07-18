@@ -58,7 +58,7 @@ function TopicScreen({navigation, route: {params}}) {
   const {user} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const gradientColors = params.extraQuizzes
-    ? ['#FDFCFB', '#E2D1C3']
+    ? ['#CCCCFF', '#fff']
     : ['#CCCCFF', '#fff'];
   let items = Object.keys(params.items);
   if (items.length) {

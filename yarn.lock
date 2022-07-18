@@ -1115,6 +1115,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@notifee/react-native@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@notifee/react-native/-/react-native-5.3.0.tgz#79d20e2d9d383d45de3efd12f616606ac7a31229"
+  integrity sha512-P8uj/Ar4sAJ9sq+1W6qklQ2yw66GBTYD3qgKXoD6sJihoCVbniQ2A8xMYIPG1Y/To/DcbPouc9lsNm2XrxQQXA==
+
 "@react-native-async-storage/async-storage@^1.17.4":
   version "1.17.5"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.17.5.tgz#8cc3edd305d09a3c252d88921f0d2846a0444f25"
@@ -1351,6 +1356,11 @@
   version "12.9.3"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-12.9.3.tgz#71c4b7f94d98091acf3771d08c7f6ceddec16794"
   integrity sha512-XfjJ9tcgnAYkxDwnWtL7lE1ZqTWztyFcYGSwLRqpzxgteQoqkWUuCMH+HFQ7tQO6ebN9d3Nm8PGV+OjWMDtY5g==
+
+"@react-native-firebase/messaging@^15.0.0":
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-15.0.0.tgz#109ec76fde2cf9a6c8204716283b0c1d40a62083"
+  integrity sha512-pVP1cFJo7/E8juH+gdvSzvJiSN5kmfuluP16gcScAEktlrj/SJTv49BUqO3ItkzaemxiBMS2f1EpY0EMvPnINg==
 
 "@react-native-picker/picker@^2.2.1":
   version "2.4.1"
@@ -2043,6 +2053,11 @@ babel-plugin-syntax-trailing-function-commas@^7.0.0-beta.0:
   version "7.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-trailing-function-commas/-/babel-plugin-syntax-trailing-function-commas-7.0.0-beta.0.tgz#aa213c1435e2bffeb6fca842287ef534ad05d5cf"
   integrity sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ==
+
+babel-plugin-transform-remove-console@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-remove-console/-/babel-plugin-transform-remove-console-6.9.4.tgz#b980360c067384e24b357a588d807d3c83527780"
+  integrity sha512-88blrUrMX3SPiGkT1GnvVY8E/7A+k6oj3MNvUtTIxJflFzXTw1bHkuJ/y039ouhFMp2prRn5cQGzokViYi1dsg==
 
 babel-preset-current-node-syntax@^1.0.0:
   version "1.0.1"

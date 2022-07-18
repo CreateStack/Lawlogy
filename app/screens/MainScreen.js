@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import database from '@react-native-firebase/database';
 import crashlytics from '@react-native-firebase/crashlytics';
+import messaging from '@react-native-firebase/messaging';
 
 import AuthContext from '../auth/context';
 import colors from '../config/colors';
@@ -16,6 +17,10 @@ import ActivityIndicator from '../components/ActivityIndicator';
 import {ms} from '../utils/scalingUtils';
 import Banner from '../components/Banner';
 import Menu from '../components/Menu/Menu';
+import displayNotification, {
+  eventHandler,
+  getInitialNotification,
+} from '../components/Notifications/Notification';
 
 const loadData = (path, setData, setLoading) => {
   setLoading(v => {
@@ -60,6 +65,7 @@ function MainScreen(props) {
   const [loading, setLoading] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [userInfo, setUserInfo] = useState({phone: user});
+  const [initialLaunch, setInitialLaunch] = useState(true);
 
   const loadFunc = useCallback(() => {
     loadData(
@@ -101,18 +107,75 @@ function MainScreen(props) {
     });
   }, [props.navigation, loadFunc]);
 
+  useEffect(() => {
+    if (loading.length < 1) {
+      if (initialLaunch) {
+        getInitialNotification(navigateToScreen =>
+          handleBannerOnPress({navigateToScreen}),
+        );
+        setInitialLaunch(false);
+      }
+      messaging()
+        .subscribeToTopic('lawlogy')
+        .then(() => console.log('Subscribed to topic!'));
+      messaging()
+        .registerDeviceForRemoteMessages()
+        .then(() => {
+          messaging()
+            .getToken()
+            .then(token => {
+              console.log('FCM token: ', token);
+            });
+        });
+      console.log('set to receive');
+      const unsubscribe = messaging().onMessage(async remoteMessage => {
+        console.log(
+          'A new FCM message arrived!',
+          JSON.stringify(remoteMessage),
+        );
+        displayNotification(
+          remoteMessage.data?.title,
+          remoteMessage.data?.body,
+          remoteMessage.data?.navigateToScreen,
+        );
+      });
+      messaging().setBackgroundMessageHandler(async remoteMessage => {
+        console.log(
+          'A new FCM message arrived!',
+          JSON.stringify(remoteMessage),
+        );
+        displayNotification(
+          remoteMessage.data?.title,
+          remoteMessage.data?.body,
+          remoteMessage.data?.navigateToScreen,
+        );
+      });
+
+      const eventHandlerUnsubscribe = eventHandler(navigateToScreen =>
+        handleBannerOnPress({navigateToScreen}),
+      );
+
+      return () => {
+        console.log('unsubscribing');
+        unsubscribe();
+        eventHandlerUnsubscribe.foreground();
+      };
+    }
+  }, [loading.length]);
+
   const data = [
     {
       onPress: () => {
         const navigate = data => {
-          props.navigation.navigate('Topics', {
-            itemName: 'Quizzes',
-            items: quizzes,
-            image: require('../assets/quizzes.jpg'),
-            navigateToScreen: 'Quizzes',
-            showExtraInfo: true,
-            premium: data,
-          });
+          quizzes &&
+            props.navigation.navigate('Topics', {
+              itemName: 'Quizzes',
+              items: quizzes,
+              image: require('../assets/quizzes.jpg'),
+              navigateToScreen: 'Quizzes',
+              showExtraInfo: true,
+              premium: data,
+            });
         };
         loadData('/premium/quizes', navigate, setLoading);
       },
@@ -126,12 +189,14 @@ function MainScreen(props) {
         : 'Coming soon',
     },
     {
-      onPress: () =>
-        props.navigation.navigate('TestSeries', {
-          itemName: 'Year',
-          items: testSeries,
-          title: 'Series',
-        }),
+      onPress: () => {
+        testSeries &&
+          props.navigation.navigate('TestSeries', {
+            itemName: 'Year',
+            items: testSeries,
+            title: 'Series',
+          });
+      },
       disabled: testSeries,
       imageBackground: require('../assets/testSeries.jpg'),
       blurRadius: 0.5,
@@ -142,9 +207,10 @@ function MainScreen(props) {
     },
     {
       onPress: () =>
+        testSeries &&
         props.navigation.navigate('Topics', {
           itemName: 'Questions',
-          items: questions,
+          items: testSeries,
           image: require('../assets/questions.jpg'),
           navigateToScreen: 'JustQuestions',
           showExtraInfo: true,
@@ -160,6 +226,7 @@ function MainScreen(props) {
     },
     {
       onPress: () =>
+        extraQuizzes &&
         props.navigation.navigate('TestSeries', {
           itemName: 'Year',
           items: extraQuizzes,
@@ -176,6 +243,7 @@ function MainScreen(props) {
     },
     {
       onPress: () =>
+        previousYearPapers &&
         props.navigation.navigate('Topics', {
           itemName: 'Year',
           items: previousYearPapers,
