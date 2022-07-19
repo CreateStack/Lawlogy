@@ -207,10 +207,10 @@ function MainScreen(props) {
     },
     {
       onPress: () =>
-        testSeries &&
+        questions &&
         props.navigation.navigate('Topics', {
           itemName: 'Questions',
-          items: testSeries,
+          items: questions,
           image: require('../assets/questions.jpg'),
           navigateToScreen: 'JustQuestions',
           showExtraInfo: true,
