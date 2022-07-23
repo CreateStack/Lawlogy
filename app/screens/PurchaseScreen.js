@@ -12,7 +12,7 @@ import colors from '../config/colors';
 import {ms, s, vs} from '../utils/scalingUtils';
 import {secrets} from '../config/purchaseConstants';
 
-const ENV = 'TEST';
+const ENV = 'PROD';
 const {appId, key, endpoint} = secrets[ENV];
 
 const PurchaseScreen = ({navigation, route: {params}}) => {

@@ -18,10 +18,12 @@ import Question from '../components/Question';
 import colors from '../config/colors';
 import {calculateScore} from '../utils/calculateScore';
 import ScoreCard from '../components/ScoreCard';
+import AnimatedLottieView from 'lottie-react-native';
 
 function QuestionsScreen(props) {
   const {user} = useContext(AuthContext);
   const [showScore, setShowScore] = useState(false);
+  const [showReportSubmitted, setShowReportSubmitted] = useState(false);
   const [selections, setSelections] = useState({});
   const {data, negativeMarking = 0, subjectName, view} = props.route.params;
   useEffect(() => {
@@ -159,6 +161,8 @@ function QuestionsScreen(props) {
         view={view}
         selection={selections[index] || ''}
         setSelections={setSelections}
+        reportPath={name + '/' + quizName}
+        setShowReportSubmitted={setShowReportSubmitted}
       />
     );
   };
@@ -242,6 +246,17 @@ function QuestionsScreen(props) {
             .length
         }
       />
+      {showReportSubmitted ? (
+        <View style={styles.submitted}>
+          <Text style={styles.submittedText}>Reported your issue</Text>
+          <AnimatedLottieView
+            autoPlay={true}
+            loop={true}
+            source={require('../assets/animations/submitted.json')}
+            style={styles.submittedAnimation}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -309,6 +324,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
+  },
+  submitted: {
+    position: 'absolute',
+    bottom: 32,
+    zIndex: 1,
+    backgroundColor: colors.white,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderColor: colors.primary,
+    borderWidth: 1,
+  },
+  submittedAnimation: {
+    backgroundColor: colors.white,
+    height: 48,
+    width: 48,
+  },
+  submittedText: {
+    color: colors.black,
+    fontSize: 14,
   },
   trophy: {
     height: 200,

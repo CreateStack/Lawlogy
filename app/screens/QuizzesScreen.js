@@ -143,16 +143,9 @@ function QuizzesScreen(props) {
                     attempts:
                       props.route.params.extraInfoData?.[item]?.attempts,
                     name: testSeries ? item : props.route.params.name,
-                    /*  onPressRightIcon: () =>
-                    props.navigation.navigate('LeaderBoard', {
-                      state: props.route.params.name,
-                      quiz: item,
-                    }), */
                     quiz: getQuiz(props.route.params.quizzes[item]),
                     quizzes: props.route.params.quizzes[item],
                     quizName: item.toUpperCase(),
-                    //rightIcon: 'podium',
-                    //showRightIcon: testSeries ? true : false,
                     subjectName: testSeries
                       ? props.route.params.heading
                       : (props.route.params.name || '')

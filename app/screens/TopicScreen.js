@@ -58,7 +58,11 @@ function TopicScreen({navigation, route}) {
                 : (noOfItems || 0) +
                   ' ' +
                   params.itemName +
-                  (noOfItems > 1 ? 's' : '')}
+                  (noOfItems > 1
+                    ? params.itemName?.[params.itemName?.length - 1] === 's'
+                      ? ''
+                      : 's'
+                    : '')}
             </Text>
           </View>
         )}
