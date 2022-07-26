@@ -1,4 +1,5 @@
 import notifee, {AndroidColor, EventType} from '@notifee/react-native';
+import {getData, storeData} from '../../utils/AsyncStorage';
 
 const displayNotification = (title = '', body = '', pressAction = 'none') => {
   if (!title && !body) return;
@@ -72,6 +73,38 @@ export const getInitialNotification = onPress => {
         initialNotification.pressAction,
       );
       onPress && onPress(initialNotification.pressAction?.id);
+    }
+  });
+};
+
+export const storeNotification = (notification, callback) => {
+  console.log('Storing notification: ', notification.messageId);
+  getData('notifications').then(notificaitons => {
+    if (notificaitons && Object.keys(notificaitons || {}).length) {
+      notificaitons[notification.messageId] = notification;
+      storeData('notifications', notificaitons).then(
+        () => callback && callback(),
+      );
+    } else {
+      let newNotificationObject = {};
+      newNotificationObject[notification.messageId] = notification;
+      storeData('notifications', newNotificationObject);
+    }
+  });
+};
+
+export const getNotifications = async () => {
+  const notifcations = await getData('notifications');
+  return notifcations;
+};
+
+export const deleteNotification = (callback, messageId) => {
+  getData('notifications').then(notificaitons => {
+    if (notificaitons && Object.keys(notificaitons || {}).length) {
+      delete notificaitons[messageId];
+      storeData('notifications', notificaitons).then(() => callback());
+    } else {
+      console.log('No notifications to delete');
     }
   });
 };

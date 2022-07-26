@@ -20,6 +20,8 @@ function Header(props) {
       onPressBack,
       onPressRightIcon,
       rightIcon,
+      rightIconExtraInfo,
+      rightIconColor,
       leftIcon = 'arrow-left',
       showRightIcon,
       showSessionTimer,
@@ -35,6 +37,8 @@ function Header(props) {
       onPressBack,
       onPressRightIcon,
       rightIcon,
+      rightIconExtraInfo,
+      rightIconColor,
       leftIcon,
       showRightIcon,
       showSessionTimer,
@@ -71,8 +75,15 @@ function Header(props) {
           <MaterialCommunityIcons
             name={data.rightIcon}
             size={24}
-            color={colors.white}
+            color={data.rightIconColor || colors.white}
           />
+          {data.rightIconExtraInfo ? (
+            <View style={styles.extraInfoRightIconContainer}>
+              <Text style={styles.extraInfoRightIcon}>
+                {data.rightIconExtraInfo}
+              </Text>
+            </View>
+          ) : null}
         </TouchableOpacity>
       )}
     </View>
@@ -131,6 +142,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  extraInfoRightIcon: {
+    aspectRatio: 1,
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  extraInfoRightIconContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.green,
+    borderRadius: 30,
+    justifyContent: 'center',
+    padding: 1,
+    position: 'absolute',
+    right: -3,
+    top: 7,
   },
   headerTitleContainer: {
     height: Platform.OS === 'android' ? vs(47) : vs(37),

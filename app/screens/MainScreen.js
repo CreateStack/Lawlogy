@@ -20,7 +20,10 @@ import Menu from '../components/Menu/Menu';
 import displayNotification, {
   eventHandler,
   getInitialNotification,
+  getNotifications,
+  storeNotification,
 } from '../components/Notifications/Notification';
+import NotificationsModal from '../components/Notifications/NotificationsModal';
 
 const loadData = (path, setData, setLoading) => {
   setLoading(v => {
@@ -53,6 +56,23 @@ const loadData = (path, setData, setLoading) => {
     });
 };
 
+const fetchNotifications = (setLoading, setNotifications) => {
+  setLoading(v => {
+    v.push('notifs');
+    return [...v];
+  });
+  getNotifications().then(notifs => {
+    setNotifications(notifs);
+    setLoading(v => {
+      let index = v.indexOf('notifs');
+      if (index > -1) {
+        v.splice(index, 1);
+      }
+      return [...v];
+    });
+  });
+};
+
 function MainScreen(props) {
   const {user} = useContext(AuthContext);
 
@@ -64,8 +84,10 @@ function MainScreen(props) {
   const [banners, setBanners] = useState();
   const [loading, setLoading] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
+  const [showNotifcations, setShowNotifcations] = useState(false);
   const [userInfo, setUserInfo] = useState({phone: user});
   const [initialLaunch, setInitialLaunch] = useState(true);
+  const [notifications, setNotifications] = useState({});
 
   const loadFunc = useCallback(() => {
     loadData(
@@ -97,6 +119,7 @@ function MainScreen(props) {
       data => setBanners(Object.values(data) || {}),
       setLoading,
     );
+    fetchNotifications(setLoading, setNotifications);
   }, [user]);
 
   useEffect(() => {
@@ -106,6 +129,16 @@ function MainScreen(props) {
       onPressBack: () => setShowMenu(true),
     });
   }, [props.navigation, loadFunc]);
+
+  useEffect(() => {
+    props.navigation.setParams({
+      onPressRightIcon: () => setShowNotifcations(true),
+      rightIcon: 'bell',
+      rightIconExtraInfo: Object.keys(notifications || {}).length,
+      rightIconColor: colors.yellow,
+      showRightIcon: true,
+    });
+  }, [notifications]);
 
   useEffect(() => {
     if (loading.length < 1) {
@@ -138,6 +171,9 @@ function MainScreen(props) {
           remoteMessage.data?.body,
           remoteMessage.data?.navigateToScreen,
         );
+        storeNotification(remoteMessage, () =>
+          fetchNotifications(setLoading, setNotifications),
+        );
       });
       messaging().setBackgroundMessageHandler(async remoteMessage => {
         console.log(
@@ -148,6 +184,9 @@ function MainScreen(props) {
           remoteMessage.data?.title,
           remoteMessage.data?.body,
           remoteMessage.data?.navigateToScreen,
+        );
+        storeNotification(remoteMessage, () =>
+          fetchNotifications(setLoading, setNotifications),
         );
       });
 
@@ -354,6 +393,15 @@ function MainScreen(props) {
     <>
       <ActivityIndicator visible={loading.length > 0} />
       <Menu isVisible={showMenu} setVisible={setShowMenu} userInfo={userInfo} />
+      <NotificationsModal
+        isVisible={showNotifcations}
+        setVisible={setShowNotifcations}
+        notifications={notifications}
+        onPress={handleBannerOnPress}
+        refreshNotification={() =>
+          fetchNotifications(setLoading, setNotifications)
+        }
+      />
       <FlatList
         columnWrapperStyle={{justifyContent: 'space-between'}}
         data={data}
